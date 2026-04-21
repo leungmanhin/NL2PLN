@@ -1,3 +1,4 @@
+import argparse
 import os
 import dspy
 import json
@@ -6,67 +7,88 @@ import mlflow
 from pprint import pformat
 from dspy.teleprompt import GEPA
 from dspy.utils.callback import BaseCallback
+from pathlib import Path
 
 from nl2pln import NL2PLNModule , difficulty_metric , build_examples_from_file
 
 import logging
 logger = logging.getLogger(dspy.teleprompt.gepa.gepa.__name__)
 
-# --------------------------------------------------------------------------- #
-#  LM configuration                                                           #
-# --------------------------------------------------------------------------- #
-#model = "openrouter/z-ai/glm-4.5"
-#model = "cerebras/gpt-oss-120b"
-#model = "openrouter/deepseek/deepseek-v3.2"
-#model = "moonshotai/kimi-k2-0905:exacto"
-#model = "openrouter/openai/gpt-5.1"
-#model = "openrouter/google/gemini-3-pro-preview"
-#model = "openrouter/google/gemini-3-flash-preview"
-model = "openai/gpt-5.2"
-optmodel = model
 
-lm = dspy.LM(model)
-dspy.configure(lm=lm)
+def parse_args():
+    p = argparse.ArgumentParser(
+        description="Run GEPA optimization on NL2PLNModule (bootstraps from a SIMBA checkpoint)"
+    )
+    p.add_argument("--model", default="openai/gpt-5.4-mini",
+                   help="LiteLLM model id used for both task LM and GEPA's reflection LM")
+    p.add_argument("--dataset", default="data/all.json",
+                   help="Path to dataset JSON")
+    p.add_argument("--num-threads", type=int, default=10,
+                   help="Parallel LM calls during optimization")
+    p.add_argument("--max-metric-calls", type=int, default=1000,
+                   help="GEPA evaluation budget (total metric calls)")
+    p.add_argument("--reflection-minibatch-size", type=int, default=16,
+                   help="Minibatch size for GEPA reflective mutation")
+    p.add_argument("--score-threshold", type=float, default=0.9,
+                   help="Early-stop threshold: stop when a candidate scores >= this")
+    p.add_argument("--log-dir", default="gepa_logs_all",
+                   help="Directory for GEPA run logs")
+    p.add_argument("--input", default="programs/simba_all.json",
+                   help="Checkpoint to bootstrap from (typically SIMBA's output)")
+    p.add_argument("--output", default="programs/simba_all2_gepa.json",
+                   help="Where to save the optimized program")
+    return p.parse_args()
 
-tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
-if tracking_uri:
-    mlflow.set_tracking_uri(uri=tracking_uri)
-    mlflow.set_experiment("DSPy-Optimization")
-    mlflow.dspy.autolog(
-        log_compiles=True,    # Track optimization process
-        log_evals=True,       # Track evaluation results
-        log_traces_from_compile=True  # Track program traces during optimization
+
+def main():
+    args = parse_args()
+
+    dspy.configure(lm=dspy.LM(args.model))
+
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
+    if tracking_uri:
+        mlflow.set_tracking_uri(uri=tracking_uri)
+        mlflow.set_experiment("DSPy-Optimization")
+        mlflow.dspy.autolog(
+            log_compiles=True,    # Track optimization process
+            log_evals=True,       # Track evaluation results
+            log_traces_from_compile=True  # Track program traces during optimization
+        )
+
+    dataset = build_examples_from_file(args.dataset)
+
+    #shutil.rmtree('gepa_logs')
+
+    module = NL2PLNModule()
+    module.load(args.input)
+
+    teleprompter = GEPA(
+        metric=difficulty_metric,
+        reflection_lm=dspy.LM(args.model),
+        num_threads=args.num_threads,
+        max_metric_calls=args.max_metric_calls,
+        reflection_minibatch_size=args.reflection_minibatch_size,
+        track_stats=True,
+        track_best_outputs=True,
+        log_dir=args.log_dir,
+        gepa_kwargs={"stop_callbacks": [
+            MaxMetricCallsStopper(args.max_metric_calls),
+            ScoreThresholdStopper(args.score_threshold),
+        ]},
+    )
+    module = teleprompter.compile(
+        module,
+        trainset=dataset,
+        valset=dataset,
     )
 
-#dataset = build_examples_from_file("data/sentences.json")
-#dataset = build_examples_from_file("data/andres.json")
-#dataset = build_examples_from_file("data/counting.json")
-dataset = build_examples_from_file("data/all.json")
+    output_path = Path(args.output)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    module.save(str(output_path))
 
-total_metric_calls = 1000
 
-#shutil.rmtree('gepa_logs')
-
-module = NL2PLNModule()
-module.load("programs/simba_all2.json")
-
-teleprompter = GEPA(metric=difficulty_metric
-               ,reflection_lm=dspy.LM(model)
-               ,num_threads=10
-               ,max_metric_calls=total_metric_calls
-               ,reflection_minibatch_size=16
-               ,track_stats=True
-               ,track_best_outputs=True
-               ,log_dir=f"gepa_logs_all"
-               ,gepa_kwargs={"stop_callbacks": [MaxMetricCallsStopper(total_metric_calls),ScoreThresholdStopper(0.9)]}
-               )
-module = teleprompter.compile(
-    module,
-    trainset=dataset,
-    valset=dataset,
-)
-
-module.save(f"programs/simba_all2_gepa.json")
+if __name__ == "__main__":
+    main()
 
 #for i in range(0,1):
 #
