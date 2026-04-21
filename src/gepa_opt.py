@@ -21,6 +21,8 @@ def parse_args():
     )
     p.add_argument("--model", default="openai/gpt-5.4-mini",
                    help="LiteLLM model id used for both task LM and GEPA's reflection LM")
+    p.add_argument("--reasoning-effort", default="high",
+                   help="Reasoning effort for reasoning-capable models: none, low, medium, high, xhigh")
     p.add_argument("--dataset", default="data/all.json",
                    help="Path to dataset JSON")
     p.add_argument("--num-threads", type=int, default=10,
@@ -43,7 +45,8 @@ def parse_args():
 def main():
     args = parse_args()
 
-    dspy.configure(lm=dspy.LM(args.model))
+    lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
+    dspy.configure(lm=dspy.LM(args.model, **lm_kwargs))
 
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
     if tracking_uri:
@@ -64,7 +67,7 @@ def main():
 
     teleprompter = GEPA(
         metric=difficulty_metric,
-        reflection_lm=dspy.LM(args.model),
+        reflection_lm=dspy.LM(args.model, **lm_kwargs),
         num_threads=args.num_threads,
         max_metric_calls=args.max_metric_calls,
         reflection_minibatch_size=args.reflection_minibatch_size,

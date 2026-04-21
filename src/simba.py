@@ -20,6 +20,8 @@ def parse_args():
     )
     p.add_argument("--model", default="openai/gpt-5.4-mini",
                    help="LiteLLM model id used for both task LM and SIMBA's prompt-candidate LM")
+    p.add_argument("--reasoning-effort", default="high",
+                   help="Reasoning effort for reasoning-capable models: none, low, medium, high, xhigh")
     p.add_argument("--dataset", default="data/all.json",
                    help="Path to dataset JSON")
     p.add_argument("--num-threads", type=int, default=10,
@@ -36,7 +38,8 @@ def parse_args():
 def main():
     args = parse_args()
 
-    dspy.configure(lm=dspy.LM(args.model))
+    lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
+    dspy.configure(lm=dspy.LM(args.model, **lm_kwargs))
 
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
     if tracking_uri:
@@ -59,7 +62,7 @@ def main():
 
     teleprompter = SIMBA(
         metric=difficulty_metric,
-        prompt_model=dspy.LM(args.model, temperature=1.0),
+        prompt_model=dspy.LM(args.model, temperature=1.0, **lm_kwargs),
         bsize=args.bsize,
         num_threads=args.num_threads,
     )
