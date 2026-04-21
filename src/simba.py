@@ -27,7 +27,13 @@ def parse_args():
     p.add_argument("--num-threads", type=int, default=10,
                    help="Parallel LM calls during optimization")
     p.add_argument("--bsize", type=int, default=8,
-                   help="SIMBA batch size")
+                   help="SIMBA mini-batch size")
+    p.add_argument("--max-steps", type=int, default=8,
+                   help="Number of mini-batch iterations (training budget)")
+    p.add_argument("--num-candidates", type=int, default=6,
+                   help="Trajectories sampled per example per batch (also caps candidates built per batch)")
+    p.add_argument("--max-demos", type=int, default=4,
+                   help="Maximum few-shot demos per predictor; oldest are probabilistically dropped beyond this")
     p.add_argument("--input", default="programs/simba_all2_gepa.json",
                    help="Optional checkpoint to resume from; ignored silently if the file does not exist")
     p.add_argument("--output", default="programs/simba_all.json",
@@ -64,6 +70,9 @@ def main():
         metric=difficulty_metric,
         prompt_model=dspy.LM(args.model, temperature=1.0, **lm_kwargs),
         bsize=args.bsize,
+        max_steps=args.max_steps,
+        num_candidates=args.num_candidates,
+        max_demos=args.max_demos,
         num_threads=args.num_threads,
     )
 
