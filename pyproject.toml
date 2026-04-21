@@ -9,7 +9,9 @@ dependencies = [
     "mlflow>=3.6.0",
     "pytest>=9.0.1",
     "pettachainer",
+    "petta",
 ]
 
 [tool.uv.sources]
 pettachainer = { path = "../PeTTaChainer", editable = true }
+petta = { path = "../PeTTa", editable = true }
