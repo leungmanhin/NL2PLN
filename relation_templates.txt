@@ -1,0 +1,288 @@
+Primitive template families below use bare MeTTa syntax. Any lexical noun/adjective/verb can instantiate the generic shells; the predicates listed here are the shared semantic relations and feature markers.
+
+GENERAL SHELLS
+- `(: <fact-id> (<UnaryPredicate> $x) (STV 1.0 1.0))`
+- `(: <fact-id> (<BinaryPredicate> $x $y) (STV 1.0 1.0))`
+- `(: <fact-id> (<TernaryPredicate> $x $y $z) (STV 1.0 1.0))`
+- `(: <rule-id> (Implication (Premises <premise-1> <premise-2> ...) (Conclusions <conclusion-1> <conclusion-2> ...)) (STV 1.0 1.0))`
+- `(: $prf <pattern> $tv)`
+
+TRUTH / VALUE CONSTRUCTORS
+- `STV $strength $confidence`
+- `NatDist ((<value> <probability>) ...)`
+- `FloatDist ((<value> <probability>) ...)`
+- `ParticleDist <ref>`
+- `ParticleDist <ref> <scale>`
+- `PointMass <x>`
+- `ParticleFromNormal <mu> <sigma>`
+- `ParticleFromPairs ((<x1> <w1>) (<x2> <w2>) ...)`
+
+LOGICAL / COMPUTATIONAL OPERATORS
+- `(: <id> (Not (<Predicate> $x ...)) (STV 1.0 1.0))`
+- `(: <id> (GreaterThan $a $b) (STV 1.0 1.0))`
+- `(: <id> (> $a $b) (STV 1.0 1.0))`
+- `(: <id> (Compute <fn> (<arg1> <arg2> ...) -> $out) (STV 1.0 1.0))`
+- `(: <id> (FoldAll <pattern> <value> <init> <fold-fn> -> $out) (STV 1.0 1.0))`
+- `(: <id> (FoldAllValue <pattern> <init> <fold-fn> -> $out) (STV 1.0 1.0))`
+
+ENTITY / KIND / REFERENCE
+- `(: <id> (Entity $x) (STV 1.0 1.0))`
+- `(: <id> (Event $e) (STV 1.0 1.0))`
+- `(: <id> (State $s) (STV 1.0 1.0))`
+- `(: <id> (Process $p) (STV 1.0 1.0))`
+- `(: <id> (InstanceOf $x $class) (STV 1.0 1.0))`
+- `(: <id> (SubclassOf $sub $sup) (STV 1.0 1.0))`
+- `(: <id> (MemberOf $x $group) (STV 1.0 1.0))`
+- `(: <id> (SameAs $x $y) (STV 1.0 1.0))`
+- `(: <id> (DistinctFrom $x $y) (STV 1.0 1.0))`
+- `(: <id> (NameOf $entity $name) (STV 1.0 1.0))`
+- `(: <id> (AliasOf $entity $alias) (STV 1.0 1.0))`
+- `(: <id> (ReferentialStatus $x Definite) (STV 1.0 1.0))`
+- `(: <id> (ReferentialStatus $x Indefinite) (STV 1.0 1.0))`
+- `(: <id> (ReferentialStatus $x Demonstrative) (STV 1.0 1.0))`
+- `(: <id> (ReferentialStatus $x Specific) (STV 1.0 1.0))`
+- `(: <id> (ReferentialStatus $x DiscourseNew) (STV 1.0 1.0))`
+- `(: <id> (ReferentialStatus $x DiscourseGiven) (STV 1.0 1.0))`
+
+PROPERTIES / STATES / MODIFIERS
+- `(: <id> (<UnaryPropertyPredicate> $x) (STV 1.0 1.0))`
+- `(: <id> (<RelationalPropertyPredicate> $x $y) (STV 1.0 1.0))`
+- `(: <id> (ModifierOf $modifier $head) (STV 1.0 1.0))`
+- `(: <id> (RelativeClauseOf $clause $head) (STV 1.0 1.0))`
+- `(: <id> (Restricts $modifier $head) (STV 1.0 1.0))`
+- `(: <id> (Describes $modifier $head) (STV 1.0 1.0))`
+- `(: <id> (DegreeOf $x $degree) (STV 1.0 1.0))`
+- `(: <id> (PolarityOf $p Positive) (STV 1.0 1.0))`
+- `(: <id> (PolarityOf $p Negative) (STV 1.0 1.0))`
+
+EVENTS / THEMATIC ROLES
+- `(: <id> (<VerbPredicate> $e) (STV 1.0 1.0))`
+- `(: <id> (Agent $e $x) (STV 1.0 1.0))`
+- `(: <id> (Patient $e $x) (STV 1.0 1.0))`
+- `(: <id> (Theme $e $x) (STV 1.0 1.0))`
+- `(: <id> (Experiencer $e $x) (STV 1.0 1.0))`
+- `(: <id> (Stimulus $e $x) (STV 1.0 1.0))`
+- `(: <id> (Instrument $e $x) (STV 1.0 1.0))`
+- `(: <id> (Recipient $e $x) (STV 1.0 1.0))`
+- `(: <id> (Beneficiary $e $x) (STV 1.0 1.0))`
+- `(: <id> (Source $e $x) (STV 1.0 1.0))`
+- `(: <id> (Goal $e $x) (STV 1.0 1.0))`
+- `(: <id> (Path $e $x) (STV 1.0 1.0))`
+- `(: <id> (Location $e $x) (STV 1.0 1.0))`
+- `(: <id> (Time $e $t) (STV 1.0 1.0))`
+- `(: <id> (Duration $e $d) (STV 1.0 1.0))`
+- `(: <id> (Manner $e $m) (STV 1.0 1.0))`
+- `(: <id> (Purpose $e $p) (STV 1.0 1.0))`
+- `(: <id> (Cause $cause $effect) (STV 1.0 1.0))`
+- `(: <id> (Effect $cause $effect) (STV 1.0 1.0))`
+- `(: <id> (Result $e $result) (STV 1.0 1.0))`
+- `(: <id> (Content $e $content) (STV 1.0 1.0))`
+- `(: <id> (Speaker $e $x) (STV 1.0 1.0))`
+- `(: <id> (Addressee $e $x) (STV 1.0 1.0))`
+- `(: <id> (Topic $e $x) (STV 1.0 1.0))`
+
+POSSESSION / PART-WHOLE / MEMBERSHIP
+- `(: <id> (Possesses $owner $thing) (STV 1.0 1.0))`
+- `(: <id> (PartOf $part $whole) (STV 1.0 1.0))`
+- `(: <id> (Contains $container $item) (STV 1.0 1.0))`
+
+SPATIAL RELATIONS
+- `(: <id> (AtLocation $x $place) (STV 1.0 1.0))`
+- `(: <id> (In $x $place) (STV 1.0 1.0))`
+- `(: <id> (On $x $surface) (STV 1.0 1.0))`
+- `(: <id> (Under $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (Over $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (Above $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (Below $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (Beside $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (Near $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (Behind $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (InFrontOf $x $landmark) (STV 1.0 1.0))`
+- `(: <id> (Between $x $a $b) (STV 1.0 1.0))`
+- `(: <id> (Into $x $dest) (STV 1.0 1.0))`
+- `(: <id> (OutOf $x $src) (STV 1.0 1.0))`
+- `(: <id> (Through $x $path) (STV 1.0 1.0))`
+- `(: <id> (Across $x $area) (STV 1.0 1.0))`
+- `(: <id> (Toward $x $goal) (STV 1.0 1.0))`
+- `(: <id> (AwayFrom $x $source) (STV 1.0 1.0))`
+- `(: <id> (Around $x $landmark) (STV 1.0 1.0))`
+
+TEMPORAL / TENSE / ASPECT / VOICE
+- `(: <id> (Before $t1 $t2) (STV 1.0 1.0))`
+- `(: <id> (After $t1 $t2) (STV 1.0 1.0))`
+- `(: <id> (During $t1 $t2) (STV 1.0 1.0))`
+- `(: <id> (Overlap $t1 $t2) (STV 1.0 1.0))`
+- `(: <id> (Precedes $e1 $e2) (STV 1.0 1.0))`
+- `(: <id> (Follows $e1 $e2) (STV 1.0 1.0))`
+- `(: <id> (AtTime $e $t) (STV 1.0 1.0))`
+- `(: <id> (StartsAt $e $t) (STV 1.0 1.0))`
+- `(: <id> (EndsAt $e $t) (STV 1.0 1.0))`
+- `(: <id> (Since $e $t) (STV 1.0 1.0))`
+- `(: <id> (Until $e $t) (STV 1.0 1.0))`
+- `(: <id> (TenseOf $e Past) (STV 1.0 1.0))`
+- `(: <id> (TenseOf $e Present) (STV 1.0 1.0))`
+- `(: <id> (TenseOf $e Future) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Progressive) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Perfect) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Perfective) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Imperfective) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Completed) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Ongoing) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Habitual) (STV 1.0 1.0))`
+- `(: <id> (AspectOf $e Iterative) (STV 1.0 1.0))`
+- `(: <id> (VoiceOf $e Active) (STV 1.0 1.0))`
+- `(: <id> (VoiceOf $e Passive) (STV 1.0 1.0))`
+
+QUANTIFICATION / COUNTING / NUMERALS
+- `(: <id> (CountOf $collection $n) (STV 1.0 1.0))`
+- `(: <id> (CardinalityOf $collection $n) (STV 1.0 1.0))`
+- `(: <id> (QuantityOf $entity $n) (STV 1.0 1.0))`
+- `(: <id> (NumericValue $measure $n) (STV 1.0 1.0))`
+- `(: <id> (UnitOf $measure $unit) (STV 1.0 1.0))`
+- `(: <id> (AtLeast $a $b) (STV 1.0 1.0))`
+- `(: <id> (AtMost $a $b) (STV 1.0 1.0))`
+- `(: <id> (Exactly $a $b) (STV 1.0 1.0))`
+- `(: <id> (LessThan $a $b) (STV 1.0 1.0))`
+- `(: <id> (ApproximatelyEqual $a $b) (STV 1.0 1.0))`
+- Universal / generic force is represented by rule form, not a dedicated quantifier operator.
+
+NEGATION / POLARITY
+- `(: <id> (Not (<Predicate> $x ...)) (STV 1.0 1.0))`
+- `(: <id> (PolarityOf $p Positive) (STV 1.0 1.0))`
+- `(: <id> (PolarityOf $p Negative) (STV 1.0 1.0))`
+
+MODALITY
+- `(: <id> (ModalityOf $p $modality) (STV 1.0 1.0))`
+- `(: <id> (ModalityTypeOf $modality Epistemic) (STV 1.0 1.0))`
+- `(: <id> (ModalityTypeOf $modality Deontic) (STV 1.0 1.0))`
+- `(: <id> (ModalityTypeOf $modality Dynamic) (STV 1.0 1.0))`
+- `(: <id> (ModalityForceOf $modality Possible) (STV 1.0 1.0))`
+- `(: <id> (ModalityForceOf $modality Necessary) (STV 1.0 1.0))`
+- `(: <id> (ModalityForceOf $modality Permitted) (STV 1.0 1.0))`
+- `(: <id> (ModalityForceOf $modality Obligatory) (STV 1.0 1.0))`
+- `(: <id> (ModalityForceOf $modality Able) (STV 1.0 1.0))`
+
+CAUSATION / PURPOSE / CONDITIONALS
+- `(: <id> (Causes $cause $effect) (STV 1.0 1.0))`
+- `(: <id> (CausedBy $effect $cause) (STV 1.0 1.0))`
+- `(: <id> (Enables $cause $effect) (STV 1.0 1.0))`
+- `(: <id> (Prevents $cause $effect) (STV 1.0 1.0))`
+- `(: <id> (PurposeOf $e $goal) (STV 1.0 1.0))`
+- `(: <id> (ReasonFor $e $reason) (STV 1.0 1.0))`
+- `(: <rule-id> (Implication (Premises <antecedent-1> <antecedent-2> ...) (Conclusions <consequent-1> <consequent-2> ...)) (STV 1.0 1.0))`
+
+COMPARISON / DEGREE / RANKING
+- `(: <id> (GreaterThan $a $b) (STV 1.0 1.0))`
+- `(: <id> (> $a $b) (STV 1.0 1.0))`
+- `(: <id> (LessThan $a $b) (STV 1.0 1.0))`
+- `(: <id> (EqualTo $a $b) (STV 1.0 1.0))`
+- `(: <id> (ComparableTo $a $b $scale) (STV 1.0 1.0))`
+- `(: <id> (ComparativeOf $x $y $scale) (STV 1.0 1.0))`
+- `(: <id> (SuperlativeOf $x $scale $domain) (STV 1.0 1.0))`
+
+COORDINATION / DISCOURSE
+- `(: <id> (Sequence $a $b) (STV 1.0 1.0))`
+- `(: <id> (ContrastsWith $a $b) (STV 1.0 1.0))`
+- `(: <id> (Concession $a $b) (STV 1.0 1.0))`
+- `(: <id> (Explains $a $b) (STV 1.0 1.0))`
+- `(: <id> (ElaboratesOn $a $b) (STV 1.0 1.0))`
+- `(: <id> (Alternative $a $b) (STV 1.0 1.0))`
+- `(: <id> (ExclusiveAlternative $a $b) (STV 1.0 1.0))`
+- Conjunction is structural: multiple atoms, multiple premises, or multiple conclusions; no dedicated `And` operator.
+
+ATTITUDES / COMMUNICATION / EMBEDDED CONTENT
+- `(: <id> (Attitude $a) (STV 1.0 1.0))`
+- `(: <id> (AttitudeTypeOf $a Belief) (STV 1.0 1.0))`
+- `(: <id> (AttitudeTypeOf $a Knowledge) (STV 1.0 1.0))`
+- `(: <id> (AttitudeTypeOf $a Desire) (STV 1.0 1.0))`
+- `(: <id> (AttitudeTypeOf $a Hope) (STV 1.0 1.0))`
+- `(: <id> (AttitudeTypeOf $a Intention) (STV 1.0 1.0))`
+- `(: <id> (Experiencer $a $x) (STV 1.0 1.0))`
+- `(: <id> (Content $a $content) (STV 1.0 1.0))`
+- `(: <id> (Communication $c) (STV 1.0 1.0))`
+- `(: <id> (CommunicationTypeOf $c Say) (STV 1.0 1.0))`
+- `(: <id> (CommunicationTypeOf $c Tell) (STV 1.0 1.0))`
+- `(: <id> (CommunicationTypeOf $c Ask) (STV 1.0 1.0))`
+- `(: <id> (CommunicationTypeOf $c Report) (STV 1.0 1.0))`
+- `(: <id> (CommunicationTypeOf $c Write) (STV 1.0 1.0))`
+- `(: <id> (Speaker $c $x) (STV 1.0 1.0))`
+- `(: <id> (Addressee $c $x) (STV 1.0 1.0))`
+- `(: <id> (Content $c $content) (STV 1.0 1.0))`
+
+QUESTIONS / DIRECTIVES / FOCUS
+- `(: <id> (Question $q) (STV 1.0 1.0))`
+- `(: <id> (QuestionOf $q $content) (STV 1.0 1.0))`
+- `(: <id> (WhTarget $q $x) (STV 1.0 1.0))`
+- `(: <id> (Directive $d) (STV 1.0 1.0))`
+- `(: <id> (DirectiveTypeOf $d Command) (STV 1.0 1.0))`
+- `(: <id> (DirectiveTypeOf $d Request) (STV 1.0 1.0))`
+- `(: <id> (DirectiveTypeOf $d Prohibit) (STV 1.0 1.0))`
+- `(: <id> (DirectiveTypeOf $d Permit) (STV 1.0 1.0))`
+- `(: <id> (Addressee $d $x) (STV 1.0 1.0))`
+- `(: <id> (Content $d $content) (STV 1.0 1.0))`
+- `(: <id> (FocusOf $focus $scope) (STV 1.0 1.0))`
+- `(: <id> (ExclusiveFocusOf $focus $scope) (STV 1.0 1.0))`
+
+COREFERENCE / PRONOUNS / REFLEXIVES / RECIPROCALS
+- `(: <id> (CorefersWith $x $y) (STV 1.0 1.0))`
+- `(: <id> (SameReferentAs $x $y) (STV 1.0 1.0))`
+- `(: <id> (AntecedentOf $antecedent $anaphor) (STV 1.0 1.0))`
+- `(: <id> (AnaphorOf $anaphor $antecedent) (STV 1.0 1.0))`
+- `(: <id> (RefersTo $mention $entity) (STV 1.0 1.0))`
+- `(: <id> (ReciprocalWith $x $y) (STV 1.0 1.0))`
+
+PASSIVE / ALTERNATIONS
+- `(: <id> (VoiceOf $e Passive) (STV 1.0 1.0))`
+- `(: <id> (VoiceOf $e Active) (STV 1.0 1.0))`
+- `(: <id> (SurfaceSubject $e $x) (STV 1.0 1.0))`
+- `(: <id> (SurfaceObject $e $x) (STV 1.0 1.0))`
+- `(: <id> (ByPhrase $e $x) (STV 1.0 1.0))`
+- `(: <id> (DativeShift $e) (STV 1.0 1.0))`
+
+APPOSITION / NAMING / NOMINAL MODIFICATION
+- `(: <id> (AppositiveOf $x $y) (STV 1.0 1.0))`
+- `(: <id> (NameOf $entity $name) (STV 1.0 1.0))`
+- `(: <id> (AliasOf $entity $alias) (STV 1.0 1.0))`
+- `(: <id> (TitleOf $entity $title) (STV 1.0 1.0))`
+
+GENERIC / HABITUAL / FREQUENCY / DISTRIBUTIVE / COLLECTIVE
+- `(: <id> (Habitual $e) (STV 1.0 1.0))`
+- `(: <id> (FrequencyOf $e Often) (STV 1.0 1.0))`
+- `(: <id> (FrequencyOf $e Usually) (STV 1.0 1.0))`
+- `(: <id> (FrequencyOf $e Always) (STV 1.0 1.0))`
+- `(: <id> (FrequencyOf $e Sometimes) (STV 1.0 1.0))`
+- `(: <id> (FrequencyOf $e Never) (STV 1.0 1.0))`
+- `(: <id> (FrequencyOf $e Repeatedly) (STV 1.0 1.0))`
+- `(: <id> (Distributive $e) (STV 1.0 1.0))`
+- `(: <id> (Collective $e) (STV 1.0 1.0))`
+- Generic / kind-level meaning is represented by rule form with variables in `Premises` and `Conclusions`.
+
+SCOPE / ELLIPSIS / GAP RECOVERY
+- `(: <id> (ScopeOf $operator $scope) (STV 1.0 1.0))`
+- `(: <id> (WideScope $a $b) (STV 1.0 1.0))`
+- `(: <id> (NarrowScope $a $b) (STV 1.0 1.0))`
+- `(: <id> (ElidedFrom $fragment $source) (STV 1.0 1.0))`
+- `(: <id> (RecoveredFrom $fragment $antecedent) (STV 1.0 1.0))`
+- `(: <id> (ParallelTo $a $b) (STV 1.0 1.0))`
+- `(: <id> (SharedMaterialWith $a $b) (STV 1.0 1.0))`
+
+MEASUREMENT / AMOUNTS / UNITS
+- `(: <id> (MeasureOf $entity $measure) (STV 1.0 1.0))`
+- `(: <id> (NumericValue $measure $n) (STV 1.0 1.0))`
+- `(: <id> (UnitOf $measure $unit) (STV 1.0 1.0))`
+- `(: <id> (DurationOf $e $duration) (STV 1.0 1.0))`
+- `(: <id> (WeightOf $x $weight) (STV 1.0 1.0))`
+- `(: <id> (HeightOf $x $height) (STV 1.0 1.0))`
+
+DISTRIBUTION / PARTICLE-STORE HELPERS
+- `(MapDist <fn> (<pattern> ... $inDist) $inDist -> $outDist)`
+- `(Map2Dist <fn> (<patternA> ... $distA) $distA (<patternB> ... $distB) $distB -> $outDist)`
+- `(AverageDist (<pattern> ... $inDist) $inDist -> $outDist)`
+- `DistGreaterThanFormula`
+- `DistGreaterThanDistFormula`
+- `ParticleMap`
+- `ParticleMap2`
+- `ParticleAddBernoulliFromSTV`
+- `ParticleStoreCount`
+- `ParticleStoreClear`
+- `ParticleStorePruneKB`

@@ -1,0 +1,71 @@
+1. Entity classification: statements that place an entity in a category or kind. Examples: A whale is a mammal. Paris is a city. My neighbor is a doctor.
+
+2. Determiners and definiteness: articles and demonstratives signal whether a referent is new, specific, or already known in context. Examples: A dog barked. The dog barked again. This dog is loud.
+
+3. Properties and attributes: descriptions of intrinsic qualities, sizes, colors, and other states. Examples: The red car is fast. The soup is hot. Those dogs are friendly.
+
+4. Actions and events with thematic roles: predicates that assign roles such as agent, patient, instrument, recipient, and beneficiary. Examples: Alice cut the bread with a knife. The chef baked the cake for the guests. The storm damaged the roof.
+
+5. Possession and ownership: expressions showing that something belongs to, is held by, or is associated with someone. Examples: Sara has a bike. The car's engine is noisy. The book belongs to Omar.
+
+6. Spatial relations: location and movement relations such as on, under, beside, into, and through. Examples: The key is under the mat. The cafe is beside the station. The plane flew over the city.
+
+7. Temporal relations and tense: ordering events in time and locating them in the past, present, or future. Examples: She arrived before noon. He left after dinner. The meeting will start tomorrow.
+
+8. Aspect and event viewpoint: whether an event is ongoing, completed, or viewed as a process. Examples: She was reading when I called. He has finished the job. They are building a house.
+
+9. Quantification: existential, universal, and cardinality expressions about how many entities are involved. Examples: Some students laughed. Every student laughed. Three students laughed.
+
+10. Negation: expressions that deny existence, membership, action, or truth. Examples: No dogs barked. She did not call. He never agreed.
+
+11. Modality: expressions of ability, possibility, necessity, and permission. Examples: She can swim. It might rain. You may leave, but you must return.
+
+12. Causation and purpose: relations where one event causes another or is done for a goal. Examples: The wind knocked over the tree. She studied to pass the test. They opened the window so the room would cool.
+
+13. Comparison: greater-than, less-than, equality, and superlative relations between entities or degrees. Examples: Tom is taller than Sam. Mia is as tall as Ben. That is the best option.
+
+14. Conjunction and disjunction: combining propositions or noun phrases with and, or, and related coordination. Examples: Anna sang and Ben danced. We can leave or stay. Both apples and oranges were on the table.
+
+15. Conditionals: if-then relations that state what follows under a condition. Examples: If it rains, we will stay home. If you are tired, rest. If she had called, we would have come.
+
+16. Propositional attitudes and embedded clauses: reports of belief, knowledge, desire, hope, and similar mental states with embedded sentences. Examples: Mia believes the story. Dan knows the answer. Lee wants to leave.
+
+17. Adverbs and manner: modifiers that describe how, when, or in what way an action happens. Examples: He spoke softly. She carefully packed the box. The child ran quickly.
+
+18. Frequency and habituality: expressions of repeated or regular events and habits. Examples: She often visits on Sundays. He usually drinks tea. They go jogging every morning.
+
+19. Pronouns, reference, and coreference: expressions whose meaning depends on context and links between mentions. Examples: Maria saw a dog and petted it. John greeted Mary, and she waved. I told him that he was late.
+
+20. Reflexives and reciprocals: forms where an argument refers back to the subject or to mutual participants. Examples: John blamed himself. The sisters hugged each other. The players looked at one another.
+
+21. Passive voice and alternations: constructions that change which participant is foregrounded as subject. Examples: The cake was eaten by the children. The ball was thrown by Sam. The door opened.
+
+22. Relative clauses and nominal modification: modifiers that restrict or describe a noun, often with who, that, or which. Examples: The man who called is waiting. I read the book that you recommended. The car parked outside is mine.
+
+23. Questions and wh-phrases: interrogatives that ask for an entity, property, or value. Examples: Who called? What did she buy? Which book did you read?
+
+24. Imperatives and directives: commands, requests, and prohibitions aimed at the listener. Examples: Close the door. Please sit down. Do not enter.
+
+25. Generic and kind-level statements: sentences that talk about general kinds, species, or regular truths. Examples: Dogs bark. Water boils at 100 degrees Celsius. Tigers are endangered.
+
+26. Part-whole and membership relations: expressions linking components to wholes or members to groups. Examples: The wheel is part of the bike. Alaska is in the United States. A chapter belongs to a book.
+
+27. Measurement, amounts, and numerals: explicit quantities, durations, weights, and other measured values. Examples: The bag weighs two kilograms. The movie lasts three hours. She is 180 centimeters tall.
+
+28. Degree and intensification: modifiers that increase, decrease, or specify the strength of a property. Examples: The coffee is very hot. The road is somewhat steep. He is extremely happy.
+
+29. Discourse sequencing and connectives: relations that link clauses or sentences in time, cause, contrast, or explanation. Examples: First we ate. She was tired, so she went home. However, he stayed.
+
+30. Distributive and collective readings: statements where participants act individually or together. Examples: The students each received a toy. The students lifted the piano together. The children ate the cookies one by one.
+
+31. Scope interactions: meaning changes when operators such as negation, quantifiers, and modals interact. Examples: Not every student left. A student did not leave. Every student may leave.
+
+32. Reported speech and quotation: direct or indirect mention of what someone said or wrote. Examples: She said that the train was late. John wrote, 'I am ready.' They reported that the road was closed.
+
+33. Transfer and ditransitive arguments: events where something is given, sent, or told from a source to a recipient. Examples: She gave him a book. They sent the child a parcel. I told her the news.
+
+34. Apposition and naming: constructions that identify an entity by another name or description. Examples: Lee, the surgeon, arrived. New York City, the Big Apple, is crowded. My dog, Max, is old.
+
+35. Ellipsis and gapping: omitted material that must be recovered from context. Examples: Alice ordered tea and Bob coffee. I can swim and you can too. She bought apples, and he pears.
+
+36. Clefts and focus: constructions that highlight a particular constituent or make exclusiveness salient. Examples: It was John who called. What she bought was a book. Only Maria laughed.

@@ -1,0 +1,313 @@
+# PeTTaChainer source analysis
+
+## 1) Expression format
+
+The Python API expects **bare MeTTa expressions** as input strings.
+
+### Public bare format
+The core outer envelope used by both statements and queries is:
+
+```metta
+(: <proof-id> <proposition-or-pattern> <truth-value-or-pattern>)
+```
+
+Examples of bare inputs passed to the API:
+
+```metta
+(: f1 (Dog fido) (STV 1.0 1.0))
+(: $prf (Dog fido) $tv)
+(: rule1
+   (Implication
+      (Premises (Dog $x) (Not (Cat $x)))
+      (Conclusions (Mammal $x)))
+   (STV 1.0 1.0))
+```
+
+### Internal runtime wrappers
+Do **not** pass these as external API input; the chainer inserts them internally:
+
+```metta
+!(eval <bare-expression>)
+!(compileadd <kb> <evaluated-statement>)
+!(query <steps> <kb> <evaluated-query>)
+```
+
+So the rule for downstream consumers is:
+
+- **caller input**: bare MeTTa expression
+- **internal execution**: wrapped `!(eval ...)`, then `!(compileadd ...)` or `!(query ...)`
+
+The public methods `add_atom()` and `query()` both evaluate the input first, then hand the evaluated bare expression to the internal MeTTa runtime.
+
+## 2) Built-in operators / combinators
+
+The public docs and source show these main surface forms.
+
+### Statement / proof-atom envelope
+```metta
+(: <proof-id> <proposition> <tv>)
+```
+
+This is the storage/query envelope for facts and rules.
+
+### `Implication`
+```metta
+(Implication (Premises ...) (Conclusions ...))
+```
+Represents an if-then rule.
+
+### `Premises`
+```metta
+(Premises premise1 premise2 ...)
+```
+Rule antecedent list.
+
+### `Conclusions`
+```metta
+(Conclusions conclusion1 conclusion2 ...)
+```
+Rule consequent list.
+
+### `Compute`
+```metta
+(Compute f (arg1 arg2 ...) -> $out)
+```
+Compute a function result and bind it.
+
+### `FoldAll` / `FoldAllValue`
+```metta
+(FoldAll pattern value init fold-fn -> out)
+(FoldAllValue pattern init fold-fn -> out)
+```
+Aggregate over matching facts.
+
+### `Not`
+```metta
+(Not expr)
+```
+Negation / negative premise.
+
+### `GreaterThan` and alias `>`
+```metta
+(GreaterThan $distA 5)
+(GreaterThan $distA $distB)
+```
+Docs say `>` is an alias/sugar for the same comparison family.
+
+### `MapDist`, `Map2Dist`, `AverageDist`
+```metta
+(MapDist f (DistFactA ... $inDist) $inDist -> $outDist)
+(Map2Dist f (DistFactA ... $distA) $distA (DistFactB ... $distB) $distB -> $outDist)
+(AverageDist (DistFactPattern ... $inDist) $inDist -> $outDist)
+```
+
+These are helper premises for distribution-valued facts.
+
+### Lower-level / compiled distribution forms seen in source
+These are not the main user-facing rule skeleton, but they are part of the chainer’s supported operator set and should be treated as structural, not domain predicates:
+
+- `DistGreaterThanFormula`
+- `DistGreaterThanDistFormula`
+- `ParticleMap`
+- `ParticleMap2`
+- `ParticleAddBernoulliFromSTV`
+
+### Utility / store operators
+Also documented in the spec:
+
+- `ParticleStoreCount`
+- `ParticleStoreClear`
+- `ParticleStorePruneKB`
+
+## 3) Truth values
+
+The chainer distinguishes **truth uncertainty** from **value uncertainty**.
+
+### Truth uncertainty
+```metta
+(STV strength confidence)
+```
+
+- `strength` is the truth / belief mass
+- `confidence` is evidence / reliability
+- both are intended to be in `[0, 1]`
+
+`STV` is for the truth of a proposition, not for numeric measurement uncertainty.
+
+### Value uncertainty / distributions
+Supported distribution-like truth/value forms:
+
+```metta
+(NatDist ((value probability) ...))
+(FloatDist ((value probability) ...))
+(ParticleDist <ref>)
+(ParticleDist <ref> <scale>)
+(PointMass x)
+(ParticleFromNormal mu sigma)
+(ParticleFromPairs ((x1 w1) (x2 w2) ...))
+```
+
+Notes:
+
+- `NatDist` and `FloatDist` are exact discrete distributions.
+- `ParticleDist` is an opaque reference backed by the particle store.
+- `PointMass` is a degenerate distribution.
+- `ParticleFromNormal` and `ParticleFromPairs` are particle-based constructors.
+- The validator explicitly accepts the above shapes.
+
+## 4) Rule templates
+
+Rules are just statements whose proposition is an `Implication`.
+
+Exact template:
+
+```metta
+(: <rule-name>
+   (Implication
+      (Premises
+         premise1
+         premise2
+         ...)
+      (Conclusions
+         conclusion1
+         conclusion2
+         ...))
+   (STV <strength> <confidence>))
+```
+
+The source/docs use the same outer `(: ... )` envelope for facts and rules.
+
+## 5) Query patterns
+
+Query patterns use the same outer envelope, but the proof-id slot must be a **variable**.
+
+Typical query shape:
+
+```metta
+(: $prf <pattern> $tv)
+```
+
+Examples:
+
+```metta
+(: $prf (Dog fido) $tv)
+(: $prf (AreaDist rectA $areaDist) $tv)
+```
+
+Important source-derived constraints:
+
+- `check_query()` requires the proof-id slot to be a variable.
+- The validator does **not** impose the same deep truth-value restrictions on queries that it does on statements.
+- In intended usage, the truth-value slot is usually also a variable (`$tv`) so the query can return it.
+
+## 6) Naming conventions
+
+Observed conventions in docs/examples:
+
+- **Variables**: prefixed with `$`
+  - examples: `$prf`, `$tv`, `$x`, `$dist`, `$avgDist`
+- **Predicates / relations**: usually CamelCase
+  - examples: `Dog`, `HeightDist`, `AvgHeightDist`, `CountryHeightDist`, `Rectangle`, `Group`
+- **Constants / entities**: plain atoms, often lowercase or mixed case
+  - examples: `fido`, `alice`, `bob`, `carol`, `room1`, `g1`, `rectA`, `countryA`
+- **Rule / proof ids**: opaque labels, often camelCase or descriptive identifiers
+  - examples: `f1`, `r1`, `avgHeightDistG1Rule`
+
+There is no quoted-string entity syntax in the source examples.
+
+## 7) Constraints & pitfalls
+
+### Do not use internal runtime wrappers as external input
+External callers should pass bare expressions, not:
+
+```metta
+!(eval ...)
+!(compileadd ...)
+!(query ...)
+```
+
+### Statement validation is shallow but strict on the envelope
+For statements, the validator checks that the evaluated expression has the outer `(: ...)` shape, that the proof-id is not a variable, and that the TV matches one of the supported constructors.
+
+### Query validation
+For queries, the validator checks that the proof-id is a variable.
+
+### No dedicated `ForAll` / `Exists` user syntax
+The repo contains unrelated internal/Prolog `forall` / `exists` occurrences, but there is no public bare-expression quantifier operator in the chainer API.
+
+### Avoid confusing internal proof-tree tokens with domain predicates
+Source examples contain internal tokens such as:
+
+- `CPU` / `cpu`
+- `conjunction`
+- `rule-proof`
+- `fact-ev`
+- `LikelierThan`
+
+These are proof/runtime artifacts, not user-defined domain relations.
+
+### Beware of `>` vs `GreaterThan`
+`GreaterThan` is the canonical documented head; `>` is documented as an alias/sugar.
+
+### Bare syntax is prefix s-expression style
+No commas or infix statement syntax is used in the public API.
+
+## 8) Predicate extraction
+
+For bare-expression predicate/relation extraction, use a regex that captures identifier-like heads after `(` and then filters out structural symbols.
+
+Recommended regex:
+
+```python
+r'\(\s*([A-Za-z][A-Za-z0-9_+-]*)'
+```
+
+Why this works:
+
+- it captures heads from statements, queries, and nested subexpressions
+- it works with Python `re` on single-line expression strings
+- it captures normal relation names like `Dog`, `HeightDist`, `Map2Dist`
+- built-ins are then removed using an exclusion list
+
+## 9) Quantification and scope
+
+There is **no dedicated quantifier syntax** like `ForAll` / `Exists` in the public bare language.
+
+Quantifier-like meaning is expressed indirectly:
+
+- **existential** meaning: via query variables and proof search
+- **universal / rule-like** meaning: via variables in rule premises and implications
+- **count/cardinality** style constraints: via aggregation helpers such as `FoldAll` plus comparison operators
+
+Scope is syntactic/nested:
+
+- variables live in the nested MeTTa expression structure
+- `Not` scopes over its nested expression
+- premise helpers such as `Compute`, `FoldAll`, `MapDist`, and `AverageDist` scope their binders using the surrounding prefix form and `->` output binder
+
+## 10) Entity identity and representation
+
+There is no built-in entity identity system beyond symbol identity.
+
+Implications:
+
+- the same atom spelling refers to the same symbol/entity
+- different spellings are different entities
+- the source does not define a canonicalization or disambiguation layer for names
+
+Recommended practice:
+
+- use stable, unique constants for named entities
+- if surface names are ambiguous, keep a separate ID and optionally a `Name`/`Alias` relation in your own ontology
+- do not rely on natural-language surface forms alone if distinct real-world entities may share the same name
+
+Observed idioms for instance/class membership are just unary predicates:
+
+```metta
+(Dog fido)
+(Person alice)
+(Rectangle rectA)
+(Group g1)
+```
+
+No special first/second-person pronoun convention is defined in the source. If the referent is unknown, skip the pronoun or ground it externally.

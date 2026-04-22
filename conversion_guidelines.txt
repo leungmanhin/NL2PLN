@@ -1,0 +1,345 @@
+GENERAL STYLE
+
+1. Use bare MeTTa expressions only.
+   - External statements and rules must be wrapped as:
+     `(: <proof-id> <proposition-or-pattern> <truth-value-or-pattern>)`
+   - Queries must use a variable proof id:
+     `(: $prf <pattern> $tv)`
+   - Do not emit internal runtime wrappers such as `!(eval ...)`, `!(compileadd ...)`, or `!(query ...)`.
+
+2. Prefer one atomic proposition per statement.
+   - Decompose complex English sentences into multiple MeTTa atoms when needed.
+   - Share the same entity or event constant across those atoms.
+   - Use `Implication` only for genuine rule/conditional/generic meanings.
+
+3. Use built-in operators only for their documented roles.
+   - `Implication`, `Premises`, `Conclusions` for rules and conditionals
+   - `Not` for semantic negation
+   - `GreaterThan` or `>` for numeric/comparative greater-than
+   - `Compute`, `FoldAll`, `FoldAllValue` only for explicit computation/aggregation
+   - `MapDist`, `Map2Dist`, `AverageDist` only for distribution-valued reasoning
+   - `ParticleStore*` only for particle-distribution storage management, not for domain meaning
+
+4. Do not invent special syntax.
+   - There is no public `ForAll`, `Exists`, `Or`, `Equals`, or `LessThan` operator in the documented bare syntax.
+   - When English needs one of those meanings, use the closest supported representation plus ontology-level predicates if necessary.
+
+NAMES, PREDICATES, AND VARIABLES
+
+5. Predicate naming:
+   - Derive predicate names from lemmatized English base forms.
+   - Use CamelCase for predicates and relation names.
+   - Examples of style: `Dog`, `City`, `Arrive`, `Under`, `GreaterThan`, `PartOf`.
+   - Multiword concepts become concatenated CamelCase: `NewYorkCity`, `HasPart`, `IsLocatedIn`.
+
+6. Entity naming:
+   - Represent entities as plain atoms, usually lowercase or mixed case.
+   - Use stable, unique identifiers for real-world entities: `alice`, `paris_france`, `paris_texas`, `fido`.
+   - Do not use the surface name alone when it is ambiguous.
+   - If two entities share the same English name, disambiguate in the atom itself with a stable suffix or ID.
+
+7. Variables:
+   - Variables always start with `$`.
+   - Use `$x`, `$y`, `$z` for entities, `$e` for events, `$n` for numeric values, `$tv` for truth values, `$prf` for proof id in queries.
+   - Reuse the same variable name whenever the same discourse referent is intended.
+
+8. Identity semantics:
+   - The same atom spelling refers to the same entity.
+   - Different atom spellings are different entities.
+   - There is no separate built-in identity resolution layer; identity is symbol identity.
+   - For named entities, prefer a canonical ID over raw surface form.
+
+9. First/second-person pronouns:
+   - `I`, `we`, and `you` must be grounded from discourse context if possible.
+   - If the referent is unknown, do not guess.
+   - Use external grounding only if the application provides speaker/addressee constants.
+   - Otherwise leave the pronoun unresolved rather than inventing a referent.
+
+TRUTH VALUES AND UNCERTAINTY
+
+10. Statement truth values:
+   - Use `STV` for truth strength/confidence only:
+     `(: f1 (Dog fido) (STV 1.0 1.0))`
+   - Use `(STV 1.0 1.0)` for ordinary asserted facts and rules unless the source explicitly marks uncertainty, hearsay, or heuristic status.
+   - Do not use `STV` to encode tense, aspect, modality, degree, or frequency.
+
+11. Query truth values:
+   - In queries, the truth-value slot is usually a variable:
+     `(: $prf (Dog fido) $tv)`
+   - Query validation expects the proof-id slot to be a variable.
+
+12. Distribution-valued truths/values:
+   - Use `NatDist`, `FloatDist`, `ParticleDist`, `PointMass`, `ParticleFromNormal`, or `ParticleFromPairs` only when the proposition’s value is genuinely distributional.
+   - Do not use distribution constructors to stand for ordinary semantic uncertainty unless the sentence is explicitly about a measured or probabilistic quantity.
+
+GENERAL DECOMPOSITION STRATEGY
+
+13. Prefer event reification for dynamic predicates.
+   - For verbs with multiple participants, time, aspect, manner, modality, causation, or embedding, introduce an event constant and attach role relations to it.
+   - Example shape:
+     `(: f1 (Run e1) (STV 1.0 1.0))`
+     plus separate statements such as agent, patient, location, time, etc. if needed.
+   - Reification is especially useful for actions, speech, transfer, and temporally located events.
+
+14. Use separate statements for separate semantic atoms.
+   - One English clause may yield several MeTTa statements.
+   - Example: “Alice cut the bread with a knife” becomes one action statement plus role statements for agent, patient, and instrument.
+   - Do not force all meaning into one proposition if the meaning is naturally decomposed.
+
+15. Use custom ontology predicates for lexical meaning.
+   - The chainer’s built-ins handle logic/computation, not every English relation.
+   - Semantic roles, temporal relations, aspect markers, modality markers, discourse relations, and named relation types should be represented as ordinary predicates in the KB when needed.
+
+PHENOMENON-BY-PHENOMENON GUIDELINES
+
+1. Entity classification
+   - Map class membership to unary predicates:
+     `(: f1 (Mammal whale1) (STV 1.0 1.0))`
+   - For generic class statements, use a rule with a variable:
+     `(: r1 (Implication (Premises (Whale $x)) (Conclusions (Mammal $x))) (STV 1.0 1.0))`
+   - For proper names, use a constant for the entity and a class predicate if relevant:
+     `(: f1 (City paris) (STV 1.0 1.0))`
+
+2. Determiners and definiteness
+   - Indefinite “a/an”: introduce a fresh existential witness constant when the sentence asserts a specific but previously unmentioned entity.
+   - Definite “the”: reuse an already introduced or contextually unique entity constant.
+   - Demonstratives “this/that”: treat like definites plus any extra contextual relation only if the ontology explicitly tracks deixis or proximity.
+   - Do not encode definiteness itself as truth value.
+
+3. Properties and attributes
+   - Encode adjectival properties as unary predicates on the entity:
+     `(: f1 (Red car1) (STV 1.0 1.0))`
+   - Use relational predicates for inherently relational adjectives or attributes.
+   - Keep each attribute as a separate atom when multiple properties are present.
+
+4. Actions and events with thematic roles
+   - Use an event constant plus role predicates for agent, patient/theme, instrument, recipient, beneficiary, source, goal, location, time, manner, etc.
+   - Normalize the verb to a lemma-based predicate name.
+   - Surface order does not matter; thematic roles do.
+   - Prefer this structure whenever the verb is not merely stative.
+
+5. Possession and ownership
+   - Represent possession with a dedicated possession relation in the ontology, not with truth value.
+   - Distinguish ownership from part-whole.
+   - For “X has Y” and “Y belongs to X,” use the same underlying possession relation if the ontology treats them as equivalent.
+   - For possessive noun phrases (“the car’s engine”), reuse the same owner/whole constant and attach the possessed entity through the relevant relation.
+
+6. Spatial relations
+   - Map prepositions to binary spatial relations such as `In`, `On`, `Under`, `Beside`, `Into`, `Through`, `Over`, `Across`.
+   - For motion verbs, reify the event and attach source/goal/location relations to the event.
+   - For static location, a direct binary relation is usually sufficient.
+
+7. Temporal relations and tense
+   - Tense is not truth value; represent time explicitly if the ontology needs it.
+   - Use temporal relations between events and times, or between events themselves, such as before/after/during relations in the ontology.
+   - “Yesterday,” “tomorrow,” “at noon,” etc. should be normalized as time constants or time relations.
+   - If no explicit time model is available, preserve the event and omit the tense unless it is semantically crucial.
+
+8. Aspect and event viewpoint
+   - Progressive aspect (`was reading`) should be treated as an ongoing-event modifier, not as a different truth value.
+   - Perfect aspect (`has finished`) should add a completion/result state if the ontology supports it.
+   - Completed vs. ongoing vs. habitual should be encoded as event-level modifiers or related state predicates, not as `STV`.
+
+9. Quantification
+   - Existential meaning:
+     - In statements, introduce a fresh witness constant if the referent must be kept.
+     - In queries, use a variable.
+   - Universal/generic meaning:
+     - Use a rule with a variable in `Premises` and `Conclusions`.
+     - Example pattern:
+       `(: r1 (Implication (Premises (Student $x)) (Conclusions (Laugh $x))) (STV 1.0 1.0))`
+   - Cardinality:
+     - The public syntax has no dedicated quantifier operator.
+     - If the KB already has a counting/aggregation model, use `FoldAll` or `FoldAllValue` to derive a count and then compare it with `GreaterThan` where possible.
+     - Otherwise, preserve the existential/generic core meaning and leave exact cardinality to an ontology-level count predicate or external preprocessing.
+   - For “at least N,” “more than N,” and similar, use counting/aggregation plus `GreaterThan` if the count can be computed.
+   - For exact “N,” prefer a dedicated count fact or precomputed count, since equality is not a documented built-in.
+
+10. Negation
+   - Use `Not` to wrap the proposition whose truth is denied.
+   - Keep negation as narrow as possible to match the English scope.
+   - Example: “She did not call” -> `(: f1 (Not (Call she1)) (STV 1.0 1.0))` or, for event-style translation, negate the relevant event proposition.
+   - For “No dogs barked,” prefer a universal negative rule if the meaning is generic:
+     `(: r1 (Implication (Premises (Dog $x)) (Conclusions (Not (Bark $x)))) (STV 1.0 1.0))`
+   - For “not every ...,” negate the widest relevant generalized proposition, or represent the counterexample reading if the context provides one.
+
+11. Modality
+   - Do not use `STV` to encode can/might/must/may.
+   - Modal meaning should be preserved with a modality predicate or a modal event/state in the ontology if needed.
+   - If the ontology does not model modality, preserve the core proposition and treat modality as an external annotation.
+   - Distinguish epistemic modality from truth uncertainty.
+
+12. Causation and purpose
+   - Use separate causal or purpose relations between events/states.
+   - “X caused Y” should be represented as a causal link plus the underlying events.
+   - “to ...”, “so that ...” should be represented as purpose/goal relations tied to the event or agent.
+   - Do not replace factual causation with `Implication` unless the English is genuinely a conditional.
+
+13. Comparison
+   - Use `GreaterThan` or `>` for explicit greater-than relations.
+   - For less-than, reverse the arguments if the scale relation is the same and the ontology is symmetric enough to support that reading.
+   - Equality has no documented built-in comparator; if true identity is meant, reuse the same constant.
+   - For “as tall as,” “equal to,” and superlatives, use ontology-level comparison predicates or repeated property assertions if available; otherwise keep the lexical comparison content separate and do not force it into unsupported syntax.
+   - Superlatives are best handled as a property plus a comparison rule when the comparison set is available.
+
+14. Conjunction and disjunction
+   - Conjunction is represented by multiple atoms, not by a special `And` operator.
+   - For rules, multiple premises in `Premises` and multiple conclusions in `Conclusions` express conjunction on each side.
+   - For clause coordination (“A and B”), create separate statements or separate rule components that share the relevant entity/event constants.
+   - There is no documented public `Or` operator.
+   - Disjunction should therefore be represented as multiple alternative rules, multiple alternative parses, or external branching at the application level.
+
+15. Conditionals
+   - Use `Implication` with `Premises` for the antecedent and `Conclusions` for the consequent.
+   - Keep the antecedent as the premise set and the consequent as the conclusion set.
+   - Multiple antecedents belong in one `Premises` list.
+   - Multiple consequents belong in one `Conclusions` list.
+   - “If and only if” should be rendered as two opposite implications.
+   - Counterfactuals have no dedicated operator; encode the closest conditional rule and preserve counterfactuality as an external annotation if needed.
+
+16. Propositional attitudes and embedded clauses
+   - For verbs like believe, know, want, hope, think, say, and similar, reify the attitude/report event.
+   - Link the holder/speaker to the embedded content with an ontology predicate such as a content relation.
+   - Preserve the embedded proposition as a separate logical object when possible.
+   - Use the attitude holder as the subject of the attitude event and the embedded clause as its content.
+   - Do not collapse reported content into raw surface text.
+
+17. Adverbs and manner
+   - Treat adverbs as event modifiers or manner relations.
+   - Keep them separate from the core verb meaning.
+   - Examples: “quickly,” “softly,” “carefully” should annotate the event, not change the subject class or truth value.
+
+18. Frequency and habituality
+   - Frequency words such as often, usually, always, sometimes, repeatedly, and never are not truth values.
+   - Encode them as habitual/frequency modifiers or as generic rules over recurring events, depending on the sentence.
+   - For explicit recurrence (“every morning”), add a temporal recurrence relation in the ontology.
+   - For habitual statements, prefer a rule-like representation rather than a single episode.
+
+19. Pronouns, reference, and coreference
+   - Resolve pronouns to their antecedents by reusing the same constant.
+   - If the referent is unknown, do not invent one.
+   - Maintain discourse coreference by symbol reuse.
+   - If ambiguity remains unresolved, leave the pronoun grounded externally rather than forcing a guess.
+
+20. Reflexives and reciprocals
+   - Reflexives: map subject and object to the same entity constant.
+   - Reciprocals: represent mutual participation with pairwise facts if participants are explicit, or with a reciprocal collective relation in the ontology.
+   - Do not introduce a separate reflexive syntax; identity of arguments carries the meaning.
+
+21. Passive voice and alternations
+   - In passive constructions, the grammatical subject usually maps to patient/theme, not agent.
+   - The by-phrase maps to the agent.
+   - Preserve the same underlying event-role structure for active and passive paraphrases.
+   - For alternations such as dative shift or unaccusative use, keep the same semantic roles and change only which surface argument is foregrounded.
+
+22. Relative clauses and nominal modification
+   - Treat the head noun as the referent and the relative clause as additional constraints on the same referent.
+   - Relative-clause content becomes extra fact(s) or rule premise(s) about that referent.
+   - Do not invent a special relative-clause operator.
+   - For restrictive readings, the modifier is part of the identifying conditions.
+   - For nonrestrictive readings, keep the same referent and add the descriptive content as an additional statement.
+
+23. Questions and wh-phrases
+   - Use query form:
+     `(: $prf <pattern> $tv)`
+   - Replace the wh-target with a variable.
+   - Yes/no questions query the proposition directly; wh-questions query the unknown argument position.
+   - If multiple wh-words appear, use multiple variables.
+   - If the question requires multiple constraints, split them into separate queries unless the application layer can combine results, since the public syntax has no dedicated query conjunction operator.
+
+24. Imperatives and directives
+   - Imperatives are not ordinary truth-apt assertions.
+   - Encode them as directive, request, command, permission, or prohibition relations in the ontology if the application needs them.
+   - “Do not ...” should be treated as a prohibition directive, not as world negation.
+   - Politeness markers may be ignored unless they affect directive force.
+
+25. Generic and kind-level statements
+   - Kind-level truths and generic habitual statements should be encoded as rules with variables, not as existential facts.
+   - Examples like “Dogs bark” or “Water boils at 100°C” should use universal/generic rule form.
+   - Avoid fresh witness constants for generics.
+   - Use class predicates in the antecedent and the generic property/event in the conclusion.
+
+26. Part-whole and membership relations
+   - Use different predicates for different relations:
+     - part-of / whole-part
+     - group membership
+     - geographic inclusion
+     - ownership
+   - Do not conflate physical containment with set membership or ownership.
+   - If the ontology has only one inclusion relation, use it consistently but keep the intended sense clear in predicate naming.
+
+27. Measurement, amounts, and numerals
+   - Represent exact numeric values as numeric atoms in a measurement relation or attribute fact.
+   - Keep units explicit if the ontology models them; otherwise normalize the value into a canonical unit before encoding.
+   - Use `Compute` only when a numeric result is actually derived by a known function in the KB.
+   - If the quantity is distributional or uncertain, use one of the documented distribution forms in the truth/value slot only when that is semantically appropriate.
+
+28. Degree and intensification
+   - Degree words such as very, extremely, somewhat, rather, and slightly modify property strength.
+   - Do not convert them into `STV`.
+   - Encode them as separate degree modifiers or normalized comparative-scale predicates in the ontology if needed.
+   - If the KB cannot model degree, preserve the base property and omit the intensifier rather than misusing truth value.
+
+29. Discourse sequencing and connectives
+   - “First,” “then,” “afterward,” and similar markers map to ordering relations between events.
+   - “Because,” “so,” and “therefore” may map to causal relations, or to `Implication` only when the English clearly expresses a logical rule.
+   - “However,” “but,” and “although” usually indicate discourse contrast rather than a different core proposition; keep the core propositions separate and annotate contrast only if your ontology supports it.
+   - Preserve rhetorical markers only when they matter to semantic interpretation.
+
+30. Distributive and collective readings
+   - Distributive readings (“each,” “one by one,” “individually”) should be represented by per-member facts or per-member rule application.
+   - Collective readings (“together,” “collectively”) should use a group-level event or group entity.
+   - If the sentence is ambiguous, use the reading most strongly supported by syntax and adverbs.
+   - When necessary, model both readings externally rather than forcing a single unsupported formalization.
+
+31. Scope interactions
+   - Scope follows nesting in the MeTTa expression.
+   - The narrower operator is the one nested deeper.
+   - `Not` should be placed as tightly as possible around the negated material.
+   - Universal/generic rules should keep quantifier-like variables in `Premises` and the main claim in `Conclusions`.
+   - For ambiguous scope, prefer the structurally closest reading and keep other readings outside the single parse if needed.
+
+32. Reported speech and quotation
+   - Convert direct quotation to indirect content whenever possible.
+   - Represent speech/reporting as a report event plus a content relation to the embedded proposition.
+   - Quotation marks themselves are not represented.
+   - If exact wording matters, preserve it only in external metadata, not in the core logic expression.
+
+33. Transfer and ditransitive arguments
+   - Use one event with agent/source/theme/recipient/goal roles.
+   - “Give,” “send,” “tell,” “offer,” and similar verbs should keep all transferred participants explicit.
+   - The double-object and prepositional-object alternations should map to the same underlying event roles.
+   - For communication verbs, the message content should be represented separately as embedded content when possible.
+
+34. Apposition and naming
+   - Appositive noun phrases identify the same entity.
+   - Use one stable entity constant and attach each descriptive or class predicate to that same constant.
+   - Do not create a second entity just because the surface form changed.
+   - For aliases, nicknames, and titles, keep the canonical entity constant and add descriptive facts rather than splitting identity.
+
+35. Ellipsis and gapping
+   - Recover omitted material from the nearest parallel clause before translation.
+   - Translate the fully recovered proposition, not the fragment alone.
+   - Reuse shared arguments and event constants across coordinated clauses.
+   - If recovery is not reliable, leave the fragment unresolved rather than hallucinating omitted content.
+
+36. Clefts and focus
+   - Normalize clefts to the underlying proposition.
+   - Focused constituents do not require a special logical operator in the documented syntax.
+   - “Only X ...” adds exclusivity, but there is no built-in equality/inequality or `Or` operator to fully express all exclusivity cases.
+   - Therefore, preserve the core positive proposition and represent exclusiveness only if the ontology can support it; otherwise treat focus as discourse emphasis, not truth-conditional change.
+
+RECOMMENDED DEFAULTS
+
+17. Default statement form:
+   - Facts: `(: <id> <atom-or-complex-proposition> (STV 1.0 1.0))`
+   - Rules: `(: <id> (Implication (Premises ...) (Conclusions ...)) (STV 1.0 1.0))`
+
+18. Default query form:
+   - `(: $prf <pattern> $tv)`
+
+19. When unsure:
+   - Prefer lexical decomposition into atomic relations.
+   - Preserve core truth conditions first.
+   - Add modality, aspect, degree, discourse, and other refinements only if the ontology or the sentence explicitly demands them.
+   - Never use truth values as a substitute for meaning that the logic layer cannot otherwise express.
