@@ -143,6 +143,12 @@ def main():
     trainset = build_examples_from_file(args.dataset)
     print(f"  Loaded {len(trainset)} training examples from {args.dataset}")
 
+    # Shuffle so MIPROv2's bootstrap-demo phase (which iterates the trainset
+    # in order) sees phenomenon-diverse samples instead of clustering on the
+    # first few phenomena from `data/generated.json`.
+    import random
+    random.Random(21).shuffle(trainset)
+
     valset = None
     if args.valset:
         valset = build_examples_from_file(args.valset)
