@@ -1,0 +1,3255 @@
+[
+  {
+    "sentences": [
+      "Nadia's goldfish is a pet.",
+      "The goldfish lives in a small tank by the window."
+    ],
+    "queries": [
+      {
+        "question": "What is Nadia's goldfish?",
+        "expected_answer": "a pet"
+      },
+      {
+        "question": "Is Nadia's goldfish a pet?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos works at the clinic as a nurse.",
+      "He often starts his shift before sunrise."
+    ],
+    "queries": [
+      {
+        "question": "What is Carlos?",
+        "expected_answer": "a nurse"
+      },
+      {
+        "question": "Is Carlos a nurse?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The red maple in the yard is a tree.",
+      "Its leaves turn bright orange in autumn."
+    ],
+    "queries": [
+      {
+        "question": "What kind of thing is the red maple in the yard?",
+        "expected_answer": "a tree"
+      },
+      {
+        "question": "Is the red maple in the yard a tree?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya's apartment building is an old museum.",
+      "The front entrance faces the river."
+    ],
+    "queries": [
+      {
+        "question": "What is Priya's apartment building?",
+        "expected_answer": "an old museum"
+      },
+      {
+        "question": "Is Priya's apartment building a museum?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The teacher's favorite car is an electric vehicle.",
+      "She charges it every night in the garage."
+    ],
+    "queries": [
+      {
+        "question": "What kind of vehicle is the teacher's favorite car?",
+        "expected_answer": "an electric vehicle"
+      },
+      {
+        "question": "Is the teacher's favorite car an electric vehicle?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "A violinist entered the hall. The violinist tuned her instrument before the concert.",
+      "This violinist had practiced all morning."
+    ],
+    "queries": [
+      {
+        "question": "Who tuned her instrument before the concert?",
+        "expected_answer": "the violinist"
+      },
+      {
+        "question": "Who had practiced all morning?",
+        "expected_answer": "this violinist"
+      },
+      {
+        "question": "Did a violinist enter the hall?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos bought a red bike on Saturday. The bike has a broken bell.",
+      "That bike is still in the garage."
+    ],
+    "queries": [
+      {
+        "question": "What did Carlos buy on Saturday?",
+        "expected_answer": "a red bike"
+      },
+      {
+        "question": "What has a broken bell?",
+        "expected_answer": "the bike"
+      },
+      {
+        "question": "Where is that bike?",
+        "expected_answer": "in the garage"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "An owl sat in the cedar tree. The owl watched the garden all night.",
+      "This owl did not move until dawn."
+    ],
+    "queries": [
+      {
+        "question": "What sat in the cedar tree?",
+        "expected_answer": "an owl"
+      },
+      {
+        "question": "What watched the garden all night?",
+        "expected_answer": "the owl"
+      },
+      {
+        "question": "Did this owl move until dawn?",
+        "expected_answer": "No."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya found a key on the library floor. The key opened the small box.",
+      "The key was old, but that key still worked."
+    ],
+    "queries": [
+      {
+        "question": "What did Priya find on the library floor?",
+        "expected_answer": "a key"
+      },
+      {
+        "question": "What opened the small box?",
+        "expected_answer": "the key"
+      },
+      {
+        "question": "Which key still worked?",
+        "expected_answer": "that key"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "A teacher wrote a note for the class. The note was short and clear.",
+      "That note reminded the students about the quiz."
+    ],
+    "queries": [
+      {
+        "question": "Who wrote a note for the class?",
+        "expected_answer": "a teacher"
+      },
+      {
+        "question": "What was short and clear?",
+        "expected_answer": "the note"
+      },
+      {
+        "question": "What reminded the students about the quiz?",
+        "expected_answer": "that note"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina's soup is hot and spicy.",
+      "She served it in a blue bowl."
+    ],
+    "queries": [
+      {
+        "question": "What temperature is the soup?",
+        "expected_answer": "hot"
+      },
+      {
+        "question": "What color is the bowl?",
+        "expected_answer": "blue"
+      },
+      {
+        "question": "Is the soup spicy?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos bought a large, black suitcase.",
+      "The suitcase is light enough to carry with one hand."
+    ],
+    "queries": [
+      {
+        "question": "What size is the suitcase?",
+        "expected_answer": "large"
+      },
+      {
+        "question": "What color is the suitcase?",
+        "expected_answer": "black"
+      },
+      {
+        "question": "Is the suitcase light enough to carry with one hand?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya keeps a friendly cat in her apartment.",
+      "The cat has a white chest and bright green eyes."
+    ],
+    "queries": [
+      {
+        "question": "How is the cat described?",
+        "expected_answer": "friendly"
+      },
+      {
+        "question": "What color is the cat's chest?",
+        "expected_answer": "white"
+      },
+      {
+        "question": "What color are the cat's eyes?",
+        "expected_answer": "bright green"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Dmitri found a deep lake near the trail.",
+      "The water was cold and clear."
+    ],
+    "queries": [
+      {
+        "question": "How deep is the lake?",
+        "expected_answer": "deep"
+      },
+      {
+        "question": "What is the water like?",
+        "expected_answer": "cold and clear"
+      },
+      {
+        "question": "Is the water clear?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia sliced the mango with a small silver knife.",
+      "She gave the slices to her brother after lunch."
+    ],
+    "queries": [
+      {
+        "question": "Who sliced the mango?",
+        "expected_answer": "Nadia"
+      },
+      {
+        "question": "What did Nadia use to slice the mango?",
+        "expected_answer": "a small silver knife"
+      },
+      {
+        "question": "Who received the slices?",
+        "expected_answer": "her brother"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos repaired the broken chair for the library.",
+      "He used a screwdriver and a glue gun."
+    ],
+    "queries": [
+      {
+        "question": "Who repaired the broken chair?",
+        "expected_answer": "Carlos"
+      },
+      {
+        "question": "What did Carlos repair?",
+        "expected_answer": "the broken chair"
+      },
+      {
+        "question": "For whom did Carlos repair the chair?",
+        "expected_answer": "the library"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina sent a package to her cousin by courier.",
+      "The courier delivered it to the apartment building."
+    ],
+    "queries": [
+      {
+        "question": "Who sent the package?",
+        "expected_answer": "Amina"
+      },
+      {
+        "question": "How did Amina send the package?",
+        "expected_answer": "by courier"
+      },
+      {
+        "question": "Who was the recipient of the package?",
+        "expected_answer": "her cousin"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The storm flooded the basement overnight.",
+      "It damaged the washing machine in the basement."
+    ],
+    "queries": [
+      {
+        "question": "What flooded the basement?",
+        "expected_answer": "the storm"
+      },
+      {
+        "question": "What did the storm damage?",
+        "expected_answer": "the washing machine"
+      },
+      {
+        "question": "Where was the washing machine?",
+        "expected_answer": "in the basement"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya baked cookies for the neighbors using oatmeal and raisins.",
+      "Afterward, she handed the warm cookies to them at the gate."
+    ],
+    "queries": [
+      {
+        "question": "Who baked the cookies?",
+        "expected_answer": "Priya"
+      },
+      {
+        "question": "Who were the cookies for?",
+        "expected_answer": "the neighbors"
+      },
+      {
+        "question": "What ingredients did Priya use?",
+        "expected_answer": "oatmeal and raisins"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia has a small red umbrella.",
+      "The umbrella is in Nadia's hallway.",
+      "Amina borrowed Nadia's umbrella yesterday."
+    ],
+    "queries": [
+      {
+        "question": "What does Nadia have?",
+        "expected_answer": "a small red umbrella"
+      },
+      {
+        "question": "Where is the umbrella?",
+        "expected_answer": "in Nadia's hallway"
+      },
+      {
+        "question": "Who borrowed Nadia's umbrella yesterday?",
+        "expected_answer": "Amina"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos owns a blue bicycle.",
+      "Its front tire is flat.",
+      "Carlos rides the bicycle to work every Monday."
+    ],
+    "queries": [
+      {
+        "question": "What does Carlos own?",
+        "expected_answer": "a blue bicycle"
+      },
+      {
+        "question": "What is flat?",
+        "expected_answer": "its front tire"
+      },
+      {
+        "question": "When does Carlos ride the bicycle to work?",
+        "expected_answer": "every Monday"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The library's copy of the atlas is missing.",
+      "Priya found another atlas on the shelf.",
+      "The atlas belongs to the library."
+    ],
+    "queries": [
+      {
+        "question": "What belongs to the library?",
+        "expected_answer": "the atlas"
+      },
+      {
+        "question": "What is missing?",
+        "expected_answer": "the library's copy of the atlas"
+      },
+      {
+        "question": "Who found another atlas on the shelf?",
+        "expected_answer": "Priya"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Dmitri's jacket has a torn sleeve.",
+      "His sister mended the jacket last night.",
+      "The jacket is hanging by the door."
+    ],
+    "queries": [
+      {
+        "question": "Whose jacket has a torn sleeve?",
+        "expected_answer": "Dmitri's"
+      },
+      {
+        "question": "Who mended the jacket last night?",
+        "expected_answer": "his sister"
+      },
+      {
+        "question": "Where is the jacket hanging?",
+        "expected_answer": "by the door"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The old lighthouse has a bright new lamp.",
+      "The lamp belongs to the town council.",
+      "At dusk, the lamp lights the entrance path."
+    ],
+    "queries": [
+      {
+        "question": "What does the lighthouse have?",
+        "expected_answer": "a bright new lamp"
+      },
+      {
+        "question": "Who does the lamp belong to?",
+        "expected_answer": "the town council"
+      },
+      {
+        "question": "What does the lamp light at dusk?",
+        "expected_answer": "the entrance path"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The blue key is under the glass bowl.",
+      "A red coin is beside the bowl.",
+      "The bowl is on the wooden table."
+    ],
+    "queries": [
+      {
+        "question": "Where is the blue key?",
+        "expected_answer": "under the glass bowl"
+      },
+      {
+        "question": "What is beside the bowl?",
+        "expected_answer": "a red coin"
+      },
+      {
+        "question": "Where is the bowl?",
+        "expected_answer": "on the wooden table"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Mina walked through the tunnel and into the park.",
+      "The park is behind the museum.",
+      "A fountain stands in the center of the park."
+    ],
+    "queries": [
+      {
+        "question": "Where did Mina walk into?",
+        "expected_answer": "the park"
+      },
+      {
+        "question": "What is behind the museum?",
+        "expected_answer": "the park"
+      },
+      {
+        "question": "Where does the fountain stand?",
+        "expected_answer": "in the center of the park"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The cat slept on the sofa beside the lamp.",
+      "Its blanket was folded under the sofa.",
+      "A toy mouse was near the rug."
+    ],
+    "queries": [
+      {
+        "question": "Where did the cat sleep?",
+        "expected_answer": "on the sofa beside the lamp"
+      },
+      {
+        "question": "Where was the blanket?",
+        "expected_answer": "under the sofa"
+      },
+      {
+        "question": "What was near the rug?",
+        "expected_answer": "a toy mouse"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos placed the map into the backpack.",
+      "He left the backpack next to the bicycle.",
+      "The bicycle was outside the cafe."
+    ],
+    "queries": [
+      {
+        "question": "What did Carlos place into the backpack?",
+        "expected_answer": "the map"
+      },
+      {
+        "question": "Where was the backpack?",
+        "expected_answer": "next to the bicycle"
+      },
+      {
+        "question": "Where was the bicycle?",
+        "expected_answer": "outside the cafe"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The plane flew over the mountains before landing at the airport.",
+      "The airport is near the coast.",
+      "Clouds were above the runway."
+    ],
+    "queries": [
+      {
+        "question": "What did the plane fly over?",
+        "expected_answer": "the mountains"
+      },
+      {
+        "question": "Where did the plane land?",
+        "expected_answer": "at the airport"
+      },
+      {
+        "question": "What is near the coast?",
+        "expected_answer": "the airport"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maya finished her report before lunch, and she sent it to her manager afterward.",
+      "The manager replied in the afternoon."
+    ],
+    "queries": [
+      {
+        "question": "When did Maya finish her report?",
+        "expected_answer": "Before lunch."
+      },
+      {
+        "question": "Did Maya send the report before or after lunch?",
+        "expected_answer": "After lunch."
+      },
+      {
+        "question": "When did the manager reply?",
+        "expected_answer": "In the afternoon."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos will fly to Lima next Monday.",
+      "He is meeting his cousin there on Tuesday morning."
+    ],
+    "queries": [
+      {
+        "question": "When will Carlos fly to Lima?",
+        "expected_answer": "Next Monday."
+      },
+      {
+        "question": "When is Carlos meeting his cousin?",
+        "expected_answer": "On Tuesday morning."
+      },
+      {
+        "question": "Will Carlos meet his cousin before or after he flies to Lima?",
+        "expected_answer": "After he flies to Lima."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina had already left when the guests arrived.",
+      "She returned home after the party was over."
+    ],
+    "queries": [
+      {
+        "question": "Who had already left when the guests arrived?",
+        "expected_answer": "Amina."
+      },
+      {
+        "question": "Did Amina leave before the guests arrived?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "When did she return home?",
+        "expected_answer": "After the party was over."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The train arrived at 7:10 a.m., and the station opened ten minutes later.",
+      "Priya bought her ticket after the station opened."
+    ],
+    "queries": [
+      {
+        "question": "When did the train arrive?",
+        "expected_answer": "At 7:10 a.m."
+      },
+      {
+        "question": "When did the station open?",
+        "expected_answer": "Ten minutes later."
+      },
+      {
+        "question": "Did Priya buy her ticket before the station opened?",
+        "expected_answer": "No."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maya was painting the fence when the rain started.",
+      "By noon, she had finished the front gate.",
+      "Later, she was still cleaning her brushes."
+    ],
+    "queries": [
+      {
+        "question": "What was Maya doing when the rain started?",
+        "expected_answer": "painting the fence"
+      },
+      {
+        "question": "Had Maya finished the front gate by noon?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Was Maya still cleaning her brushes later?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos is building a treehouse in the backyard.",
+      "He has already cut the wooden boards.",
+      "Right now, he is measuring the roof panels."
+    ],
+    "queries": [
+      {
+        "question": "What is Carlos building in the backyard?",
+        "expected_answer": "a treehouse"
+      },
+      {
+        "question": "Has Carlos already cut the wooden boards?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "What is Carlos measuring right now?",
+        "expected_answer": "the roof panels"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina had been waiting at the station for an hour before the train arrived.",
+      "When the train arrived, she was checking her phone.",
+      "After that, she boarded the train."
+    ],
+    "queries": [
+      {
+        "question": "How long had Amina been waiting at the station before the train arrived?",
+        "expected_answer": "for an hour"
+      },
+      {
+        "question": "What was Amina doing when the train arrived?",
+        "expected_answer": "checking her phone"
+      },
+      {
+        "question": "Did Amina board the train after that?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The teacher has graded all the final exams.",
+      "She is now writing comments for the students.",
+      "By the time the meeting begins, she will have uploaded the scores."
+    ],
+    "queries": [
+      {
+        "question": "Has the teacher graded all the final exams?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "What is the teacher doing now?",
+        "expected_answer": "writing comments for the students"
+      },
+      {
+        "question": "Will she have uploaded the scores by the time the meeting begins?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Dmitri was crossing the bridge when the lights went out.",
+      "He had already reached the middle of the bridge.",
+      "After the lights came back on, he kept walking."
+    ],
+    "queries": [
+      {
+        "question": "What was Dmitri doing when the lights went out?",
+        "expected_answer": "crossing the bridge"
+      },
+      {
+        "question": "Had Dmitri already reached the middle of the bridge?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did he keep walking after the lights came back on?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Three hikers reached the cabin before sunset.",
+      "Two of them carried red backpacks."
+    ],
+    "queries": [
+      {
+        "question": "How many hikers reached the cabin before sunset?",
+        "expected_answer": "Three"
+      },
+      {
+        "question": "How many of them carried red backpacks?",
+        "expected_answer": "Two"
+      },
+      {
+        "question": "Did every hiker carry a red backpack?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Some of the oranges in the basket were bruised.",
+      "Exactly four oranges were ripe."
+    ],
+    "queries": [
+      {
+        "question": "Were some of the oranges in the basket bruised?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "How many oranges were ripe?",
+        "expected_answer": "Exactly four"
+      },
+      {
+        "question": "Did every orange in the basket bruise?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Seven birds landed on the fence.",
+      "All seven birds sang for a minute, and one flew away afterward."
+    ],
+    "queries": [
+      {
+        "question": "How many birds landed on the fence?",
+        "expected_answer": "Seven"
+      },
+      {
+        "question": "Did all seven birds sing for a minute?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "How many birds flew away afterward?",
+        "expected_answer": "One"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya invited five neighbors to the picnic.",
+      "Only two neighbors came, but both brought dessert."
+    ],
+    "queries": [
+      {
+        "question": "How many neighbors did Priya invite to the picnic?",
+        "expected_answer": "Five"
+      },
+      {
+        "question": "How many neighbors came?",
+        "expected_answer": "Two"
+      },
+      {
+        "question": "Did all five neighbors come?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "No students from the robotics club attended the meeting.",
+      "Mina sent the agenda by email afterward."
+    ],
+    "queries": [
+      {
+        "question": "Did any students from the robotics club attend the meeting?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Who sent the agenda by email afterward?",
+        "expected_answer": "Mina."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos did not finish the race, but he kept cheering from the sidelines.",
+      "Only Ana crossed the finish line."
+    ],
+    "queries": [
+      {
+        "question": "Did Carlos finish the race?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Who crossed the finish line?",
+        "expected_answer": "Ana."
+      },
+      {
+        "question": "Did Carlos keep cheering from the sidelines?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The museum never opened on Mondays during January.",
+      "Visitors could enter on Tuesdays."
+    ],
+    "queries": [
+      {
+        "question": "Did the museum open on Mondays during January?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "On which day could visitors enter?",
+        "expected_answer": "Tuesdays."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The lamp in the hall does not work, so Ethan bought a new bulb.",
+      "The old bulb was not broken; it was loose."
+    ],
+    "queries": [
+      {
+        "question": "Does the lamp in the hall work?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Was the old bulb broken?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Why did Ethan buy a new bulb?",
+        "expected_answer": "Because the lamp in the hall does not work."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia can speak Arabic and French.",
+      "She must finish her report by Friday."
+    ],
+    "queries": [
+      {
+        "question": "What languages can Nadia speak?",
+        "expected_answer": "Arabic and French"
+      },
+      {
+        "question": "What must Nadia finish by Friday?",
+        "expected_answer": "her report"
+      },
+      {
+        "question": "Does Nadia have to finish her report by Friday?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The museum may open early on Saturdays.",
+      "Visitors cannot enter before 9 a.m.",
+      "Tickets are required at the door."
+    ],
+    "queries": [
+      {
+        "question": "When may the museum open early?",
+        "expected_answer": "on Saturdays"
+      },
+      {
+        "question": "Can visitors enter before 9 a.m.?",
+        "expected_answer": "No"
+      },
+      {
+        "question": "What is required at the door?",
+        "expected_answer": "Tickets"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos might travel to Peru next spring.",
+      "He should call his aunt before he leaves.",
+      "He cannot take more than two days off this month."
+    ],
+    "queries": [
+      {
+        "question": "Where might Carlos travel next spring?",
+        "expected_answer": "Peru"
+      },
+      {
+        "question": "What should Carlos do before he leaves?",
+        "expected_answer": "call his aunt"
+      },
+      {
+        "question": "Can Carlos take more than two days off this month?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina is allowed to use the lab after school.",
+      "She must wear gloves in the lab.",
+      "She may not bring food into the lab."
+    ],
+    "queries": [
+      {
+        "question": "When is Amina allowed to use the lab?",
+        "expected_answer": "after school"
+      },
+      {
+        "question": "What must Amina wear in the lab?",
+        "expected_answer": "gloves"
+      },
+      {
+        "question": "May Amina bring food into the lab?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The cat can jump onto the windowsill.",
+      "It has to stay inside at night.",
+      "It may sleep on the sofa during the day."
+    ],
+    "queries": [
+      {
+        "question": "What can the cat jump onto?",
+        "expected_answer": "the windowsill"
+      },
+      {
+        "question": "When does the cat have to stay inside?",
+        "expected_answer": "at night"
+      },
+      {
+        "question": "Can the cat sleep on the sofa during the day?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The strong wind toppled the bicycle rack.",
+      "As a result, several bikes fell onto the sidewalk."
+    ],
+    "queries": [
+      {
+        "question": "What toppled the bicycle rack?",
+        "expected_answer": "The strong wind."
+      },
+      {
+        "question": "What happened to several bikes?",
+        "expected_answer": "They fell onto the sidewalk."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Mina set an alarm for 6 a.m. so she would catch the early train.",
+      "She packed her suitcase the night before."
+    ],
+    "queries": [
+      {
+        "question": "Why did Mina set an alarm for 6 a.m.?",
+        "expected_answer": "So she would catch the early train."
+      },
+      {
+        "question": "What did Mina pack the night before?",
+        "expected_answer": "Her suitcase."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The chef lowered the heat because the sauce was boiling too fast.",
+      "The sauce thickened slowly afterward."
+    ],
+    "queries": [
+      {
+        "question": "Why did the chef lower the heat?",
+        "expected_answer": "Because the sauce was boiling too fast."
+      },
+      {
+        "question": "What thickened slowly afterward?",
+        "expected_answer": "The sauce."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos closed the curtains to keep the sun out of the room.",
+      "The room stayed cool during the afternoon."
+    ],
+    "queries": [
+      {
+        "question": "Why did Carlos close the curtains?",
+        "expected_answer": "To keep the sun out of the room."
+      },
+      {
+        "question": "What stayed cool during the afternoon?",
+        "expected_answer": "The room."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina watered the plants because they were wilting.",
+      "By evening, the leaves looked healthier."
+    ],
+    "queries": [
+      {
+        "question": "Why did Amina water the plants?",
+        "expected_answer": "Because they were wilting."
+      },
+      {
+        "question": "What looked healthier by evening?",
+        "expected_answer": "The leaves."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia is taller than Omar.",
+      "Omar is taller than Lina.",
+      "Nadia is the tallest of the three."
+    ],
+    "queries": [
+      {
+        "question": "Who is taller, Nadia or Omar?",
+        "expected_answer": "Nadia"
+      },
+      {
+        "question": "Is Omar taller than Lina?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "Who is the tallest?",
+        "expected_answer": "Nadia"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The red tent is larger than the blue tent.",
+      "The blue tent is larger than the green tent.",
+      "The red tent and the green tent are not the same size."
+    ],
+    "queries": [
+      {
+        "question": "Which tent is larger, the red tent or the blue tent?",
+        "expected_answer": "The red tent"
+      },
+      {
+        "question": "Is the blue tent larger than the green tent?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "Are the red tent and the green tent the same size?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya scored 92 points on the test.",
+      "Carlos scored 87 points on the test.",
+      "Priya scored more points than Carlos."
+    ],
+    "queries": [
+      {
+        "question": "Who scored more points, Priya or Carlos?",
+        "expected_answer": "Priya"
+      },
+      {
+        "question": "Did Carlos score fewer points than Priya?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "How many points did Priya score?",
+        "expected_answer": "92 points"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The morning train arrived earlier than the afternoon train.",
+      "The afternoon train arrived earlier than the evening train.",
+      "The morning train arrived the earliest."
+    ],
+    "queries": [
+      {
+        "question": "Which train arrived earlier, the morning train or the afternoon train?",
+        "expected_answer": "The morning train"
+      },
+      {
+        "question": "Did the afternoon train arrive earlier than the evening train?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "Which train arrived the earliest?",
+        "expected_answer": "The morning train"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The violin is quieter than the drum.",
+      "The flute is quieter than the violin.",
+      "The flute is the quietest instrument in the room."
+    ],
+    "queries": [
+      {
+        "question": "Which is quieter, the violin or the drum?",
+        "expected_answer": "The violin"
+      },
+      {
+        "question": "Is the flute quieter than the violin?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "Which instrument is the quietest?",
+        "expected_answer": "The flute"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos grilled the fish and sliced the lemons for dinner.",
+      "Either the chef or the assistant will serve the guests."
+    ],
+    "queries": [
+      {
+        "question": "What did Carlos grill?",
+        "expected_answer": "the fish"
+      },
+      {
+        "question": "What did Carlos slice?",
+        "expected_answer": "the lemons"
+      },
+      {
+        "question": "Who will serve the guests?",
+        "expected_answer": "the chef or the assistant"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina bought pencils, notebooks, and markers for school.",
+      "Both the blue backpack and the red lunchbox were on the chair."
+    ],
+    "queries": [
+      {
+        "question": "What did Amina buy?",
+        "expected_answer": "pencils, notebooks, and markers"
+      },
+      {
+        "question": "What was on the chair?",
+        "expected_answer": "the blue backpack and the red lunchbox"
+      },
+      {
+        "question": "Was the red lunchbox on the chair?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Ethan studied astronomy and wrote a short report about Mars.",
+      "He can present the report in class or email it to the teacher."
+    ],
+    "queries": [
+      {
+        "question": "What did Ethan study?",
+        "expected_answer": "astronomy"
+      },
+      {
+        "question": "What did Ethan write?",
+        "expected_answer": "a short report about Mars"
+      },
+      {
+        "question": "How can Ethan share the report?",
+        "expected_answer": "in class or by email"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The cat slept under the sofa and watched the birds from the window.",
+      "Both the toy mouse and the striped ball were under the table."
+    ],
+    "queries": [
+      {
+        "question": "Where did the cat sleep?",
+        "expected_answer": "under the sofa"
+      },
+      {
+        "question": "What did the cat watch?",
+        "expected_answer": "the birds"
+      },
+      {
+        "question": "What was under the table?",
+        "expected_answer": "the toy mouse and the striped ball"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "If the museum closes early, Nadia will take the 6 p.m. train home.",
+      "If Nadia takes the 6 p.m. train, she will miss dinner with her friends."
+    ],
+    "queries": [
+      {
+        "question": "What will Nadia do if the museum closes early?",
+        "expected_answer": "She will take the 6 p.m. train home."
+      },
+      {
+        "question": "What will happen if Nadia takes the 6 p.m. train?",
+        "expected_answer": "She will miss dinner with her friends."
+      },
+      {
+        "question": "Will Nadia miss dinner with her friends if the museum closes early?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "If Carlos forgets his umbrella, he will buy a cheap raincoat at the station.",
+      "If he buys a raincoat at the station, Carlos will not get soaked on the walk to work."
+    ],
+    "queries": [
+      {
+        "question": "What will Carlos buy if he forgets his umbrella?",
+        "expected_answer": "A cheap raincoat at the station."
+      },
+      {
+        "question": "What will happen if Carlos buys a raincoat at the station?",
+        "expected_answer": "He will not get soaked on the walk to work."
+      },
+      {
+        "question": "Will Carlos get soaked on the walk to work if he forgets his umbrella?",
+        "expected_answer": "No."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "If Amina finishes her homework before 8, her mother will let her watch one episode.",
+      "If Amina watches one episode, she will go to bed before 10."
+    ],
+    "queries": [
+      {
+        "question": "What will Amina's mother let her do if she finishes her homework before 8?",
+        "expected_answer": "Watch one episode."
+      },
+      {
+        "question": "When will Amina go to bed if she watches one episode?",
+        "expected_answer": "Before 10."
+      },
+      {
+        "question": "Will Amina go to bed before 10 if she finishes her homework before 8?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "If the wind gets stronger, the harbor ferry will stop running.",
+      "If the ferry stops running, the shop owner will close the seaside kiosk."
+    ],
+    "queries": [
+      {
+        "question": "What will happen if the wind gets stronger?",
+        "expected_answer": "The harbor ferry will stop running."
+      },
+      {
+        "question": "What will the shop owner do if the ferry stops running?",
+        "expected_answer": "Close the seaside kiosk."
+      },
+      {
+        "question": "Will the shop owner close the seaside kiosk if the wind gets stronger?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "If Priya finds the lost key, she will open the storage room.",
+      "If the storage room is open, the volunteers will move the boxes inside."
+    ],
+    "queries": [
+      {
+        "question": "What will Priya do if she finds the lost key?",
+        "expected_answer": "Open the storage room."
+      },
+      {
+        "question": "What will the volunteers do if the storage room is open?",
+        "expected_answer": "Move the boxes inside."
+      },
+      {
+        "question": "Will the volunteers move the boxes inside if Priya finds the lost key?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia believes that the train will arrive before noon.",
+      "Her brother thinks that it will be late.",
+      "Nadia knows that the station is open."
+    ],
+    "queries": [
+      {
+        "question": "What does Nadia believe?",
+        "expected_answer": "that the train will arrive before noon"
+      },
+      {
+        "question": "What does her brother think?",
+        "expected_answer": "that it will be late"
+      },
+      {
+        "question": "What does Nadia know?",
+        "expected_answer": "that the station is open"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos wants to visit his aunt in Lima.",
+      "He hopes that the weather will stay warm.",
+      "His friend doubts that the trip will happen."
+    ],
+    "queries": [
+      {
+        "question": "What does Carlos want to do?",
+        "expected_answer": "visit his aunt in Lima"
+      },
+      {
+        "question": "What does he hope?",
+        "expected_answer": "that the weather will stay warm"
+      },
+      {
+        "question": "What does his friend doubt?",
+        "expected_answer": "that the trip will happen"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina learned that the library closes early on Fridays.",
+      "She believes that the new schedule is confusing.",
+      "Her teacher says that the schedule is temporary."
+    ],
+    "queries": [
+      {
+        "question": "What did Amina learn?",
+        "expected_answer": "that the library closes early on Fridays"
+      },
+      {
+        "question": "What does she believe?",
+        "expected_answer": "that the new schedule is confusing"
+      },
+      {
+        "question": "What does her teacher say?",
+        "expected_answer": "that the schedule is temporary"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Ethan remembers that he locked the door.",
+      "He fears that he lost the key.",
+      "His sister knows that the spare key is in the kitchen drawer."
+    ],
+    "queries": [
+      {
+        "question": "What does Ethan remember?",
+        "expected_answer": "that he locked the door"
+      },
+      {
+        "question": "What does he fear?",
+        "expected_answer": "that he lost the key"
+      },
+      {
+        "question": "What does his sister know?",
+        "expected_answer": "that the spare key is in the kitchen drawer"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya thinks that the concert starts at eight.",
+      "She expects that her cousin will come with her.",
+      "The manager knows that the tickets are sold out."
+    ],
+    "queries": [
+      {
+        "question": "What does Priya think?",
+        "expected_answer": "that the concert starts at eight"
+      },
+      {
+        "question": "What does she expect?",
+        "expected_answer": "that her cousin will come with her"
+      },
+      {
+        "question": "What does the manager know?",
+        "expected_answer": "that the tickets are sold out"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia gently placed the sleeping kitten into the basket.",
+      "She quietly closed the door behind her."
+    ],
+    "queries": [
+      {
+        "question": "How did Nadia place the kitten into the basket?",
+        "expected_answer": "gently"
+      },
+      {
+        "question": "How did she close the door behind her?",
+        "expected_answer": "quietly"
+      },
+      {
+        "question": "Did Nadia place the kitten into the basket gently?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos quickly packed his suitcase before the taxi arrived.",
+      "He carefully checked the front pocket for his passport."
+    ],
+    "queries": [
+      {
+        "question": "How did Carlos pack his suitcase?",
+        "expected_answer": "quickly"
+      },
+      {
+        "question": "How did he check the front pocket?",
+        "expected_answer": "carefully"
+      },
+      {
+        "question": "Did Carlos check the front pocket quickly?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina sang softly during the rehearsal.",
+      "Later, she laughed loudly with her friends."
+    ],
+    "queries": [
+      {
+        "question": "How did Amina sing during the rehearsal?",
+        "expected_answer": "softly"
+      },
+      {
+        "question": "How did she laugh with her friends?",
+        "expected_answer": "loudly"
+      },
+      {
+        "question": "Did Amina laugh softly with her friends?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya carefully arranged the flowers in a glass vase.",
+      "Then she patiently waited for her guests to arrive."
+    ],
+    "queries": [
+      {
+        "question": "How did Priya arrange the flowers in the vase?",
+        "expected_answer": "carefully"
+      },
+      {
+        "question": "How did she wait for her guests to arrive?",
+        "expected_answer": "patiently"
+      },
+      {
+        "question": "Did Priya arrange the flowers patiently?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia usually reads the news before breakfast.",
+      "On rainy days, she often stays home and drinks tea.",
+      "She rarely checks social media in the morning."
+    ],
+    "queries": [
+      {
+        "question": "What does Nadia usually do before breakfast?",
+        "expected_answer": "She reads the news."
+      },
+      {
+        "question": "When does Nadia often stay home and drink tea?",
+        "expected_answer": "On rainy days."
+      },
+      {
+        "question": "Does Nadia rarely check social media in the morning?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos goes to the gym every Tuesday and Thursday.",
+      "He sometimes skips the Friday session if he is tired.",
+      "After each workout, he usually stretches for ten minutes."
+    ],
+    "queries": [
+      {
+        "question": "How often does Carlos go to the gym?",
+        "expected_answer": "Every Tuesday and Thursday."
+      },
+      {
+        "question": "What does Carlos usually do after each workout?",
+        "expected_answer": "He stretches for ten minutes."
+      },
+      {
+        "question": "Does Carlos sometimes skip the Friday session?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina waters the garden every evening in summer.",
+      "She never waters it at noon.",
+      "In spring, she usually plants new herbs."
+    ],
+    "queries": [
+      {
+        "question": "When does Amina water the garden in summer?",
+        "expected_answer": "Every evening."
+      },
+      {
+        "question": "Does Amina ever water the garden at noon?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "What does Amina usually do in spring?",
+        "expected_answer": "She plants new herbs."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Every Saturday, Ethan visits his grandparents.",
+      "He often brings fresh bread from the bakery.",
+      "He seldom arrives after lunch."
+    ],
+    "queries": [
+      {
+        "question": "How often does Ethan visit his grandparents?",
+        "expected_answer": "Every Saturday."
+      },
+      {
+        "question": "What does Ethan often bring from the bakery?",
+        "expected_answer": "Fresh bread."
+      },
+      {
+        "question": "Does Ethan seldom arrive after lunch?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya and her sister take the train to work on weekdays.",
+      "They usually sit near the window.",
+      "On Mondays, they always buy coffee at the station."
+    ],
+    "queries": [
+      {
+        "question": "When do Priya and her sister take the train to work?",
+        "expected_answer": "On weekdays."
+      },
+      {
+        "question": "Where do they usually sit?",
+        "expected_answer": "Near the window."
+      },
+      {
+        "question": "What do they always buy at the station on Mondays?",
+        "expected_answer": "Coffee."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia adopted a kitten from the shelter.",
+      "She named it Juniper and took it home."
+    ],
+    "queries": [
+      {
+        "question": "Who adopted a kitten?",
+        "expected_answer": "Nadia"
+      },
+      {
+        "question": "What did Nadia name the kitten?",
+        "expected_answer": "Juniper"
+      },
+      {
+        "question": "Who took the kitten home?",
+        "expected_answer": "Nadia"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos met the new engineer after the meeting.",
+      "He showed her the project plan, and she asked for a copy."
+    ],
+    "queries": [
+      {
+        "question": "Who showed the project plan?",
+        "expected_answer": "Carlos"
+      },
+      {
+        "question": "Who asked for a copy?",
+        "expected_answer": "the new engineer"
+      },
+      {
+        "question": "What did Carlos show her?",
+        "expected_answer": "the project plan"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina baked two loaves of bread for her neighbors.",
+      "They thanked her, and she shared one loaf with them."
+    ],
+    "queries": [
+      {
+        "question": "Who baked two loaves of bread?",
+        "expected_answer": "Amina"
+      },
+      {
+        "question": "How many loaves of bread did Amina bake?",
+        "expected_answer": "two"
+      },
+      {
+        "question": "Who thanked Amina?",
+        "expected_answer": "her neighbors"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Ethan found a wallet on the train.",
+      "He returned it to its owner at the station."
+    ],
+    "queries": [
+      {
+        "question": "What did Ethan find?",
+        "expected_answer": "a wallet"
+      },
+      {
+        "question": "Where did Ethan find the wallet?",
+        "expected_answer": "on the train"
+      },
+      {
+        "question": "Who did Ethan return it to?",
+        "expected_answer": "its owner"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya called her brother before the concert.",
+      "He told her that he would meet her there after work."
+    ],
+    "queries": [
+      {
+        "question": "Who did Priya call?",
+        "expected_answer": "her brother"
+      },
+      {
+        "question": "Who would meet Priya there after work?",
+        "expected_answer": "her brother"
+      },
+      {
+        "question": "When did Priya call her brother?",
+        "expected_answer": "before the concert"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maya blamed herself after the presentation went badly.",
+      "Her teammates forgave her quickly."
+    ],
+    "queries": [
+      {
+        "question": "Who did Maya blame?",
+        "expected_answer": "herself"
+      },
+      {
+        "question": "Who forgave Maya?",
+        "expected_answer": "her teammates"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The two brothers hugged each other at the airport.",
+      "Their mother took a photo of them."
+    ],
+    "queries": [
+      {
+        "question": "Who hugged each other?",
+        "expected_answer": "the two brothers"
+      },
+      {
+        "question": "What did their mother take?",
+        "expected_answer": "a photo of them"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos taught himself to play the guitar during the summer.",
+      "His sister listened to him practice every evening."
+    ],
+    "queries": [
+      {
+        "question": "Who did Carlos teach?",
+        "expected_answer": "himself"
+      },
+      {
+        "question": "What did his sister do every evening?",
+        "expected_answer": "listened to him practice"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The players looked at one another before the final match.",
+      "The coach smiled at them from the sideline."
+    ],
+    "queries": [
+      {
+        "question": "Who looked at one another?",
+        "expected_answer": "the players"
+      },
+      {
+        "question": "Who smiled at the players?",
+        "expected_answer": "the coach"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya reminded herself to lock the door before leaving.",
+      "Then she left the apartment."
+    ],
+    "queries": [
+      {
+        "question": "What did Priya remind herself to do?",
+        "expected_answer": "lock the door"
+      },
+      {
+        "question": "Where did she leave from?",
+        "expected_answer": "the apartment"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The cake was eaten by the children after the party.",
+      "The plate was washed by Maya."
+    ],
+    "queries": [
+      {
+        "question": "Who ate the cake?",
+        "expected_answer": "the children"
+      },
+      {
+        "question": "What was eaten by the children?",
+        "expected_answer": "the cake"
+      },
+      {
+        "question": "Who washed the plate?",
+        "expected_answer": "Maya"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The package was delivered by Omar at noon.",
+      "The door opened quietly when the wind picked up."
+    ],
+    "queries": [
+      {
+        "question": "Who delivered the package?",
+        "expected_answer": "Omar"
+      },
+      {
+        "question": "What was delivered by Omar?",
+        "expected_answer": "the package"
+      },
+      {
+        "question": "What opened quietly?",
+        "expected_answer": "the door"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The mural was painted by Priya and her cousin.",
+      "The windows were cleaned by the staff early in the morning."
+    ],
+    "queries": [
+      {
+        "question": "Who painted the mural?",
+        "expected_answer": "Priya and her cousin"
+      },
+      {
+        "question": "What was painted by Priya and her cousin?",
+        "expected_answer": "the mural"
+      },
+      {
+        "question": "Who cleaned the windows?",
+        "expected_answer": "the staff"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The trophy was won by Carlos in the final match.",
+      "The gate opened before sunrise."
+    ],
+    "queries": [
+      {
+        "question": "Who won the trophy?",
+        "expected_answer": "Carlos"
+      },
+      {
+        "question": "What was won by Carlos?",
+        "expected_answer": "the trophy"
+      },
+      {
+        "question": "What opened before sunrise?",
+        "expected_answer": "the gate"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The old bridge was repaired by a team of engineers last week.",
+      "The baby was carried by his father across the room.",
+      "The mailbox opened with a squeak."
+    ],
+    "queries": [
+      {
+        "question": "Who repaired the old bridge?",
+        "expected_answer": "a team of engineers"
+      },
+      {
+        "question": "Who carried the baby across the room?",
+        "expected_answer": "his father"
+      },
+      {
+        "question": "What opened with a squeak?",
+        "expected_answer": "the mailbox"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The nurse who helped the child stayed after the shift.",
+      "The child who was helped thanked her later."
+    ],
+    "queries": [
+      {
+        "question": "Who stayed after the shift?",
+        "expected_answer": "The nurse who helped the child."
+      },
+      {
+        "question": "Who was helped?",
+        "expected_answer": "The child."
+      },
+      {
+        "question": "Did the nurse stay after the shift?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "I found the keys that were under the blue chair.",
+      "The blue chair that was in the hallway had a loose leg.",
+      "The hallway was quiet."
+    ],
+    "queries": [
+      {
+        "question": "What did I find?",
+        "expected_answer": "The keys that were under the blue chair."
+      },
+      {
+        "question": "Which chair had a loose leg?",
+        "expected_answer": "The blue chair that was in the hallway."
+      },
+      {
+        "question": "Where was the blue chair?",
+        "expected_answer": "In the hallway."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos sold the car that he fixed last week.",
+      "The car that he fixed last week ran smoothly on the test drive.",
+      "Carlos drove it to the market."
+    ],
+    "queries": [
+      {
+        "question": "What did Carlos sell?",
+        "expected_answer": "The car that he fixed last week."
+      },
+      {
+        "question": "What ran smoothly on the test drive?",
+        "expected_answer": "The car that he fixed last week."
+      },
+      {
+        "question": "Did Carlos fix the car last week?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina met the artist who painted the mural on the station wall.",
+      "The mural that the artist painted uses bright colors.",
+      "The station wall faces the park."
+    ],
+    "queries": [
+      {
+        "question": "Who painted the mural on the station wall?",
+        "expected_answer": "The artist."
+      },
+      {
+        "question": "What uses bright colors?",
+        "expected_answer": "The mural that the artist painted."
+      },
+      {
+        "question": "Who did Amina meet?",
+        "expected_answer": "The artist who painted the mural on the station wall."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The lamp that stood beside the sofa was broken.",
+      "The sofa that my grandmother bought is red.",
+      "My grandmother likes the lamp in the kitchen."
+    ],
+    "queries": [
+      {
+        "question": "Which lamp was broken?",
+        "expected_answer": "The lamp that stood beside the sofa."
+      },
+      {
+        "question": "What color is the sofa that my grandmother bought?",
+        "expected_answer": "Red."
+      },
+      {
+        "question": "Which sofa did my grandmother buy?",
+        "expected_answer": "The sofa that my grandmother bought."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia bought a blue jacket at the market.",
+      "She later gave the jacket to her cousin."
+    ],
+    "queries": [
+      {
+        "question": "What did Nadia buy?",
+        "expected_answer": "a blue jacket"
+      },
+      {
+        "question": "Who did she give the jacket to?",
+        "expected_answer": "her cousin"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos finished the marathon in three hours and ten minutes.",
+      "His brother finished in four hours."
+    ],
+    "queries": [
+      {
+        "question": "How long did Carlos take to finish the marathon?",
+        "expected_answer": "three hours and ten minutes"
+      },
+      {
+        "question": "Who finished faster?",
+        "expected_answer": "Carlos"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The teacher placed the keys on the windowsill.",
+      "After class, the janitor moved them to the front desk."
+    ],
+    "queries": [
+      {
+        "question": "Where did the teacher place the keys?",
+        "expected_answer": "on the windowsill"
+      },
+      {
+        "question": "Who moved the keys to the front desk?",
+        "expected_answer": "the janitor"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina wrote a short article about desert plants.",
+      "The editor published the article on Tuesday."
+    ],
+    "queries": [
+      {
+        "question": "What did Amina write?",
+        "expected_answer": "a short article about desert plants"
+      },
+      {
+        "question": "When did the editor publish the article?",
+        "expected_answer": "Tuesday"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The cat slept under the sofa during the storm.",
+      "When the rain stopped, it jumped onto the warm rug."
+    ],
+    "queries": [
+      {
+        "question": "Where did the cat sleep?",
+        "expected_answer": "under the sofa"
+      },
+      {
+        "question": "What did it jump onto?",
+        "expected_answer": "the warm rug"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maya told Luis, \"Please water the basil before noon.\"",
+      "She also said, \"Do not touch the seedlings.\""
+    ],
+    "queries": [
+      {
+        "question": "What did Maya ask Luis to do before noon?",
+        "expected_answer": "Water the basil."
+      },
+      {
+        "question": "What did Maya tell Luis not to do?",
+        "expected_answer": "Touch the seedlings."
+      },
+      {
+        "question": "Did Maya ask Luis to water the basil before noon?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The coach said to the team, \"Run three laps around the field.\"",
+      "Then she added, \"Do not stop at the bench.\""
+    ],
+    "queries": [
+      {
+        "question": "How many laps did the coach tell the team to run?",
+        "expected_answer": "Three laps."
+      },
+      {
+        "question": "What did the coach tell the team not to do?",
+        "expected_answer": "Stop at the bench."
+      },
+      {
+        "question": "Did the coach tell the team to run around the field?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The librarian whispered, \"Please keep your voice down.\"",
+      "She pointed to a sign and said, \"Do not eat in the reading room.\""
+    ],
+    "queries": [
+      {
+        "question": "What did the librarian ask people to do?",
+        "expected_answer": "Keep their voice down."
+      },
+      {
+        "question": "Where did the librarian say not to eat?",
+        "expected_answer": "In the reading room."
+      },
+      {
+        "question": "Did the librarian forbid eating in the reading room?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos told the intern, \"Send me the revised report by Friday.\"",
+      "He also said, \"Do not print the draft version.\""
+    ],
+    "queries": [
+      {
+        "question": "What did Carlos ask the intern to send?",
+        "expected_answer": "The revised report."
+      },
+      {
+        "question": "By when did Carlos want the report sent?",
+        "expected_answer": "By Friday."
+      },
+      {
+        "question": "Did Carlos tell the intern not to print the draft version?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina said, \"Close the window and turn off the fan.\"",
+      "After that, she told her brother, \"Do not leave the room open.\""
+    ],
+    "queries": [
+      {
+        "question": "What did Amina tell someone to close?",
+        "expected_answer": "The window."
+      },
+      {
+        "question": "What did Amina tell someone to turn off?",
+        "expected_answer": "The fan."
+      },
+      {
+        "question": "Did Amina tell her brother not to leave the room open?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Dolphins live in groups called pods.",
+      "They use whistles to communicate.",
+      "Dolphins breathe air through lungs."
+    ],
+    "queries": [
+      {
+        "question": "What do dolphins live in?",
+        "expected_answer": "pods"
+      },
+      {
+        "question": "How do dolphins communicate?",
+        "expected_answer": "with whistles"
+      },
+      {
+        "question": "Do dolphins breathe air through lungs?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maple trees lose their leaves in autumn.",
+      "Their sap can be used to make syrup.",
+      "Maple trees grow well in cool climates."
+    ],
+    "queries": [
+      {
+        "question": "When do maple trees lose their leaves?",
+        "expected_answer": "in autumn"
+      },
+      {
+        "question": "What can maple tree sap be used to make?",
+        "expected_answer": "syrup"
+      },
+      {
+        "question": "Do maple trees grow well in cool climates?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "A violin has four strings.",
+      "It is played with a bow.",
+      "Violins are common in orchestras."
+    ],
+    "queries": [
+      {
+        "question": "How many strings does a violin have?",
+        "expected_answer": "four"
+      },
+      {
+        "question": "What is a violin played with?",
+        "expected_answer": "a bow"
+      },
+      {
+        "question": "Are violins common in orchestras?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Penguins are birds that cannot fly.",
+      "They swim well in cold water.",
+      "Many penguins live near the Antarctic coast."
+    ],
+    "queries": [
+      {
+        "question": "Can penguins fly?",
+        "expected_answer": "No"
+      },
+      {
+        "question": "What kind of water do penguins swim well in?",
+        "expected_answer": "cold water"
+      },
+      {
+        "question": "Where do many penguins live?",
+        "expected_answer": "near the Antarctic coast"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Honey is made by bees.",
+      "It is usually sweet.",
+      "Honey can stay edible for a long time."
+    ],
+    "queries": [
+      {
+        "question": "Who makes honey?",
+        "expected_answer": "bees"
+      },
+      {
+        "question": "What is honey usually like?",
+        "expected_answer": "sweet"
+      },
+      {
+        "question": "Can honey stay edible for a long time?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "A violin section is part of the orchestra.",
+      "The orchestra belongs to the city arts program.",
+      "The cellos are in the violin section."
+    ],
+    "queries": [
+      {
+        "question": "What is part of the orchestra?",
+        "expected_answer": "A violin section."
+      },
+      {
+        "question": "What does the orchestra belong to?",
+        "expected_answer": "The city arts program."
+      },
+      {
+        "question": "What is in the violin section?",
+        "expected_answer": "The cellos."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The suitcase weighs 12 kilograms.",
+      "The backpack weighs 4 kilograms.",
+      "The suitcase is heavier than the backpack."
+    ],
+    "queries": [
+      {
+        "question": "How much does the suitcase weigh?",
+        "expected_answer": "12 kilograms"
+      },
+      {
+        "question": "How much does the backpack weigh?",
+        "expected_answer": "4 kilograms"
+      },
+      {
+        "question": "Is the suitcase heavier than the backpack?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maya ran for 45 minutes yesterday.",
+      "Today she ran for 30 minutes.",
+      "Her workout today was shorter than yesterday's run."
+    ],
+    "queries": [
+      {
+        "question": "How long did Maya run yesterday?",
+        "expected_answer": "45 minutes"
+      },
+      {
+        "question": "How long did she run today?",
+        "expected_answer": "30 minutes"
+      },
+      {
+        "question": "Was today's workout shorter than yesterday's run?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The river is 300 meters wide near the bridge.",
+      "Farther downstream, it is 450 meters wide.",
+      "The downstream part is wider."
+    ],
+    "queries": [
+      {
+        "question": "How wide is the river near the bridge?",
+        "expected_answer": "300 meters"
+      },
+      {
+        "question": "How wide is it farther downstream?",
+        "expected_answer": "450 meters"
+      },
+      {
+        "question": "Is the downstream part wider?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya bought 6 apples and 3 oranges.",
+      "She gave 2 apples to her neighbor.",
+      "She still has 4 apples left."
+    ],
+    "queries": [
+      {
+        "question": "How many apples did Priya buy?",
+        "expected_answer": "6 apples"
+      },
+      {
+        "question": "How many oranges did she buy?",
+        "expected_answer": "3 oranges"
+      },
+      {
+        "question": "How many apples does she still have left?",
+        "expected_answer": "4 apples"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The meeting lasted 90 minutes.",
+      "The second meeting lasted 2 hours.",
+      "The second meeting was longer."
+    ],
+    "queries": [
+      {
+        "question": "How long did the first meeting last?",
+        "expected_answer": "90 minutes"
+      },
+      {
+        "question": "How long did the second meeting last?",
+        "expected_answer": "2 hours"
+      },
+      {
+        "question": "Was the second meeting longer?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The trail is somewhat steep after the rain.",
+      "The alternate path is very steep near the top.",
+      "The shortcut is not steep at all."
+    ],
+    "queries": [
+      {
+        "question": "How steep is the trail after the rain?",
+        "expected_answer": "somewhat steep"
+      },
+      {
+        "question": "Which path is very steep?",
+        "expected_answer": "the alternate path"
+      },
+      {
+        "question": "Is the shortcut steep?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Dmitri is incredibly proud of his team.",
+      "Priya is fairly proud of her results."
+    ],
+    "queries": [
+      {
+        "question": "Who is incredibly proud of his team?",
+        "expected_answer": "Dmitri"
+      },
+      {
+        "question": "How proud is Priya of her results?",
+        "expected_answer": "fairly proud"
+      },
+      {
+        "question": "Is Priya incredibly proud of her results?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "First, Maya packed her backpack.",
+      "Then she boarded the bus to school."
+    ],
+    "queries": [
+      {
+        "question": "What did Maya do first?",
+        "expected_answer": "She packed her backpack."
+      },
+      {
+        "question": "What did Maya do after packing her backpack?",
+        "expected_answer": "She boarded the bus to school."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Leo was late, so he skipped breakfast.",
+      "However, he still arrived before the meeting started."
+    ],
+    "queries": [
+      {
+        "question": "Why did Leo skip breakfast?",
+        "expected_answer": "Because he was late."
+      },
+      {
+        "question": "Did Leo arrive before the meeting started?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "What happened despite skipping breakfast?",
+        "expected_answer": "He arrived before the meeting started."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nina studied all evening because she had a test the next day.",
+      "As a result, she felt prepared in the morning."
+    ],
+    "queries": [
+      {
+        "question": "Why did Nina study all evening?",
+        "expected_answer": "Because she had a test the next day."
+      },
+      {
+        "question": "How did Nina feel in the morning?",
+        "expected_answer": "Prepared."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The rain stopped, and then the children went outside.",
+      "Later, they built a small fort in the yard."
+    ],
+    "queries": [
+      {
+        "question": "When did the children go outside?",
+        "expected_answer": "After the rain stopped."
+      },
+      {
+        "question": "What did the children build later?",
+        "expected_answer": "A small fort in the yard."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya wanted to visit the museum, but it was closed.",
+      "So she walked to the library instead."
+    ],
+    "queries": [
+      {
+        "question": "Where did Priya want to go?",
+        "expected_answer": "The museum."
+      },
+      {
+        "question": "Why did Priya go to the library instead?",
+        "expected_answer": "Because the museum was closed."
+      },
+      {
+        "question": "Where did Priya walk instead?",
+        "expected_answer": "The library."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The two mechanics each inspected a different engine.",
+      "Then they lifted the heavy crate together."
+    ],
+    "queries": [
+      {
+        "question": "Did each mechanic inspect a different engine?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did the mechanics lift the crate together?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "How many engines did the mechanics inspect in total?",
+        "expected_answer": "Two."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina, Priya, and Joao lined up at the counter.",
+      "They bought their tickets one by one."
+    ],
+    "queries": [
+      {
+        "question": "How did they buy their tickets?",
+        "expected_answer": "One by one."
+      },
+      {
+        "question": "Did they buy the tickets together?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "How many people lined up at the counter?",
+        "expected_answer": "Three."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The children each chose a different book from the shelf.",
+      "Afterward, they read quietly together in the tent."
+    ],
+    "queries": [
+      {
+        "question": "Did each child choose a different book?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did they read quietly together in the tent?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Where did they read quietly together?",
+        "expected_answer": "In the tent."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos and Ethan carried the sofa through the doorway.",
+      "Later, each of them took a separate taxi home."
+    ],
+    "queries": [
+      {
+        "question": "Did Carlos and Ethan carry the sofa together?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did each of them take a separate taxi home?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "How many taxis did they take home?",
+        "expected_answer": "Two."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The birds spread out across the field and found seeds individually.",
+      "When the hawk appeared, they gathered in one flock."
+    ],
+    "queries": [
+      {
+        "question": "Did the birds find seeds individually?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did they gather in one flock when the hawk appeared?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did the birds spread out across the field?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Every camper did not pack a flashlight.",
+      "Two campers stayed near the fire."
+    ],
+    "queries": [
+      {
+        "question": "Did every camper pack a flashlight?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Did any camper pack a flashlight?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Did two campers stay near the fire?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "No student solved all three puzzles.",
+      "One student solved two puzzles."
+    ],
+    "queries": [
+      {
+        "question": "Did any student solve all three puzzles?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Did one student solve two puzzles?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did no student solve all three puzzles?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya did not invite every neighbor to the picnic.",
+      "She invited some neighbors after sunset.",
+      "The neighbors who came brought lemonade."
+    ],
+    "queries": [
+      {
+        "question": "Did Priya invite every neighbor to the picnic?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Did Priya invite some neighbors after sunset?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Did the neighbors who came bring lemonade?",
+        "expected_answer": "Yes."
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maya told her brother, \"I finished the puzzle last night.\"",
+      "Her brother asked if she wanted to start another one today."
+    ],
+    "queries": [
+      {
+        "question": "What did Maya say she finished last night?",
+        "expected_answer": "the puzzle"
+      },
+      {
+        "question": "When did Maya say she finished it?",
+        "expected_answer": "last night"
+      },
+      {
+        "question": "Did Maya say she finished the puzzle last night?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The coach announced that the game would begin at 8 p.m.",
+      "Later, he said the team should arrive by 7:30."
+    ],
+    "queries": [
+      {
+        "question": "What time did the coach say the game would begin?",
+        "expected_answer": "8 p.m."
+      },
+      {
+        "question": "When did he say the team should arrive?",
+        "expected_answer": "by 7:30"
+      },
+      {
+        "question": "Did the coach say the game would begin at 8 p.m.?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya wrote in her email, \"The office is closed on Friday.\"",
+      "She added that she would return on Monday."
+    ],
+    "queries": [
+      {
+        "question": "What did Priya say about the office?",
+        "expected_answer": "The office is closed on Friday."
+      },
+      {
+        "question": "When did Priya say she would return?",
+        "expected_answer": "on Monday"
+      },
+      {
+        "question": "Was the office said to be closed on Friday?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Dmitri reported that the bridge was damaged after the storm.",
+      "He also said the buses were using a different route."
+    ],
+    "queries": [
+      {
+        "question": "What did Dmitri say was damaged after the storm?",
+        "expected_answer": "the bridge"
+      },
+      {
+        "question": "What did Dmitri say the buses were using?",
+        "expected_answer": "a different route"
+      },
+      {
+        "question": "Did Dmitri report that the bridge was damaged after the storm?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The teacher said, \"Please open your books to page ten.\"",
+      "Then she told the class that the quiz would start in five minutes."
+    ],
+    "queries": [
+      {
+        "question": "What did the teacher ask the class to open?",
+        "expected_answer": "their books to page ten"
+      },
+      {
+        "question": "When did she say the quiz would start?",
+        "expected_answer": "in five minutes"
+      },
+      {
+        "question": "Did the teacher say the quiz would start in five minutes?",
+        "expected_answer": "Yes"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia gave her brother a map before the hike.",
+      "Later, she sent her cousin a photo of the trail."
+    ],
+    "queries": [
+      {
+        "question": "Who did Nadia give a map to?",
+        "expected_answer": "her brother"
+      },
+      {
+        "question": "What did Nadia send her cousin?",
+        "expected_answer": "a photo of the trail"
+      },
+      {
+        "question": "What did Nadia give her brother?",
+        "expected_answer": "a map"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Carlos told the mechanic the problem with the car.",
+      "He also told his sister the same story over dinner."
+    ],
+    "queries": [
+      {
+        "question": "Who did Carlos tell the problem with the car to?",
+        "expected_answer": "the mechanic"
+      },
+      {
+        "question": "What did Carlos tell the mechanic?",
+        "expected_answer": "the problem with the car"
+      },
+      {
+        "question": "Who did Carlos tell the same story to?",
+        "expected_answer": "his sister"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Amina mailed the library a box of old books.",
+      "She sent the school a letter the next day."
+    ],
+    "queries": [
+      {
+        "question": "What did Amina mail the library?",
+        "expected_answer": "a box of old books"
+      },
+      {
+        "question": "Where did Amina send a letter?",
+        "expected_answer": "the school"
+      },
+      {
+        "question": "What did Amina send the school?",
+        "expected_answer": "a letter"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Ethan handed the runner a water bottle at the finish line.",
+      "After the race, he gave the coach his number."
+    ],
+    "queries": [
+      {
+        "question": "Who did Ethan hand a water bottle to?",
+        "expected_answer": "the runner"
+      },
+      {
+        "question": "What did Ethan give the coach?",
+        "expected_answer": "his number"
+      },
+      {
+        "question": "What did Ethan hand the runner?",
+        "expected_answer": "a water bottle"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya explained the rules to the new volunteers.",
+      "Then she wrote the manager a short note about the schedule."
+    ],
+    "queries": [
+      {
+        "question": "Who did Priya explain the rules to?",
+        "expected_answer": "the new volunteers"
+      },
+      {
+        "question": "What did Priya write the manager?",
+        "expected_answer": "a short note about the schedule"
+      },
+      {
+        "question": "What did Priya explain to the new volunteers?",
+        "expected_answer": "the rules"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Nadia, the lead architect, presented the new bridge design.",
+      "The lead architect, Nadia, answered three questions from the council."
+    ],
+    "queries": [
+      {
+        "question": "Who presented the new bridge design?",
+        "expected_answer": "Nadia"
+      },
+      {
+        "question": "What was Nadia's role?",
+        "expected_answer": "the lead architect"
+      },
+      {
+        "question": "Who answered three questions from the council?",
+        "expected_answer": "the lead architect, Nadia"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The city of Kyoto, once the imperial capital, attracts many visitors in spring.",
+      "Kyoto, the old imperial capital, is famous for its temples."
+    ],
+    "queries": [
+      {
+        "question": "What city attracts many visitors in spring?",
+        "expected_answer": "Kyoto"
+      },
+      {
+        "question": "What was Kyoto once?",
+        "expected_answer": "the imperial capital"
+      },
+      {
+        "question": "What is Kyoto famous for?",
+        "expected_answer": "its temples"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "My brother Carlos, the tallest player on the team, scored the winning goal.",
+      "Carlos, my brother, thanked the coach after the match."
+    ],
+    "queries": [
+      {
+        "question": "Who scored the winning goal?",
+        "expected_answer": "Carlos"
+      },
+      {
+        "question": "Who is the tallest player on the team?",
+        "expected_answer": "Carlos"
+      },
+      {
+        "question": "Who thanked the coach after the match?",
+        "expected_answer": "Carlos"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The kitten, Luna, slept beside the fireplace.",
+      "Luna, the kitten, woke up when the clock chimed."
+    ],
+    "queries": [
+      {
+        "question": "What is the kitten's name?",
+        "expected_answer": "Luna"
+      },
+      {
+        "question": "What slept beside the fireplace?",
+        "expected_answer": "the kitten, Luna"
+      },
+      {
+        "question": "What woke up when the clock chimed?",
+        "expected_answer": "Luna"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Priya, our new editor, revised the article before noon.",
+      "Our new editor, Priya, approved the final draft."
+    ],
+    "queries": [
+      {
+        "question": "Who revised the article before noon?",
+        "expected_answer": "Priya"
+      },
+      {
+        "question": "What is Priya's job?",
+        "expected_answer": "our new editor"
+      },
+      {
+        "question": "Who approved the final draft?",
+        "expected_answer": "our new editor, Priya"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Maya ordered soup, and Leo salad.",
+      "The waiter brought Maya water, and Leo juice."
+    ],
+    "queries": [
+      {
+        "question": "What did Leo order?",
+        "expected_answer": "salad"
+      },
+      {
+        "question": "What did Maya get to drink?",
+        "expected_answer": "water"
+      },
+      {
+        "question": "What did Leo get to drink?",
+        "expected_answer": "juice"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "I can finish the report by Friday, and Priya can too.",
+      "Dmitri could join the meeting, but Carlos couldn't."
+    ],
+    "queries": [
+      {
+        "question": "Can Priya finish the report by Friday?",
+        "expected_answer": "Yes"
+      },
+      {
+        "question": "Who could join the meeting?",
+        "expected_answer": "Dmitri"
+      },
+      {
+        "question": "Could Carlos join the meeting?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The red bird landed on the fence, and the blue one on the roof.",
+      "In the morning, the red bird sang loudly, and the blue one softly."
+    ],
+    "queries": [
+      {
+        "question": "Where did the blue bird land?",
+        "expected_answer": "on the roof"
+      },
+      {
+        "question": "How did the red bird sing in the morning?",
+        "expected_answer": "loudly"
+      },
+      {
+        "question": "How did the blue bird sing in the morning?",
+        "expected_answer": "softly"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "At the market, Hana bought peaches, and Omar plums.",
+      "Later, Hana sold two peaches, and Omar three plums."
+    ],
+    "queries": [
+      {
+        "question": "What did Omar buy at the market?",
+        "expected_answer": "plums"
+      },
+      {
+        "question": "How many peaches did Hana sell later?",
+        "expected_answer": "two"
+      },
+      {
+        "question": "How many plums did Omar sell later?",
+        "expected_answer": "three"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "The teacher handed Nora a pencil, and Sam a ruler.",
+      "After class, Nora gave the teacher a note, and Sam a drawing."
+    ],
+    "queries": [
+      {
+        "question": "What did Sam receive from the teacher?",
+        "expected_answer": "a ruler"
+      },
+      {
+        "question": "What did Nora give the teacher after class?",
+        "expected_answer": "a note"
+      },
+      {
+        "question": "What did Sam give the teacher after class?",
+        "expected_answer": "a drawing"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "It was Leila who repaired the broken bicycle on Saturday.",
+      "Only Leila knew where the spare key was kept."
+    ],
+    "queries": [
+      {
+        "question": "Who repaired the broken bicycle on Saturday?",
+        "expected_answer": "Leila"
+      },
+      {
+        "question": "Who knew where the spare key was kept?",
+        "expected_answer": "Leila"
+      },
+      {
+        "question": "Was anyone else said to know where the spare key was kept?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "What Tomas ordered for lunch was a bowl of lentil soup.",
+      "It was at the small cafe that he ate it."
+    ],
+    "queries": [
+      {
+        "question": "What did Tomas order for lunch?",
+        "expected_answer": "A bowl of lentil soup"
+      },
+      {
+        "question": "Where did he eat it?",
+        "expected_answer": "At the small cafe"
+      },
+      {
+        "question": "Did he order a sandwich?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Only the teacher opened the final exam room.",
+      "It was the teacher who checked the IDs at the door."
+    ],
+    "queries": [
+      {
+        "question": "Who opened the final exam room?",
+        "expected_answer": "The teacher"
+      },
+      {
+        "question": "Who checked the IDs at the door?",
+        "expected_answer": "The teacher"
+      },
+      {
+        "question": "Did a student open the final exam room?",
+        "expected_answer": "No"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "It was in Kyoto that Hana spent her vacation.",
+      "What she photographed most was the old temple.",
+      "Only Hana uploaded the pictures that night."
+    ],
+    "queries": [
+      {
+        "question": "Where did Hana spend her vacation?",
+        "expected_answer": "In Kyoto"
+      },
+      {
+        "question": "What did she photograph most?",
+        "expected_answer": "The old temple"
+      },
+      {
+        "question": "Who uploaded the pictures that night?",
+        "expected_answer": "Hana"
+      }
+    ]
+  },
+  {
+    "sentences": [
+      "Only the red scarf made Priya smile.",
+      "It was the red scarf that she bought at the market."
+    ],
+    "queries": [
+      {
+        "question": "What made Priya smile?",
+        "expected_answer": "The red scarf"
+      },
+      {
+        "question": "What did she buy at the market?",
+        "expected_answer": "The red scarf"
+      },
+      {
+        "question": "Did the blue scarf make Priya smile?",
+        "expected_answer": "No"
+      }
+    ]
+  }
+]
