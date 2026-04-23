@@ -1,3 +1,327 @@
+# NL to logic conversion instructions
+
+You are converting English natural language (sentences or questions) into logical expressions (statements or queries) for a chainer/reasoner.
+
+## Chainer syntax reference
+
+# PeTTaChainer source analysis
+
+## 1) Expression format
+
+The Python API expects **bare MeTTa expressions** as input strings.
+
+### Public bare format
+The core outer envelope used by both statements and queries is:
+
+```metta
+(: <proof-id> <proposition-or-pattern> <truth-value-or-pattern>)
+```
+
+Examples of bare inputs passed to the API:
+
+```metta
+(: f1 (Dog fido) (STV 1.0 1.0))
+(: $prf (Dog fido) $tv)
+(: rule1
+   (Implication
+      (Premises (Dog $x) (Not (Cat $x)))
+      (Conclusions (Mammal $x)))
+   (STV 1.0 1.0))
+```
+
+### Internal runtime wrappers
+Do **not** pass these as external API input; the chainer inserts them internally:
+
+```metta
+!(eval <bare-expression>)
+!(compileadd <kb> <evaluated-statement>)
+!(query <steps> <kb> <evaluated-query>)
+```
+
+So the rule for downstream consumers is:
+
+- **caller input**: bare MeTTa expression
+- **internal execution**: wrapped `!(eval ...)`, then `!(compileadd ...)` or `!(query ...)`
+
+The public methods `add_atom()` and `query()` both evaluate the input first, then hand the evaluated bare expression to the internal MeTTa runtime.
+
+## 2) Built-in operators / combinators
+
+The public docs and source show these main surface forms.
+
+### Statement / proof-atom envelope
+```metta
+(: <proof-id> <proposition> <tv>)
+```
+
+This is the storage/query envelope for facts and rules.
+
+### `Implication`
+```metta
+(Implication (Premises ...) (Conclusions ...))
+```
+Represents an if-then rule.
+
+### `Premises`
+```metta
+(Premises premise1 premise2 ...)
+```
+Rule antecedent list.
+
+### `Conclusions`
+```metta
+(Conclusions conclusion1 conclusion2 ...)
+```
+Rule consequent list.
+
+### `Compute`
+```metta
+(Compute f (arg1 arg2 ...) -> $out)
+```
+Compute a function result and bind it.
+
+### `FoldAll` / `FoldAllValue`
+```metta
+(FoldAll pattern value init fold-fn -> out)
+(FoldAllValue pattern init fold-fn -> out)
+```
+Aggregate over matching facts.
+
+### `Not`
+```metta
+(Not expr)
+```
+Negation / negative premise.
+
+### `GreaterThan` and alias `>`
+```metta
+(GreaterThan $distA 5)
+(GreaterThan $distA $distB)
+```
+Docs say `>` is an alias/sugar for the same comparison family.
+
+### `MapDist`, `Map2Dist`, `AverageDist`
+```metta
+(MapDist f (DistFactA ... $inDist) $inDist -> $outDist)
+(Map2Dist f (DistFactA ... $distA) $distA (DistFactB ... $distB) $distB -> $outDist)
+(AverageDist (DistFactPattern ... $inDist) $inDist -> $outDist)
+```
+
+These are helper premises for distribution-valued facts.
+
+### Lower-level / compiled distribution forms seen in source
+These are not the main user-facing rule skeleton, but they are part of the chainer’s supported operator set and should be treated as structural, not domain predicates:
+
+- `DistGreaterThanFormula`
+- `DistGreaterThanDistFormula`
+- `ParticleMap`
+- `ParticleMap2`
+- `ParticleAddBernoulliFromSTV`
+
+### Utility / store operators
+Also documented in the spec:
+
+- `ParticleStoreCount`
+- `ParticleStoreClear`
+- `ParticleStorePruneKB`
+
+## 3) Truth values
+
+The chainer distinguishes **truth uncertainty** from **value uncertainty**.
+
+### Truth uncertainty
+```metta
+(STV strength confidence)
+```
+
+- `strength` is the truth / belief mass
+- `confidence` is evidence / reliability
+- both are intended to be in `[0, 1]`
+
+`STV` is for the truth of a proposition, not for numeric measurement uncertainty.
+
+### Value uncertainty / distributions
+Supported distribution-like truth/value forms:
+
+```metta
+(NatDist ((value probability) ...))
+(FloatDist ((value probability) ...))
+(ParticleDist <ref>)
+(ParticleDist <ref> <scale>)
+(PointMass x)
+(ParticleFromNormal mu sigma)
+(ParticleFromPairs ((x1 w1) (x2 w2) ...))
+```
+
+Notes:
+
+- `NatDist` and `FloatDist` are exact discrete distributions.
+- `ParticleDist` is an opaque reference backed by the particle store.
+- `PointMass` is a degenerate distribution.
+- `ParticleFromNormal` and `ParticleFromPairs` are particle-based constructors.
+- The validator explicitly accepts the above shapes.
+
+## 4) Rule templates
+
+Rules are just statements whose proposition is an `Implication`.
+
+Exact template:
+
+```metta
+(: <rule-name>
+   (Implication
+      (Premises
+         premise1
+         premise2
+         ...)
+      (Conclusions
+         conclusion1
+         conclusion2
+         ...))
+   (STV <strength> <confidence>))
+```
+
+The source/docs use the same outer `(: ... )` envelope for facts and rules.
+
+## 5) Query patterns
+
+Query patterns use the same outer envelope, but the proof-id slot must be a **variable**.
+
+Typical query shape:
+
+```metta
+(: $prf <pattern> $tv)
+```
+
+Examples:
+
+```metta
+(: $prf (Dog fido) $tv)
+(: $prf (AreaDist rectA $areaDist) $tv)
+```
+
+Important source-derived constraints:
+
+- `check_query()` requires the proof-id slot to be a variable.
+- The validator does **not** impose the same deep truth-value restrictions on queries that it does on statements.
+- In intended usage, the truth-value slot is usually also a variable (`$tv`) so the query can return it.
+
+## 6) Naming conventions
+
+Observed conventions in docs/examples:
+
+- **Variables**: prefixed with `$`
+  - examples: `$prf`, `$tv`, `$x`, `$dist`, `$avgDist`
+- **Predicates / relations**: usually CamelCase
+  - examples: `Dog`, `HeightDist`, `AvgHeightDist`, `CountryHeightDist`, `Rectangle`, `Group`
+- **Constants / entities**: plain atoms, often lowercase or mixed case
+  - examples: `fido`, `alice`, `bob`, `carol`, `room1`, `g1`, `rectA`, `countryA`
+- **Rule / proof ids**: opaque labels, often camelCase or descriptive identifiers
+  - examples: `f1`, `r1`, `avgHeightDistG1Rule`
+
+There is no quoted-string entity syntax in the source examples.
+
+## 7) Constraints & pitfalls
+
+### Do not use internal runtime wrappers as external input
+External callers should pass bare expressions, not:
+
+```metta
+!(eval ...)
+!(compileadd ...)
+!(query ...)
+```
+
+### Statement validation is shallow but strict on the envelope
+For statements, the validator checks that the evaluated expression has the outer `(: ...)` shape, that the proof-id is not a variable, and that the TV matches one of the supported constructors.
+
+### Query validation
+For queries, the validator checks that the proof-id is a variable.
+
+### No dedicated `ForAll` / `Exists` user syntax
+The repo contains unrelated internal/Prolog `forall` / `exists` occurrences, but there is no public bare-expression quantifier operator in the chainer API.
+
+### Avoid confusing internal proof-tree tokens with domain predicates
+Source examples contain internal tokens such as:
+
+- `CPU` / `cpu`
+- `conjunction`
+- `rule-proof`
+- `fact-ev`
+- `LikelierThan`
+
+These are proof/runtime artifacts, not user-defined domain relations.
+
+### Beware of `>` vs `GreaterThan`
+`GreaterThan` is the canonical documented head; `>` is documented as an alias/sugar.
+
+### Bare syntax is prefix s-expression style
+No commas or infix statement syntax is used in the public API.
+
+## 8) Predicate extraction
+
+For bare-expression predicate/relation extraction, use a regex that captures identifier-like heads after `(` and then filters out structural symbols.
+
+Recommended regex:
+
+```python
+r'\(\s*([A-Za-z][A-Za-z0-9_+-]*)'
+```
+
+Why this works:
+
+- it captures heads from statements, queries, and nested subexpressions
+- it works with Python `re` on single-line expression strings
+- it captures normal relation names like `Dog`, `HeightDist`, `Map2Dist`
+- built-ins are then removed using an exclusion list
+
+## 9) Quantification and scope
+
+There is **no dedicated quantifier syntax** like `ForAll` / `Exists` in the public bare language.
+
+Quantifier-like meaning is expressed indirectly:
+
+- **existential** meaning: via query variables and proof search
+- **universal / rule-like** meaning: via variables in rule premises and implications
+- **count/cardinality** style constraints: via aggregation helpers such as `FoldAll` plus comparison operators
+
+Scope is syntactic/nested:
+
+- variables live in the nested MeTTa expression structure
+- `Not` scopes over its nested expression
+- premise helpers such as `Compute`, `FoldAll`, `MapDist`, and `AverageDist` scope their binders using the surrounding prefix form and `->` output binder
+
+## 10) Entity identity and representation
+
+There is no built-in entity identity system beyond symbol identity.
+
+Implications:
+
+- the same atom spelling refers to the same symbol/entity
+- different spellings are different entities
+- the source does not define a canonicalization or disambiguation layer for names
+
+Recommended practice:
+
+- use stable, unique constants for named entities
+- if surface names are ambiguous, keep a separate ID and optionally a `Name`/`Alias` relation in your own ontology
+- do not rely on natural-language surface forms alone if distinct real-world entities may share the same name
+
+Observed idioms for instance/class membership are just unary predicates:
+
+```metta
+(Dog fido)
+(Person alice)
+(Rectangle rectA)
+(Group g1)
+```
+
+No special first/second-person pronoun convention is defined in the source. If the referent is unknown, skip the pronoun or ground it externally.
+
+---
+
+## Conversion guidelines
+
 PeTTaChainer English-to-logic conversion guidelines
 
 1. Core surface forms
@@ -1096,3 +1420,607 @@ Before emitting a parse, verify:
 - Complex clauses are decomposed into linked atoms.
 - Queries ask only for the requested unknown, usually as one target pattern.
 - No undocumented syntax or operators have been introduced.
+
+---
+
+## Relation templates
+
+Canonical primitive relation templates for PeTTaChainer
+
+Legend
+- `<...>` = template slot, not a literal emitted atom
+- `$x`, `$y` = entity variables
+- `$e` = event variable
+- `$s` = state variable
+- `$p` = embedded event/state/proposition variable
+- `$t` = time variable
+- `$n` = numeric/count variable
+- `$d` = distribution variable
+- `$unit` = unit atom
+- Open-class lexical families may instantiate many predicate heads.
+- Closed-class relations below should use the exact predicate names shown.
+
+======================================================================
+1. PUBLIC LOGICAL / QUERY SCAFFOLDING
+======================================================================
+
+1.1 Fact / assertion envelope
+```metta
+(: <fact-id> <proposition> (STV <strength> <confidence>))
+```
+Use for asserted facts.
+
+1.2 Rule envelope
+```metta
+(: <rule-id>
+   (Implication
+      (Premises
+         <premise1>
+         <premise2>
+         ...)
+      (Conclusions
+         <conclusion1>
+         <conclusion2>
+         ...))
+   (STV <strength> <confidence>))
+```
+Use for generics, taxonomic rules, conditionals, and derived summaries.
+
+1.3 Query envelope
+```metta
+(: $prf <pattern> $tv)
+```
+Use for yes/no and wh-queries. Put variables only in the unknown positions.
+
+======================================================================
+2. BUILT-IN LOGICAL / COMPOSITIONAL OPERATORS
+======================================================================
+
+These are fixed built-ins, not custom ontology predicates.
+
+2.1 Negation
+```metta
+(Not <proposition>)
+```
+Explicit negation with local scope.
+
+2.2 Conditional / rule structure
+```metta
+(Implication (Premises <premise> ...) (Conclusions <conclusion> ...))
+(Premises <premise1> <premise2> ...)
+(Conclusions <conclusion1> <conclusion2> ...)
+```
+Canonical encoding for if-then structure, universal/generic rules, and derived relations.
+
+2.3 Numeric comparison
+```metta
+(GreaterThan <left> <right>)
+```
+Canonical comparison primitive. Use reversed arguments for less-than meanings.
+
+2.4 Runtime computation
+```metta
+(Compute <function> (<arg1> <arg2> ...) -> $out)
+```
+Use only when a runtime function already exists.
+
+2.5 Aggregation / counting
+```metta
+(FoldAll <pattern> <value> <init> <fold-fn> -> $out)
+(FoldAllValue <pattern> <init> <fold-fn> -> $out)
+```
+Use for counts, totals, and aggregate-derived quantificational facts.
+
+2.6 Distribution mapping / aggregation
+```metta
+(MapDist <function> <pattern> $d -> $outD)
+(Map2Dist <function> <patternA> $dA <patternB> $dB -> $outD)
+(AverageDist <pattern> $d -> $outD)
+```
+Use for uncertain values stored as distributions.
+
+======================================================================
+3. TRUTH / VALUE CONSTRUCTORS
+======================================================================
+
+3.1 Truth uncertainty
+```metta
+(STV <strength> <confidence>)
+```
+
+3.2 Value uncertainty constructors
+```metta
+(NatDist ((<value> <probability>) ...))
+(FloatDist ((<value> <probability>) ...))
+(ParticleDist <ref>)
+(ParticleDist <ref> <scale>)
+(PointMass <value>)
+(ParticleFromNormal <mu> <sigma>)
+(ParticleFromPairs ((<value1> <weight1>) (<value2> <weight2>) ...))
+```
+
+These constructors appear inside propositions, typically in `...Dist` predicates.
+
+======================================================================
+4. OPEN-CLASS LEXICAL PREDICATE FAMILIES
+======================================================================
+
+These are the productive content-predicate families used across domains.
+
+4.1 Entity / kind membership
+```metta
+(<Kind> $x)
+```
+Unary class/category membership.
+Examples of the family: `Dog`, `City`, `Person`, `Doctor`.
+
+4.2 One-place properties / states
+```metta
+(<Property> $x)
+```
+Unary qualities or states.
+Examples of the family: `Red`, `Fast`, `Hot`, `Friendly`, `Endangered`.
+
+4.3 Simple intransitive predicate family
+```metta
+(<IntransitivePredicate> $x)
+```
+Compact form for simple unmodified clauses when event reification is unnecessary.
+Examples of the family: `Bark`, `Laugh`, `Arrive`, `Wait`.
+
+4.4 Simple binary predicate family
+```metta
+(<BinaryPredicate> $x $y)
+```
+Compact form for simple binary relations/events when no extra roles or modifiers are needed.
+Examples of the family: `Own`, `See`, `Read`, `Call`, `Hug`.
+
+4.5 Simple ternary predicate family
+```metta
+(<TernaryPredicate> $x $y $z)
+```
+Compact form for simple ditransitives or three-place relations.
+Examples of the family: `Give`, `Tell`, `Put`.
+
+4.6 Reified event type family
+```metta
+(<VerbLemma>Event $e)
+```
+Preferred primitive for complex clauses, modifiers, embedded content, passive alternations, and role-based querying.
+Examples of the family: `CutEvent`, `ReadEvent`, `GiveEvent`, `SayEvent`, `OpenEvent`.
+
+4.7 Reified state/situation type family
+```metta
+(<StateLemma>State $s)
+```
+Use for embedded stative content, resultant states, or reified situations.
+Examples of the family: `LateState`, `ReadyState`, `ClosedState`.
+
+4.8 Explicit scalar/measurement family
+```metta
+(<ScalarProperty> $x $n $unit)
+```
+Numeric property with explicit unit.
+Examples of the family: `Height`, `Weight`, `Duration`, `Length`, `Temperature`.
+
+4.9 Uncertain scalar/measurement family
+```metta
+(<ScalarProperty>Dist $x $d)
+```
+Distribution-valued property.
+Examples of the family: `HeightDist`, `WeightDist`, `AreaDist`.
+
+Note
+- Prefer 4.6/4.7 plus role relations once a clause has modifiers, tense/aspect, embedding, cause, purpose, negation scope, or multiple participants.
+- Derived summary predicates such as `(Cut $a $p)` are useful, but they are not primitive templates.
+
+======================================================================
+5. CLOSED-CLASS SEMANTIC RELATION TEMPLATES
+======================================================================
+
+----------------------------------------------------------------------
+5.1 Reference, naming, definiteness, and deixis
+----------------------------------------------------------------------
+
+```metta
+(Name $x <name_atom>)
+(Alias $x <alias_atom>)
+(Definite $x)
+(Indefinite $x)
+(Specific $x)
+(Proximal $x)
+(Distal $x)
+```
+
+Descriptions
+- `Name`: canonical name or surface name token mapped to an entity.
+- `Alias`: alternate label or nickname.
+- `Definite`: referent treated as discourse-familiar/resolved.
+- `Indefinite`: referent introduced as new/non-familiar.
+- `Specific`: speaker has a particular referent in mind.
+- `Proximal`: this/these-style deixis.
+- `Distal`: that/those-style deixis.
+
+----------------------------------------------------------------------
+5.2 Event/state participant and modifier roles
+----------------------------------------------------------------------
+
+```metta
+(Agent $e $x)
+(Patient $e $x)
+(Theme $e $x)
+(Recipient $e $x)
+(Beneficiary $e $x)
+(Instrument $e $x)
+(Experiencer $e $x)
+(Stimulus $e $x)
+(Source $e $x)
+(Goal $e $x)
+(Path $e $x)
+(Location $e $x)
+(Time $e $t)
+(StartTime $e $t)
+(EndTime $e $t)
+(Manner $e <manner_atom>)
+(Frequency $e <frequency_atom>)
+(Tense $e <tense_atom>)
+(Aspect $e <aspect_atom>)
+(Content $e $p)
+(Cause $x $y)
+(Purpose $e $p)
+(Reason $e $p)
+(Result $e $s)
+(Speaker $e $x)
+(Addressee $e $x)
+(Participant $e $x)
+```
+
+Descriptions
+- `Agent`: actor, doer, or effective causer of an event.
+- `Patient`: entity directly affected or undergone.
+- `Theme`: moved, transferred, perceived, or semantically central participant.
+- `Recipient`: receiver in transfer/communication.
+- `Beneficiary`: one for whose benefit the event occurs.
+- `Instrument`: means/tool used in the event.
+- `Experiencer`: experiencer of mental/perceptual/emotional state.
+- `Stimulus`: entity causing the experience or emotion.
+- `Source`: origin in motion, transfer, or derivation.
+- `Goal`: destination/end-point in motion, transfer, or change.
+- `Path`: route traversed.
+- `Location`: place of an event/state, or anchoring location.
+- `Time`: general temporal anchor.
+- `StartTime`: event/state onset.
+- `EndTime`: event/state endpoint.
+- `Manner`: how the event happens.
+- `Frequency`: often/usually/daily-style recurrence marker.
+- `Tense`: typical values include `past`, `present`, `future`.
+- `Aspect`: typical values include `progressive`, `perfect`, `completed`, `ongoing`.
+- `Content`: embedded clause/event/state content.
+- `Cause`: general causal link; may relate event-event, state-event, or proposition-proposition.
+- `Purpose`: intended goal of an event.
+- `Reason`: explanatory/motivational reason.
+- `Result`: resulting state/situation produced by an event.
+- `Speaker`: producer of a speech/report event.
+- `Addressee`: intended hearer/recipient of a speech/directive event.
+- `Participant`: additional participant, useful for collective or reciprocal structures.
+
+----------------------------------------------------------------------
+5.3 Possession, ownership, part-whole, and membership
+----------------------------------------------------------------------
+
+```metta
+(Have $x $y)
+(Own $x $y)
+(BelongTo $x $y)
+(PartOf $x $y)
+(MemberOf $x $y)
+```
+
+Descriptions
+- `Have`: general possession/holding/association.
+- `Own`: stronger ownership relation.
+- `BelongTo`: inverse-style belonging/affiliation.
+- `PartOf`: component-whole relation.
+- `MemberOf`: member-group / element-collection relation.
+
+----------------------------------------------------------------------
+5.4 Spatial configuration and motion-related relations
+----------------------------------------------------------------------
+
+These may relate entity-entity, entity-place, or event-landmark pairs as needed.
+
+```metta
+(In $x $y)
+(On $x $y)
+(At $x $y)
+(Under $x $y)
+(Over $x $y)
+(Above $x $y)
+(Below $x $y)
+(Beside $x $y)
+(Near $x $y)
+(Inside $x $y)
+(Outside $x $y)
+(Between $x $y)
+(Through $x $y)
+(Across $x $y)
+(Around $x $y)
+(Toward $x $y)
+(Behind $x $y)
+(FrontOf $x $y)
+```
+
+Descriptions
+- `In`, `On`, `At`: basic locative relations.
+- `Under`, `Over`, `Above`, `Below`: vertical/topological relations.
+- `Beside`, `Near`, `Between`: proximity/adjacency relations.
+- `Inside`, `Outside`: interior/exterior relation.
+- `Through`, `Across`, `Around`, `Toward`: path/orientation relations, often with an event as first argument.
+- `Behind`, `FrontOf`: frontal orientation relations.
+
+----------------------------------------------------------------------
+5.5 Temporal ordering and discourse linkage
+----------------------------------------------------------------------
+
+```metta
+(Before $x $y)
+(After $x $y)
+(During $x $y)
+(Simultaneous $x $y)
+(Contrast $x $y)
+(Explanation $x $y)
+```
+
+Descriptions
+- `Before`, `After`: temporal ordering between events, states, or times.
+- `During`: containment/overlap of one interval/event within another.
+- `Simultaneous`: co-temporality.
+- `Contrast`: discourse contrast/concession-style link.
+- `Explanation`: explanatory relation between two reified clauses/events/states.
+
+Note
+- Use `Implication` as the canonical template for true conditionals and generic if-then statements.
+- Use `Before` / `After` rather than inventing tense morphology in predicate names.
+
+----------------------------------------------------------------------
+5.6 Modality
+----------------------------------------------------------------------
+
+```metta
+(Can $x $p)
+(May $x $p)
+(Must $x $p)
+(Possible $p)
+(Necessary $p)
+(Permitted $x $p)
+```
+
+Descriptions
+- `Can`: ability/capacity of an agent with respect to content.
+- `May`: permission/possibility licensed for an agent.
+- `Must`: obligation/necessity on an agent.
+- `Possible`: proposition/event is possible.
+- `Necessary`: proposition/event is necessary.
+- `Permitted`: explicit permission relation when separate from `May` is useful.
+
+`$p` should usually be a reified event/state/proposition constant.
+
+----------------------------------------------------------------------
+5.7 Propositional attitudes and intention
+----------------------------------------------------------------------
+
+```metta
+(Believe $x $p)
+(Know $x $p)
+(Want $x $p)
+(Hope $x $p)
+(Intend $x $p)
+```
+
+Descriptions
+- `Believe`: belief attitude toward content.
+- `Know`: knowledge attitude toward content.
+- `Want`: desire toward content.
+- `Hope`: hope toward content.
+- `Intend`: intention/plan toward content.
+
+Use with a reified event/state/proposition in `$p`, or decompose further with `(<AttitudeVerb>Event $e)` plus `Experiencer` and `Content`.
+
+----------------------------------------------------------------------
+5.8 Directives and speech-act force
+----------------------------------------------------------------------
+
+```metta
+(Command $x $y $p)
+(Request $x $y $p)
+(Prohibit $x $y $p)
+```
+
+Descriptions
+- `Command`: speaker `$x` commands addressee `$y` regarding content `$p`.
+- `Request`: speaker `$x` requests addressee `$y` regarding content `$p`.
+- `Prohibit`: speaker `$x` forbids addressee `$y` regarding content `$p`.
+
+These cover imperatives, prohibitions, and directive readings.
+
+----------------------------------------------------------------------
+5.9 Quantity, counting, grouping, and reading type
+----------------------------------------------------------------------
+
+```metta
+(Cardinality $x $n)
+(Quantity $x $n $unit)
+(Collective $e)
+(Distributive $e)
+(Reciprocal $e)
+(Habitual $e)
+```
+
+Descriptions
+- `Cardinality`: explicit count of a group/collection.
+- `Quantity`: measured amount of an entity/substance.
+- `Collective`: event interpreted as joint group action.
+- `Distributive`: event interpreted as individually distributed over participants.
+- `Reciprocal`: event interpreted mutually among participants.
+- `Habitual`: event/schema interpreted as habitual or regular.
+
+Note
+- Exact numeric quantification can also be derived with `FoldAll` / `FoldAllValue` plus `GreaterThan` and `Not`.
+
+----------------------------------------------------------------------
+5.10 Degree, equality, comparison, and ranking
+----------------------------------------------------------------------
+
+```metta
+(Degree $x <scale_atom> <degree_atom>)
+(Equal $x $y)
+(Maximal $x <scale_atom> $context)
+(Minimal $x <scale_atom> $context)
+```
+
+Descriptions
+- `Degree`: intensification or attenuation on a property/manner/scale.
+- `Equal`: explicit asserted equality/equivalence when needed as a custom relation.
+- `Maximal`: superlative/top-ranked item on a given scale within a context/comparison class.
+- `Minimal`: bottom-ranked item on a given scale within a context/comparison class.
+
+Notes
+- Prefer explicit scalar facts plus `GreaterThan` for ordinary comparatives.
+- Use reversed `GreaterThan` for less-than meanings.
+- `Equal` is a custom predicate, not a built-in arithmetic operator.
+
+----------------------------------------------------------------------
+5.11 Focus and alternatives
+----------------------------------------------------------------------
+
+```metta
+(Focus $p $x)
+(Only $x $p)
+(Alternative $alt $option)
+```
+
+Descriptions
+- `Focus`: content/event `$p` focuses constituent `$x`.
+- `Only`: exclusive reading; only `$x` satisfies the focused slot in content `$p`.
+- `Alternative`: reified alternative-set/choice/disjunction structure; `$alt` has option `$option`.
+
+Note
+- There is no built-in `Or`. `Alternative` is the canonical fallback when unresolved alternatives must be stored.
+
+======================================================================
+6. DISTRIBUTION-VALUED PROPOSITION TEMPLATES
+======================================================================
+
+Use these when the proposition is true but the value is uncertain.
+
+6.1 Uncertain scalar property
+```metta
+(<ScalarProperty>Dist $x $d)
+```
+
+6.2 Example shape of the distribution argument
+```metta
+(<ScalarProperty>Dist $x (ParticleFromNormal <mu> <sigma>))
+(<ScalarProperty>Dist $x (FloatDist ((<value1> <prob1>) (<value2> <prob2>) ...)))
+(<ScalarProperty>Dist $x (PointMass <value>))
+```
+
+6.3 Distribution-derived summaries in rules
+```metta
+(MapDist <function> (<ScalarProperty>Dist $x $d) $d -> $outD)
+(Map2Dist <function> (<ScalarProperty>Dist $x $d1) $d1 (<ScalarProperty>Dist $y $d2) $d2 -> $outD)
+(AverageDist (<ScalarProperty>Dist $x $d) $d -> $outD)
+```
+
+======================================================================
+7. PHENOMENA HANDLED BY COMPOSITION, NOT BY EXTRA PREDICATE HEADS
+======================================================================
+
+The following do not require additional primitive relation names:
+
+7.1 Universal quantification / generics
+- Use variables inside `Implication`.
+```metta
+(: <rule-id>
+   (Implication
+      (Premises (<Kind> $x))
+      (Conclusions (<Property> $x)))
+   (STV 1.0 1.0))
+```
+
+7.2 Existential quantification
+- Use witness constants in assertions.
+- Use variables in queries.
+
+7.3 Conjunction
+- Use multiple facts, multiple premises, or multiple conclusions.
+- Do not invent `And`.
+
+7.4 Negation scope
+- Use nested `Not`.
+- Do not treat missing facts as negative facts.
+
+7.5 Questions and wh-phrases
+- Reuse any proposition template inside:
+```metta
+(: $prf <pattern> $tv)
+```
+
+7.6 Pronouns, coreference, reflexives
+- Reuse the same constant for the same referent.
+- Reflexives are ordinary repeated-role assignments.
+- No dedicated coreference predicate is required.
+
+7.7 Passive voice
+- Keep the same semantic roles; do not add a passive-specific primitive.
+
+7.8 Relative clauses and apposition
+- Reuse the same entity constant and add more facts about it.
+- No dedicated relative-clause primitive is required.
+
+7.9 Ellipsis and gapping
+- Recover omitted material upstream, then emit full ordinary predicates.
+
+======================================================================
+8. CANONICAL PRIORITY ORDER
+======================================================================
+
+When multiple encodings are possible, prefer this order:
+
+1. Built-in logical operators:
+   `Implication`, `Premises`, `Conclusions`, `Not`, `GreaterThan`, `Compute`, `FoldAll`, `FoldAllValue`, `MapDist`, `Map2Dist`, `AverageDist`
+
+2. Reified event/state families plus fixed role relations:
+   `(<VerbLemma>Event $e)`, `(<StateLemma>State $s)`, plus `Agent`, `Patient`, `Theme`, etc.
+
+3. Open-class kind/property predicates:
+   `(<Kind> $x)`, `(<Property> $x)`
+
+4. Compact direct lexical predicates only for simple, unmodified clauses:
+   `(<IntransitivePredicate> $x)`, `(<BinaryPredicate> $x $y)`, `(<TernaryPredicate> $x $y $z)`
+
+5. Derived summary predicates only as secondary query aids, not as primitives
+
+======================================================================
+9. MINIMAL CORE INVENTORY TO SHARE ACROSS THE PIPELINE
+======================================================================
+
+If a smaller mandatory closed-class inventory is needed, this is the core set:
+
+```metta
+Name Alias Definite Indefinite Specific Proximal Distal
+Agent Patient Theme Recipient Beneficiary Instrument Experiencer Stimulus
+Source Goal Path Location Time StartTime EndTime Manner Frequency Tense Aspect
+Content Cause Purpose Reason Result Speaker Addressee Participant
+Have Own BelongTo PartOf MemberOf
+In On At Under Over Above Below Beside Near Inside Outside Between Through Across Around Toward Behind FrontOf
+Before After During Simultaneous Contrast Explanation
+Can May Must Possible Necessary Permitted
+Believe Know Want Hope Intend
+Command Request Prohibit
+Cardinality Quantity Collective Distributive Reciprocal Habitual
+Degree Equal Maximal Minimal
+Focus Only Alternative
+```
+
+This closed-class inventory, combined with the open-class lexical families and the built-ins above, is sufficient to cover the listed linguistic phenomena.

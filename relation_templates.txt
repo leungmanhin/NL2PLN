@@ -1,288 +1,599 @@
-Primitive template families below use bare MeTTa syntax. Any lexical noun/adjective/verb can instantiate the generic shells; the predicates listed here are the shared semantic relations and feature markers.
+Canonical primitive relation templates for PeTTaChainer
 
-GENERAL SHELLS
-- `(: <fact-id> (<UnaryPredicate> $x) (STV 1.0 1.0))`
-- `(: <fact-id> (<BinaryPredicate> $x $y) (STV 1.0 1.0))`
-- `(: <fact-id> (<TernaryPredicate> $x $y $z) (STV 1.0 1.0))`
-- `(: <rule-id> (Implication (Premises <premise-1> <premise-2> ...) (Conclusions <conclusion-1> <conclusion-2> ...)) (STV 1.0 1.0))`
-- `(: $prf <pattern> $tv)`
+Legend
+- `<...>` = template slot, not a literal emitted atom
+- `$x`, `$y` = entity variables
+- `$e` = event variable
+- `$s` = state variable
+- `$p` = embedded event/state/proposition variable
+- `$t` = time variable
+- `$n` = numeric/count variable
+- `$d` = distribution variable
+- `$unit` = unit atom
+- Open-class lexical families may instantiate many predicate heads.
+- Closed-class relations below should use the exact predicate names shown.
 
-TRUTH / VALUE CONSTRUCTORS
-- `STV $strength $confidence`
-- `NatDist ((<value> <probability>) ...)`
-- `FloatDist ((<value> <probability>) ...)`
-- `ParticleDist <ref>`
-- `ParticleDist <ref> <scale>`
-- `PointMass <x>`
-- `ParticleFromNormal <mu> <sigma>`
-- `ParticleFromPairs ((<x1> <w1>) (<x2> <w2>) ...)`
+======================================================================
+1. PUBLIC LOGICAL / QUERY SCAFFOLDING
+======================================================================
 
-LOGICAL / COMPUTATIONAL OPERATORS
-- `(: <id> (Not (<Predicate> $x ...)) (STV 1.0 1.0))`
-- `(: <id> (GreaterThan $a $b) (STV 1.0 1.0))`
-- `(: <id> (> $a $b) (STV 1.0 1.0))`
-- `(: <id> (Compute <fn> (<arg1> <arg2> ...) -> $out) (STV 1.0 1.0))`
-- `(: <id> (FoldAll <pattern> <value> <init> <fold-fn> -> $out) (STV 1.0 1.0))`
-- `(: <id> (FoldAllValue <pattern> <init> <fold-fn> -> $out) (STV 1.0 1.0))`
+1.1 Fact / assertion envelope
+```metta
+(: <fact-id> <proposition> (STV <strength> <confidence>))
+```
+Use for asserted facts.
 
-ENTITY / KIND / REFERENCE
-- `(: <id> (Entity $x) (STV 1.0 1.0))`
-- `(: <id> (Event $e) (STV 1.0 1.0))`
-- `(: <id> (State $s) (STV 1.0 1.0))`
-- `(: <id> (Process $p) (STV 1.0 1.0))`
-- `(: <id> (InstanceOf $x $class) (STV 1.0 1.0))`
-- `(: <id> (SubclassOf $sub $sup) (STV 1.0 1.0))`
-- `(: <id> (MemberOf $x $group) (STV 1.0 1.0))`
-- `(: <id> (SameAs $x $y) (STV 1.0 1.0))`
-- `(: <id> (DistinctFrom $x $y) (STV 1.0 1.0))`
-- `(: <id> (NameOf $entity $name) (STV 1.0 1.0))`
-- `(: <id> (AliasOf $entity $alias) (STV 1.0 1.0))`
-- `(: <id> (ReferentialStatus $x Definite) (STV 1.0 1.0))`
-- `(: <id> (ReferentialStatus $x Indefinite) (STV 1.0 1.0))`
-- `(: <id> (ReferentialStatus $x Demonstrative) (STV 1.0 1.0))`
-- `(: <id> (ReferentialStatus $x Specific) (STV 1.0 1.0))`
-- `(: <id> (ReferentialStatus $x DiscourseNew) (STV 1.0 1.0))`
-- `(: <id> (ReferentialStatus $x DiscourseGiven) (STV 1.0 1.0))`
+1.2 Rule envelope
+```metta
+(: <rule-id>
+   (Implication
+      (Premises
+         <premise1>
+         <premise2>
+         ...)
+      (Conclusions
+         <conclusion1>
+         <conclusion2>
+         ...))
+   (STV <strength> <confidence>))
+```
+Use for generics, taxonomic rules, conditionals, and derived summaries.
 
-PROPERTIES / STATES / MODIFIERS
-- `(: <id> (<UnaryPropertyPredicate> $x) (STV 1.0 1.0))`
-- `(: <id> (<RelationalPropertyPredicate> $x $y) (STV 1.0 1.0))`
-- `(: <id> (ModifierOf $modifier $head) (STV 1.0 1.0))`
-- `(: <id> (RelativeClauseOf $clause $head) (STV 1.0 1.0))`
-- `(: <id> (Restricts $modifier $head) (STV 1.0 1.0))`
-- `(: <id> (Describes $modifier $head) (STV 1.0 1.0))`
-- `(: <id> (DegreeOf $x $degree) (STV 1.0 1.0))`
-- `(: <id> (PolarityOf $p Positive) (STV 1.0 1.0))`
-- `(: <id> (PolarityOf $p Negative) (STV 1.0 1.0))`
+1.3 Query envelope
+```metta
+(: $prf <pattern> $tv)
+```
+Use for yes/no and wh-queries. Put variables only in the unknown positions.
 
-EVENTS / THEMATIC ROLES
-- `(: <id> (<VerbPredicate> $e) (STV 1.0 1.0))`
-- `(: <id> (Agent $e $x) (STV 1.0 1.0))`
-- `(: <id> (Patient $e $x) (STV 1.0 1.0))`
-- `(: <id> (Theme $e $x) (STV 1.0 1.0))`
-- `(: <id> (Experiencer $e $x) (STV 1.0 1.0))`
-- `(: <id> (Stimulus $e $x) (STV 1.0 1.0))`
-- `(: <id> (Instrument $e $x) (STV 1.0 1.0))`
-- `(: <id> (Recipient $e $x) (STV 1.0 1.0))`
-- `(: <id> (Beneficiary $e $x) (STV 1.0 1.0))`
-- `(: <id> (Source $e $x) (STV 1.0 1.0))`
-- `(: <id> (Goal $e $x) (STV 1.0 1.0))`
-- `(: <id> (Path $e $x) (STV 1.0 1.0))`
-- `(: <id> (Location $e $x) (STV 1.0 1.0))`
-- `(: <id> (Time $e $t) (STV 1.0 1.0))`
-- `(: <id> (Duration $e $d) (STV 1.0 1.0))`
-- `(: <id> (Manner $e $m) (STV 1.0 1.0))`
-- `(: <id> (Purpose $e $p) (STV 1.0 1.0))`
-- `(: <id> (Cause $cause $effect) (STV 1.0 1.0))`
-- `(: <id> (Effect $cause $effect) (STV 1.0 1.0))`
-- `(: <id> (Result $e $result) (STV 1.0 1.0))`
-- `(: <id> (Content $e $content) (STV 1.0 1.0))`
-- `(: <id> (Speaker $e $x) (STV 1.0 1.0))`
-- `(: <id> (Addressee $e $x) (STV 1.0 1.0))`
-- `(: <id> (Topic $e $x) (STV 1.0 1.0))`
+======================================================================
+2. BUILT-IN LOGICAL / COMPOSITIONAL OPERATORS
+======================================================================
 
-POSSESSION / PART-WHOLE / MEMBERSHIP
-- `(: <id> (Possesses $owner $thing) (STV 1.0 1.0))`
-- `(: <id> (PartOf $part $whole) (STV 1.0 1.0))`
-- `(: <id> (Contains $container $item) (STV 1.0 1.0))`
+These are fixed built-ins, not custom ontology predicates.
 
-SPATIAL RELATIONS
-- `(: <id> (AtLocation $x $place) (STV 1.0 1.0))`
-- `(: <id> (In $x $place) (STV 1.0 1.0))`
-- `(: <id> (On $x $surface) (STV 1.0 1.0))`
-- `(: <id> (Under $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (Over $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (Above $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (Below $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (Beside $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (Near $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (Behind $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (InFrontOf $x $landmark) (STV 1.0 1.0))`
-- `(: <id> (Between $x $a $b) (STV 1.0 1.0))`
-- `(: <id> (Into $x $dest) (STV 1.0 1.0))`
-- `(: <id> (OutOf $x $src) (STV 1.0 1.0))`
-- `(: <id> (Through $x $path) (STV 1.0 1.0))`
-- `(: <id> (Across $x $area) (STV 1.0 1.0))`
-- `(: <id> (Toward $x $goal) (STV 1.0 1.0))`
-- `(: <id> (AwayFrom $x $source) (STV 1.0 1.0))`
-- `(: <id> (Around $x $landmark) (STV 1.0 1.0))`
+2.1 Negation
+```metta
+(Not <proposition>)
+```
+Explicit negation with local scope.
 
-TEMPORAL / TENSE / ASPECT / VOICE
-- `(: <id> (Before $t1 $t2) (STV 1.0 1.0))`
-- `(: <id> (After $t1 $t2) (STV 1.0 1.0))`
-- `(: <id> (During $t1 $t2) (STV 1.0 1.0))`
-- `(: <id> (Overlap $t1 $t2) (STV 1.0 1.0))`
-- `(: <id> (Precedes $e1 $e2) (STV 1.0 1.0))`
-- `(: <id> (Follows $e1 $e2) (STV 1.0 1.0))`
-- `(: <id> (AtTime $e $t) (STV 1.0 1.0))`
-- `(: <id> (StartsAt $e $t) (STV 1.0 1.0))`
-- `(: <id> (EndsAt $e $t) (STV 1.0 1.0))`
-- `(: <id> (Since $e $t) (STV 1.0 1.0))`
-- `(: <id> (Until $e $t) (STV 1.0 1.0))`
-- `(: <id> (TenseOf $e Past) (STV 1.0 1.0))`
-- `(: <id> (TenseOf $e Present) (STV 1.0 1.0))`
-- `(: <id> (TenseOf $e Future) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Progressive) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Perfect) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Perfective) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Imperfective) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Completed) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Ongoing) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Habitual) (STV 1.0 1.0))`
-- `(: <id> (AspectOf $e Iterative) (STV 1.0 1.0))`
-- `(: <id> (VoiceOf $e Active) (STV 1.0 1.0))`
-- `(: <id> (VoiceOf $e Passive) (STV 1.0 1.0))`
+2.2 Conditional / rule structure
+```metta
+(Implication (Premises <premise> ...) (Conclusions <conclusion> ...))
+(Premises <premise1> <premise2> ...)
+(Conclusions <conclusion1> <conclusion2> ...)
+```
+Canonical encoding for if-then structure, universal/generic rules, and derived relations.
 
-QUANTIFICATION / COUNTING / NUMERALS
-- `(: <id> (CountOf $collection $n) (STV 1.0 1.0))`
-- `(: <id> (CardinalityOf $collection $n) (STV 1.0 1.0))`
-- `(: <id> (QuantityOf $entity $n) (STV 1.0 1.0))`
-- `(: <id> (NumericValue $measure $n) (STV 1.0 1.0))`
-- `(: <id> (UnitOf $measure $unit) (STV 1.0 1.0))`
-- `(: <id> (AtLeast $a $b) (STV 1.0 1.0))`
-- `(: <id> (AtMost $a $b) (STV 1.0 1.0))`
-- `(: <id> (Exactly $a $b) (STV 1.0 1.0))`
-- `(: <id> (LessThan $a $b) (STV 1.0 1.0))`
-- `(: <id> (ApproximatelyEqual $a $b) (STV 1.0 1.0))`
-- Universal / generic force is represented by rule form, not a dedicated quantifier operator.
+2.3 Numeric comparison
+```metta
+(GreaterThan <left> <right>)
+```
+Canonical comparison primitive. Use reversed arguments for less-than meanings.
 
-NEGATION / POLARITY
-- `(: <id> (Not (<Predicate> $x ...)) (STV 1.0 1.0))`
-- `(: <id> (PolarityOf $p Positive) (STV 1.0 1.0))`
-- `(: <id> (PolarityOf $p Negative) (STV 1.0 1.0))`
+2.4 Runtime computation
+```metta
+(Compute <function> (<arg1> <arg2> ...) -> $out)
+```
+Use only when a runtime function already exists.
 
-MODALITY
-- `(: <id> (ModalityOf $p $modality) (STV 1.0 1.0))`
-- `(: <id> (ModalityTypeOf $modality Epistemic) (STV 1.0 1.0))`
-- `(: <id> (ModalityTypeOf $modality Deontic) (STV 1.0 1.0))`
-- `(: <id> (ModalityTypeOf $modality Dynamic) (STV 1.0 1.0))`
-- `(: <id> (ModalityForceOf $modality Possible) (STV 1.0 1.0))`
-- `(: <id> (ModalityForceOf $modality Necessary) (STV 1.0 1.0))`
-- `(: <id> (ModalityForceOf $modality Permitted) (STV 1.0 1.0))`
-- `(: <id> (ModalityForceOf $modality Obligatory) (STV 1.0 1.0))`
-- `(: <id> (ModalityForceOf $modality Able) (STV 1.0 1.0))`
+2.5 Aggregation / counting
+```metta
+(FoldAll <pattern> <value> <init> <fold-fn> -> $out)
+(FoldAllValue <pattern> <init> <fold-fn> -> $out)
+```
+Use for counts, totals, and aggregate-derived quantificational facts.
 
-CAUSATION / PURPOSE / CONDITIONALS
-- `(: <id> (Causes $cause $effect) (STV 1.0 1.0))`
-- `(: <id> (CausedBy $effect $cause) (STV 1.0 1.0))`
-- `(: <id> (Enables $cause $effect) (STV 1.0 1.0))`
-- `(: <id> (Prevents $cause $effect) (STV 1.0 1.0))`
-- `(: <id> (PurposeOf $e $goal) (STV 1.0 1.0))`
-- `(: <id> (ReasonFor $e $reason) (STV 1.0 1.0))`
-- `(: <rule-id> (Implication (Premises <antecedent-1> <antecedent-2> ...) (Conclusions <consequent-1> <consequent-2> ...)) (STV 1.0 1.0))`
+2.6 Distribution mapping / aggregation
+```metta
+(MapDist <function> <pattern> $d -> $outD)
+(Map2Dist <function> <patternA> $dA <patternB> $dB -> $outD)
+(AverageDist <pattern> $d -> $outD)
+```
+Use for uncertain values stored as distributions.
 
-COMPARISON / DEGREE / RANKING
-- `(: <id> (GreaterThan $a $b) (STV 1.0 1.0))`
-- `(: <id> (> $a $b) (STV 1.0 1.0))`
-- `(: <id> (LessThan $a $b) (STV 1.0 1.0))`
-- `(: <id> (EqualTo $a $b) (STV 1.0 1.0))`
-- `(: <id> (ComparableTo $a $b $scale) (STV 1.0 1.0))`
-- `(: <id> (ComparativeOf $x $y $scale) (STV 1.0 1.0))`
-- `(: <id> (SuperlativeOf $x $scale $domain) (STV 1.0 1.0))`
+======================================================================
+3. TRUTH / VALUE CONSTRUCTORS
+======================================================================
 
-COORDINATION / DISCOURSE
-- `(: <id> (Sequence $a $b) (STV 1.0 1.0))`
-- `(: <id> (ContrastsWith $a $b) (STV 1.0 1.0))`
-- `(: <id> (Concession $a $b) (STV 1.0 1.0))`
-- `(: <id> (Explains $a $b) (STV 1.0 1.0))`
-- `(: <id> (ElaboratesOn $a $b) (STV 1.0 1.0))`
-- `(: <id> (Alternative $a $b) (STV 1.0 1.0))`
-- `(: <id> (ExclusiveAlternative $a $b) (STV 1.0 1.0))`
-- Conjunction is structural: multiple atoms, multiple premises, or multiple conclusions; no dedicated `And` operator.
+3.1 Truth uncertainty
+```metta
+(STV <strength> <confidence>)
+```
 
-ATTITUDES / COMMUNICATION / EMBEDDED CONTENT
-- `(: <id> (Attitude $a) (STV 1.0 1.0))`
-- `(: <id> (AttitudeTypeOf $a Belief) (STV 1.0 1.0))`
-- `(: <id> (AttitudeTypeOf $a Knowledge) (STV 1.0 1.0))`
-- `(: <id> (AttitudeTypeOf $a Desire) (STV 1.0 1.0))`
-- `(: <id> (AttitudeTypeOf $a Hope) (STV 1.0 1.0))`
-- `(: <id> (AttitudeTypeOf $a Intention) (STV 1.0 1.0))`
-- `(: <id> (Experiencer $a $x) (STV 1.0 1.0))`
-- `(: <id> (Content $a $content) (STV 1.0 1.0))`
-- `(: <id> (Communication $c) (STV 1.0 1.0))`
-- `(: <id> (CommunicationTypeOf $c Say) (STV 1.0 1.0))`
-- `(: <id> (CommunicationTypeOf $c Tell) (STV 1.0 1.0))`
-- `(: <id> (CommunicationTypeOf $c Ask) (STV 1.0 1.0))`
-- `(: <id> (CommunicationTypeOf $c Report) (STV 1.0 1.0))`
-- `(: <id> (CommunicationTypeOf $c Write) (STV 1.0 1.0))`
-- `(: <id> (Speaker $c $x) (STV 1.0 1.0))`
-- `(: <id> (Addressee $c $x) (STV 1.0 1.0))`
-- `(: <id> (Content $c $content) (STV 1.0 1.0))`
+3.2 Value uncertainty constructors
+```metta
+(NatDist ((<value> <probability>) ...))
+(FloatDist ((<value> <probability>) ...))
+(ParticleDist <ref>)
+(ParticleDist <ref> <scale>)
+(PointMass <value>)
+(ParticleFromNormal <mu> <sigma>)
+(ParticleFromPairs ((<value1> <weight1>) (<value2> <weight2>) ...))
+```
 
-QUESTIONS / DIRECTIVES / FOCUS
-- `(: <id> (Question $q) (STV 1.0 1.0))`
-- `(: <id> (QuestionOf $q $content) (STV 1.0 1.0))`
-- `(: <id> (WhTarget $q $x) (STV 1.0 1.0))`
-- `(: <id> (Directive $d) (STV 1.0 1.0))`
-- `(: <id> (DirectiveTypeOf $d Command) (STV 1.0 1.0))`
-- `(: <id> (DirectiveTypeOf $d Request) (STV 1.0 1.0))`
-- `(: <id> (DirectiveTypeOf $d Prohibit) (STV 1.0 1.0))`
-- `(: <id> (DirectiveTypeOf $d Permit) (STV 1.0 1.0))`
-- `(: <id> (Addressee $d $x) (STV 1.0 1.0))`
-- `(: <id> (Content $d $content) (STV 1.0 1.0))`
-- `(: <id> (FocusOf $focus $scope) (STV 1.0 1.0))`
-- `(: <id> (ExclusiveFocusOf $focus $scope) (STV 1.0 1.0))`
+These constructors appear inside propositions, typically in `...Dist` predicates.
 
-COREFERENCE / PRONOUNS / REFLEXIVES / RECIPROCALS
-- `(: <id> (CorefersWith $x $y) (STV 1.0 1.0))`
-- `(: <id> (SameReferentAs $x $y) (STV 1.0 1.0))`
-- `(: <id> (AntecedentOf $antecedent $anaphor) (STV 1.0 1.0))`
-- `(: <id> (AnaphorOf $anaphor $antecedent) (STV 1.0 1.0))`
-- `(: <id> (RefersTo $mention $entity) (STV 1.0 1.0))`
-- `(: <id> (ReciprocalWith $x $y) (STV 1.0 1.0))`
+======================================================================
+4. OPEN-CLASS LEXICAL PREDICATE FAMILIES
+======================================================================
 
-PASSIVE / ALTERNATIONS
-- `(: <id> (VoiceOf $e Passive) (STV 1.0 1.0))`
-- `(: <id> (VoiceOf $e Active) (STV 1.0 1.0))`
-- `(: <id> (SurfaceSubject $e $x) (STV 1.0 1.0))`
-- `(: <id> (SurfaceObject $e $x) (STV 1.0 1.0))`
-- `(: <id> (ByPhrase $e $x) (STV 1.0 1.0))`
-- `(: <id> (DativeShift $e) (STV 1.0 1.0))`
+These are the productive content-predicate families used across domains.
 
-APPOSITION / NAMING / NOMINAL MODIFICATION
-- `(: <id> (AppositiveOf $x $y) (STV 1.0 1.0))`
-- `(: <id> (NameOf $entity $name) (STV 1.0 1.0))`
-- `(: <id> (AliasOf $entity $alias) (STV 1.0 1.0))`
-- `(: <id> (TitleOf $entity $title) (STV 1.0 1.0))`
+4.1 Entity / kind membership
+```metta
+(<Kind> $x)
+```
+Unary class/category membership.
+Examples of the family: `Dog`, `City`, `Person`, `Doctor`.
 
-GENERIC / HABITUAL / FREQUENCY / DISTRIBUTIVE / COLLECTIVE
-- `(: <id> (Habitual $e) (STV 1.0 1.0))`
-- `(: <id> (FrequencyOf $e Often) (STV 1.0 1.0))`
-- `(: <id> (FrequencyOf $e Usually) (STV 1.0 1.0))`
-- `(: <id> (FrequencyOf $e Always) (STV 1.0 1.0))`
-- `(: <id> (FrequencyOf $e Sometimes) (STV 1.0 1.0))`
-- `(: <id> (FrequencyOf $e Never) (STV 1.0 1.0))`
-- `(: <id> (FrequencyOf $e Repeatedly) (STV 1.0 1.0))`
-- `(: <id> (Distributive $e) (STV 1.0 1.0))`
-- `(: <id> (Collective $e) (STV 1.0 1.0))`
-- Generic / kind-level meaning is represented by rule form with variables in `Premises` and `Conclusions`.
+4.2 One-place properties / states
+```metta
+(<Property> $x)
+```
+Unary qualities or states.
+Examples of the family: `Red`, `Fast`, `Hot`, `Friendly`, `Endangered`.
 
-SCOPE / ELLIPSIS / GAP RECOVERY
-- `(: <id> (ScopeOf $operator $scope) (STV 1.0 1.0))`
-- `(: <id> (WideScope $a $b) (STV 1.0 1.0))`
-- `(: <id> (NarrowScope $a $b) (STV 1.0 1.0))`
-- `(: <id> (ElidedFrom $fragment $source) (STV 1.0 1.0))`
-- `(: <id> (RecoveredFrom $fragment $antecedent) (STV 1.0 1.0))`
-- `(: <id> (ParallelTo $a $b) (STV 1.0 1.0))`
-- `(: <id> (SharedMaterialWith $a $b) (STV 1.0 1.0))`
+4.3 Simple intransitive predicate family
+```metta
+(<IntransitivePredicate> $x)
+```
+Compact form for simple unmodified clauses when event reification is unnecessary.
+Examples of the family: `Bark`, `Laugh`, `Arrive`, `Wait`.
 
-MEASUREMENT / AMOUNTS / UNITS
-- `(: <id> (MeasureOf $entity $measure) (STV 1.0 1.0))`
-- `(: <id> (NumericValue $measure $n) (STV 1.0 1.0))`
-- `(: <id> (UnitOf $measure $unit) (STV 1.0 1.0))`
-- `(: <id> (DurationOf $e $duration) (STV 1.0 1.0))`
-- `(: <id> (WeightOf $x $weight) (STV 1.0 1.0))`
-- `(: <id> (HeightOf $x $height) (STV 1.0 1.0))`
+4.4 Simple binary predicate family
+```metta
+(<BinaryPredicate> $x $y)
+```
+Compact form for simple binary relations/events when no extra roles or modifiers are needed.
+Examples of the family: `Own`, `See`, `Read`, `Call`, `Hug`.
 
-DISTRIBUTION / PARTICLE-STORE HELPERS
-- `(MapDist <fn> (<pattern> ... $inDist) $inDist -> $outDist)`
-- `(Map2Dist <fn> (<patternA> ... $distA) $distA (<patternB> ... $distB) $distB -> $outDist)`
-- `(AverageDist (<pattern> ... $inDist) $inDist -> $outDist)`
-- `DistGreaterThanFormula`
-- `DistGreaterThanDistFormula`
-- `ParticleMap`
-- `ParticleMap2`
-- `ParticleAddBernoulliFromSTV`
-- `ParticleStoreCount`
-- `ParticleStoreClear`
-- `ParticleStorePruneKB`
+4.5 Simple ternary predicate family
+```metta
+(<TernaryPredicate> $x $y $z)
+```
+Compact form for simple ditransitives or three-place relations.
+Examples of the family: `Give`, `Tell`, `Put`.
+
+4.6 Reified event type family
+```metta
+(<VerbLemma>Event $e)
+```
+Preferred primitive for complex clauses, modifiers, embedded content, passive alternations, and role-based querying.
+Examples of the family: `CutEvent`, `ReadEvent`, `GiveEvent`, `SayEvent`, `OpenEvent`.
+
+4.7 Reified state/situation type family
+```metta
+(<StateLemma>State $s)
+```
+Use for embedded stative content, resultant states, or reified situations.
+Examples of the family: `LateState`, `ReadyState`, `ClosedState`.
+
+4.8 Explicit scalar/measurement family
+```metta
+(<ScalarProperty> $x $n $unit)
+```
+Numeric property with explicit unit.
+Examples of the family: `Height`, `Weight`, `Duration`, `Length`, `Temperature`.
+
+4.9 Uncertain scalar/measurement family
+```metta
+(<ScalarProperty>Dist $x $d)
+```
+Distribution-valued property.
+Examples of the family: `HeightDist`, `WeightDist`, `AreaDist`.
+
+Note
+- Prefer 4.6/4.7 plus role relations once a clause has modifiers, tense/aspect, embedding, cause, purpose, negation scope, or multiple participants.
+- Derived summary predicates such as `(Cut $a $p)` are useful, but they are not primitive templates.
+
+======================================================================
+5. CLOSED-CLASS SEMANTIC RELATION TEMPLATES
+======================================================================
+
+----------------------------------------------------------------------
+5.1 Reference, naming, definiteness, and deixis
+----------------------------------------------------------------------
+
+```metta
+(Name $x <name_atom>)
+(Alias $x <alias_atom>)
+(Definite $x)
+(Indefinite $x)
+(Specific $x)
+(Proximal $x)
+(Distal $x)
+```
+
+Descriptions
+- `Name`: canonical name or surface name token mapped to an entity.
+- `Alias`: alternate label or nickname.
+- `Definite`: referent treated as discourse-familiar/resolved.
+- `Indefinite`: referent introduced as new/non-familiar.
+- `Specific`: speaker has a particular referent in mind.
+- `Proximal`: this/these-style deixis.
+- `Distal`: that/those-style deixis.
+
+----------------------------------------------------------------------
+5.2 Event/state participant and modifier roles
+----------------------------------------------------------------------
+
+```metta
+(Agent $e $x)
+(Patient $e $x)
+(Theme $e $x)
+(Recipient $e $x)
+(Beneficiary $e $x)
+(Instrument $e $x)
+(Experiencer $e $x)
+(Stimulus $e $x)
+(Source $e $x)
+(Goal $e $x)
+(Path $e $x)
+(Location $e $x)
+(Time $e $t)
+(StartTime $e $t)
+(EndTime $e $t)
+(Manner $e <manner_atom>)
+(Frequency $e <frequency_atom>)
+(Tense $e <tense_atom>)
+(Aspect $e <aspect_atom>)
+(Content $e $p)
+(Cause $x $y)
+(Purpose $e $p)
+(Reason $e $p)
+(Result $e $s)
+(Speaker $e $x)
+(Addressee $e $x)
+(Participant $e $x)
+```
+
+Descriptions
+- `Agent`: actor, doer, or effective causer of an event.
+- `Patient`: entity directly affected or undergone.
+- `Theme`: moved, transferred, perceived, or semantically central participant.
+- `Recipient`: receiver in transfer/communication.
+- `Beneficiary`: one for whose benefit the event occurs.
+- `Instrument`: means/tool used in the event.
+- `Experiencer`: experiencer of mental/perceptual/emotional state.
+- `Stimulus`: entity causing the experience or emotion.
+- `Source`: origin in motion, transfer, or derivation.
+- `Goal`: destination/end-point in motion, transfer, or change.
+- `Path`: route traversed.
+- `Location`: place of an event/state, or anchoring location.
+- `Time`: general temporal anchor.
+- `StartTime`: event/state onset.
+- `EndTime`: event/state endpoint.
+- `Manner`: how the event happens.
+- `Frequency`: often/usually/daily-style recurrence marker.
+- `Tense`: typical values include `past`, `present`, `future`.
+- `Aspect`: typical values include `progressive`, `perfect`, `completed`, `ongoing`.
+- `Content`: embedded clause/event/state content.
+- `Cause`: general causal link; may relate event-event, state-event, or proposition-proposition.
+- `Purpose`: intended goal of an event.
+- `Reason`: explanatory/motivational reason.
+- `Result`: resulting state/situation produced by an event.
+- `Speaker`: producer of a speech/report event.
+- `Addressee`: intended hearer/recipient of a speech/directive event.
+- `Participant`: additional participant, useful for collective or reciprocal structures.
+
+----------------------------------------------------------------------
+5.3 Possession, ownership, part-whole, and membership
+----------------------------------------------------------------------
+
+```metta
+(Have $x $y)
+(Own $x $y)
+(BelongTo $x $y)
+(PartOf $x $y)
+(MemberOf $x $y)
+```
+
+Descriptions
+- `Have`: general possession/holding/association.
+- `Own`: stronger ownership relation.
+- `BelongTo`: inverse-style belonging/affiliation.
+- `PartOf`: component-whole relation.
+- `MemberOf`: member-group / element-collection relation.
+
+----------------------------------------------------------------------
+5.4 Spatial configuration and motion-related relations
+----------------------------------------------------------------------
+
+These may relate entity-entity, entity-place, or event-landmark pairs as needed.
+
+```metta
+(In $x $y)
+(On $x $y)
+(At $x $y)
+(Under $x $y)
+(Over $x $y)
+(Above $x $y)
+(Below $x $y)
+(Beside $x $y)
+(Near $x $y)
+(Inside $x $y)
+(Outside $x $y)
+(Between $x $y)
+(Through $x $y)
+(Across $x $y)
+(Around $x $y)
+(Toward $x $y)
+(Behind $x $y)
+(FrontOf $x $y)
+```
+
+Descriptions
+- `In`, `On`, `At`: basic locative relations.
+- `Under`, `Over`, `Above`, `Below`: vertical/topological relations.
+- `Beside`, `Near`, `Between`: proximity/adjacency relations.
+- `Inside`, `Outside`: interior/exterior relation.
+- `Through`, `Across`, `Around`, `Toward`: path/orientation relations, often with an event as first argument.
+- `Behind`, `FrontOf`: frontal orientation relations.
+
+----------------------------------------------------------------------
+5.5 Temporal ordering and discourse linkage
+----------------------------------------------------------------------
+
+```metta
+(Before $x $y)
+(After $x $y)
+(During $x $y)
+(Simultaneous $x $y)
+(Contrast $x $y)
+(Explanation $x $y)
+```
+
+Descriptions
+- `Before`, `After`: temporal ordering between events, states, or times.
+- `During`: containment/overlap of one interval/event within another.
+- `Simultaneous`: co-temporality.
+- `Contrast`: discourse contrast/concession-style link.
+- `Explanation`: explanatory relation between two reified clauses/events/states.
+
+Note
+- Use `Implication` as the canonical template for true conditionals and generic if-then statements.
+- Use `Before` / `After` rather than inventing tense morphology in predicate names.
+
+----------------------------------------------------------------------
+5.6 Modality
+----------------------------------------------------------------------
+
+```metta
+(Can $x $p)
+(May $x $p)
+(Must $x $p)
+(Possible $p)
+(Necessary $p)
+(Permitted $x $p)
+```
+
+Descriptions
+- `Can`: ability/capacity of an agent with respect to content.
+- `May`: permission/possibility licensed for an agent.
+- `Must`: obligation/necessity on an agent.
+- `Possible`: proposition/event is possible.
+- `Necessary`: proposition/event is necessary.
+- `Permitted`: explicit permission relation when separate from `May` is useful.
+
+`$p` should usually be a reified event/state/proposition constant.
+
+----------------------------------------------------------------------
+5.7 Propositional attitudes and intention
+----------------------------------------------------------------------
+
+```metta
+(Believe $x $p)
+(Know $x $p)
+(Want $x $p)
+(Hope $x $p)
+(Intend $x $p)
+```
+
+Descriptions
+- `Believe`: belief attitude toward content.
+- `Know`: knowledge attitude toward content.
+- `Want`: desire toward content.
+- `Hope`: hope toward content.
+- `Intend`: intention/plan toward content.
+
+Use with a reified event/state/proposition in `$p`, or decompose further with `(<AttitudeVerb>Event $e)` plus `Experiencer` and `Content`.
+
+----------------------------------------------------------------------
+5.8 Directives and speech-act force
+----------------------------------------------------------------------
+
+```metta
+(Command $x $y $p)
+(Request $x $y $p)
+(Prohibit $x $y $p)
+```
+
+Descriptions
+- `Command`: speaker `$x` commands addressee `$y` regarding content `$p`.
+- `Request`: speaker `$x` requests addressee `$y` regarding content `$p`.
+- `Prohibit`: speaker `$x` forbids addressee `$y` regarding content `$p`.
+
+These cover imperatives, prohibitions, and directive readings.
+
+----------------------------------------------------------------------
+5.9 Quantity, counting, grouping, and reading type
+----------------------------------------------------------------------
+
+```metta
+(Cardinality $x $n)
+(Quantity $x $n $unit)
+(Collective $e)
+(Distributive $e)
+(Reciprocal $e)
+(Habitual $e)
+```
+
+Descriptions
+- `Cardinality`: explicit count of a group/collection.
+- `Quantity`: measured amount of an entity/substance.
+- `Collective`: event interpreted as joint group action.
+- `Distributive`: event interpreted as individually distributed over participants.
+- `Reciprocal`: event interpreted mutually among participants.
+- `Habitual`: event/schema interpreted as habitual or regular.
+
+Note
+- Exact numeric quantification can also be derived with `FoldAll` / `FoldAllValue` plus `GreaterThan` and `Not`.
+
+----------------------------------------------------------------------
+5.10 Degree, equality, comparison, and ranking
+----------------------------------------------------------------------
+
+```metta
+(Degree $x <scale_atom> <degree_atom>)
+(Equal $x $y)
+(Maximal $x <scale_atom> $context)
+(Minimal $x <scale_atom> $context)
+```
+
+Descriptions
+- `Degree`: intensification or attenuation on a property/manner/scale.
+- `Equal`: explicit asserted equality/equivalence when needed as a custom relation.
+- `Maximal`: superlative/top-ranked item on a given scale within a context/comparison class.
+- `Minimal`: bottom-ranked item on a given scale within a context/comparison class.
+
+Notes
+- Prefer explicit scalar facts plus `GreaterThan` for ordinary comparatives.
+- Use reversed `GreaterThan` for less-than meanings.
+- `Equal` is a custom predicate, not a built-in arithmetic operator.
+
+----------------------------------------------------------------------
+5.11 Focus and alternatives
+----------------------------------------------------------------------
+
+```metta
+(Focus $p $x)
+(Only $x $p)
+(Alternative $alt $option)
+```
+
+Descriptions
+- `Focus`: content/event `$p` focuses constituent `$x`.
+- `Only`: exclusive reading; only `$x` satisfies the focused slot in content `$p`.
+- `Alternative`: reified alternative-set/choice/disjunction structure; `$alt` has option `$option`.
+
+Note
+- There is no built-in `Or`. `Alternative` is the canonical fallback when unresolved alternatives must be stored.
+
+======================================================================
+6. DISTRIBUTION-VALUED PROPOSITION TEMPLATES
+======================================================================
+
+Use these when the proposition is true but the value is uncertain.
+
+6.1 Uncertain scalar property
+```metta
+(<ScalarProperty>Dist $x $d)
+```
+
+6.2 Example shape of the distribution argument
+```metta
+(<ScalarProperty>Dist $x (ParticleFromNormal <mu> <sigma>))
+(<ScalarProperty>Dist $x (FloatDist ((<value1> <prob1>) (<value2> <prob2>) ...)))
+(<ScalarProperty>Dist $x (PointMass <value>))
+```
+
+6.3 Distribution-derived summaries in rules
+```metta
+(MapDist <function> (<ScalarProperty>Dist $x $d) $d -> $outD)
+(Map2Dist <function> (<ScalarProperty>Dist $x $d1) $d1 (<ScalarProperty>Dist $y $d2) $d2 -> $outD)
+(AverageDist (<ScalarProperty>Dist $x $d) $d -> $outD)
+```
+
+======================================================================
+7. PHENOMENA HANDLED BY COMPOSITION, NOT BY EXTRA PREDICATE HEADS
+======================================================================
+
+The following do not require additional primitive relation names:
+
+7.1 Universal quantification / generics
+- Use variables inside `Implication`.
+```metta
+(: <rule-id>
+   (Implication
+      (Premises (<Kind> $x))
+      (Conclusions (<Property> $x)))
+   (STV 1.0 1.0))
+```
+
+7.2 Existential quantification
+- Use witness constants in assertions.
+- Use variables in queries.
+
+7.3 Conjunction
+- Use multiple facts, multiple premises, or multiple conclusions.
+- Do not invent `And`.
+
+7.4 Negation scope
+- Use nested `Not`.
+- Do not treat missing facts as negative facts.
+
+7.5 Questions and wh-phrases
+- Reuse any proposition template inside:
+```metta
+(: $prf <pattern> $tv)
+```
+
+7.6 Pronouns, coreference, reflexives
+- Reuse the same constant for the same referent.
+- Reflexives are ordinary repeated-role assignments.
+- No dedicated coreference predicate is required.
+
+7.7 Passive voice
+- Keep the same semantic roles; do not add a passive-specific primitive.
+
+7.8 Relative clauses and apposition
+- Reuse the same entity constant and add more facts about it.
+- No dedicated relative-clause primitive is required.
+
+7.9 Ellipsis and gapping
+- Recover omitted material upstream, then emit full ordinary predicates.
+
+======================================================================
+8. CANONICAL PRIORITY ORDER
+======================================================================
+
+When multiple encodings are possible, prefer this order:
+
+1. Built-in logical operators:
+   `Implication`, `Premises`, `Conclusions`, `Not`, `GreaterThan`, `Compute`, `FoldAll`, `FoldAllValue`, `MapDist`, `Map2Dist`, `AverageDist`
+
+2. Reified event/state families plus fixed role relations:
+   `(<VerbLemma>Event $e)`, `(<StateLemma>State $s)`, plus `Agent`, `Patient`, `Theme`, etc.
+
+3. Open-class kind/property predicates:
+   `(<Kind> $x)`, `(<Property> $x)`
+
+4. Compact direct lexical predicates only for simple, unmodified clauses:
+   `(<IntransitivePredicate> $x)`, `(<BinaryPredicate> $x $y)`, `(<TernaryPredicate> $x $y $z)`
+
+5. Derived summary predicates only as secondary query aids, not as primitives
+
+======================================================================
+9. MINIMAL CORE INVENTORY TO SHARE ACROSS THE PIPELINE
+======================================================================
+
+If a smaller mandatory closed-class inventory is needed, this is the core set:
+
+```metta
+Name Alias Definite Indefinite Specific Proximal Distal
+Agent Patient Theme Recipient Beneficiary Instrument Experiencer Stimulus
+Source Goal Path Location Time StartTime EndTime Manner Frequency Tense Aspect
+Content Cause Purpose Reason Result Speaker Addressee Participant
+Have Own BelongTo PartOf MemberOf
+In On At Under Over Above Below Beside Near Inside Outside Between Through Across Around Toward Behind FrontOf
+Before After During Simultaneous Contrast Explanation
+Can May Must Possible Necessary Permitted
+Believe Know Want Hope Intend
+Command Request Prohibit
+Cardinality Quantity Collective Distributive Reciprocal Habitual
+Degree Equal Maximal Minimal
+Focus Only Alternative
+```
+
+This closed-class inventory, combined with the open-class lexical families and the built-ins above, is sufficient to cover the listed linguistic phenomena.
