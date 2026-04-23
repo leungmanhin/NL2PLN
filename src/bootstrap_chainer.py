@@ -13,12 +13,14 @@ NL-to-PLN pipeline in five steps:
   3. Generate NL→logic conversion guidelines (Predict) — systematic
      rules for mapping each phenomenon to the chainer's logic format.
 
-  4. Generate primitive logical relation templates (Predict) — the
-     canonical predicate vocabulary that will be shared across the
-     pipeline to ensure consistency.
+  4. Generate chainer primitives and suggested vocabulary (Predict) —
+     split into two outputs: the real chainer primitives (with semantic
+     backing in the chainer's evaluation engine) vs. open-class/closed-
+     class vocabulary (naming suggestions for the LLM, not primitives).
 
   5. Assemble final conversion instructions (deterministic) — concatenates
-     the chainer analysis, guidelines, and templates into instructions.md.
+     the chainer analysis, primitives, guidelines, and vocabulary into
+     instructions.md.
 
 Step 1 uses RLM (Recursive LM, requires Deno) to explore the chainer
 source code via iterative code execution.  Steps 2-4 use dspy.Predict
@@ -51,7 +53,8 @@ _DEFAULTS = {
     "analysis": _PROJECT_ROOT / "chainer_analysis.txt",
     "phenomena": _PROJECT_ROOT / "linguistic_phenomena.txt",
     "guidelines": _PROJECT_ROOT / "conversion_guidelines.txt",
-    "templates": _PROJECT_ROOT / "relation_templates.txt",
+    "primitives": _PROJECT_ROOT / "chainer_primitives.txt",
+    "vocabulary": _PROJECT_ROOT / "suggested_vocabulary.txt",
     "instructions": _PROJECT_ROOT / "instructions.md",
 }
 
@@ -370,33 +373,43 @@ class ConversionGuidelinesSignature(dspy.Signature):
 
 
 # ---------------------------------------------------------------------------
-# Step 4: Generate relation templates
+# Step 4: Generate chainer primitives + suggested vocabulary
 # ---------------------------------------------------------------------------
 
 class RelationTemplatesSignature(dspy.Signature):
     """
-    You are designing PRIMITIVE LOGICAL RELATION TEMPLATES for a semantic
-    parsing pipeline that converts natural language to logical expressions.
+    You are producing TWO separate bodies of content for a semantic parsing
+    pipeline that converts natural language to logical expressions against
+    a specific chainer/reasoner.
 
-    You are given:
-    1. A complete analysis of the chainer's syntax and capabilities
-    2. A list of linguistic phenomena to cover
-    3. Conversion guidelines
+    The distinction between the two outputs is CRITICAL and must be
+    preserved — conflating them causes downstream LLMs to treat
+    vocabulary-style suggestions as if they were chainer primitives, which
+    produces KB facts the reasoner cannot unify or chain through.
 
-    Produce a comprehensive set of PRIMITIVE LOGICAL RELATION TEMPLATES
-    — general-purpose building blocks that, individually or in combination,
-    are expressive enough to handle every phenomenon from the phenomena
-    list.  These templates define the canonical predicate vocabulary that
-    will be shared across the entire pipeline to ensure consistency.
+    1. chainer_primitives:
+       The REAL primitives documented in the chainer analysis — query
+       scaffolding, built-in operators, truth-value constructors, and any
+       other constructs that have SEMANTIC BACKING in the chainer's
+       evaluation engine. Names listed here will be used VERBATIM by
+       downstream LLMs, and the reasoner will apply meaning to them during
+       proof search. Include only what the chainer analysis documents as a
+       built-in or operational construct.
 
-    All templates MUST:
-    - Use the exact syntax from the chainer analysis
-    - Follow the naming conventions from the conversion guidelines
-    - Be general-purpose (not domain-specific) so they can combine to
-      cover a wide range of linguistic phenomena
-    - Be organized by category with clear descriptions
+    2. suggested_vocabulary:
+       Open-class predicate template families AND closed-class canonical
+       relation names for domain concepts (e.g., canonical names for
+       thematic roles, spatial relations, temporal relations, modality,
+       propositional attitudes, etc.). These are NAMING SUGGESTIONS for
+       the LLM to maintain consistency across translations. They do NOT
+       have chainer semantics unless the chainer analysis explicitly
+       documents them as primitives. Mark this clearly with a preamble
+       in the output.
 
-    Output as structured plain text.
+    Organize each output with clear section headers. Use the exact syntax
+    from the chainer analysis. Be general-purpose (not domain-specific)
+    so the templates can combine to cover the full phenomena list. Both
+    outputs must be plain text.
     """
     chainer_analysis: str = dspy.InputField(
         desc="Complete analysis of the chainer's syntax and capabilities"
@@ -407,9 +420,17 @@ class RelationTemplatesSignature(dspy.Signature):
     conversion_guidelines: str = dspy.InputField(
         desc="Systematic conversion rules (naming, decomposition, etc.)"
     )
-    relation_templates: str = dspy.OutputField(
-        desc="Comprehensive set of primitive logical relation templates, "
-             "organized by category.  Plain text format."
+    chainer_primitives: str = dspy.OutputField(
+        desc="The real chainer primitives — query scaffolding, built-in "
+             "operators, truth-value constructors — that have semantic "
+             "backing in the chainer.  Use these verbatim.  Plain text, "
+             "organized by category."
+    )
+    suggested_vocabulary: str = dspy.OutputField(
+        desc="Open-class predicate template families and closed-class "
+             "canonical relation names for domain concepts.  NAMING "
+             "SUGGESTIONS only, NOT chainer primitives.  Include a clear "
+             "preamble stating this.  Plain text, organized by category."
     )
 
 
@@ -418,8 +439,9 @@ class RelationTemplatesSignature(dspy.Signature):
 # ---------------------------------------------------------------------------
 
 def _assemble_instructions(chainer_analysis: str, conversion_guidelines: str,
-                           relation_templates: str) -> str:
-    """Concatenate the three artifacts into a single instruction document."""
+                           chainer_primitives: str,
+                           suggested_vocabulary: str) -> str:
+    """Concatenate all four artifacts into a single instruction document."""
     return (
         "# NL to logic conversion instructions\n\n"
         "You are converting English natural language (sentences or questions) "
@@ -427,11 +449,14 @@ def _assemble_instructions(chainer_analysis: str, conversion_guidelines: str,
         "## Chainer syntax reference\n\n"
         + chainer_analysis
         + "\n\n---\n\n"
+        "## Chainer primitives\n\n"
+        + chainer_primitives
+        + "\n\n---\n\n"
         "## Conversion guidelines\n\n"
         + conversion_guidelines
         + "\n\n---\n\n"
-        "## Relation templates\n\n"
-        + relation_templates
+        "## Suggested vocabulary\n\n"
+        + suggested_vocabulary
     )
 
 
@@ -440,19 +465,22 @@ def _assemble_instructions(chainer_analysis: str, conversion_guidelines: str,
 # ---------------------------------------------------------------------------
 
 def _run_step4(chainer_analysis: str, linguistic_phenomena: str,
-               conversion_guidelines: str) -> str:
+               conversion_guidelines: str) -> tuple[str, str]:
     """
-    Generate primitive logical relation templates.
-    Returns relation_templates string.
+    Generate the two template outputs (chainer primitives + suggested
+    vocabulary).  Returns them as a (primitives, vocabulary) pair.
     """
-    print("  Generating relation templates ...")
-    templates = dspy.Predict(RelationTemplatesSignature)(
+    print("  Generating chainer primitives + suggested vocabulary ...")
+    result = dspy.Predict(RelationTemplatesSignature)(
         chainer_analysis=chainer_analysis,
         linguistic_phenomena=linguistic_phenomena,
         conversion_guidelines=conversion_guidelines,
-    ).relation_templates
-    print(f"  Generated ({len(templates):,} chars)")
-    return templates
+    )
+    primitives = result.chainer_primitives
+    vocabulary = result.suggested_vocabulary
+    print(f"  Generated primitives ({len(primitives):,} chars), "
+          f"vocabulary ({len(vocabulary):,} chars)")
+    return primitives, vocabulary
 
 
 # ---------------------------------------------------------------------------
@@ -489,7 +517,8 @@ def main():
     parser.add_argument("--output-analysis", default=str(_DEFAULTS["analysis"]))
     parser.add_argument("--output-phenomena", default=str(_DEFAULTS["phenomena"]))
     parser.add_argument("--output-guidelines", default=str(_DEFAULTS["guidelines"]))
-    parser.add_argument("--output-templates", default=str(_DEFAULTS["templates"]))
+    parser.add_argument("--output-primitives", default=str(_DEFAULTS["primitives"]))
+    parser.add_argument("--output-vocabulary", default=str(_DEFAULTS["vocabulary"]))
     parser.add_argument("--output-instructions", default=str(_DEFAULTS["instructions"]))
     parser.add_argument(
         "--log-level",
@@ -578,7 +607,8 @@ def main():
         "analysis": pathlib.Path(args.output_analysis),
         "phenomena": pathlib.Path(args.output_phenomena),
         "guidelines": pathlib.Path(args.output_guidelines),
-        "templates": pathlib.Path(args.output_templates),
+        "primitives": pathlib.Path(args.output_primitives),
+        "vocabulary": pathlib.Path(args.output_vocabulary),
         "instructions": pathlib.Path(args.output_instructions),
     }
 
@@ -595,7 +625,8 @@ def main():
     if from_step >= 4:
         ctx["conversion_guidelines"] = _load_text(paths["guidelines"], "conversion_guidelines")
     if from_step >= 5:
-        ctx["relation_templates"] = _load_text(paths["templates"], "relation_templates")
+        ctx["chainer_primitives"] = _load_text(paths["primitives"], "chainer_primitives")
+        ctx["suggested_vocabulary"] = _load_text(paths["vocabulary"], "suggested_vocabulary")
 
     # =================================================================
     # Step 1: Analyze chainer (RLM)
@@ -645,18 +676,21 @@ def main():
         _save_text(paths["guidelines"], ctx["conversion_guidelines"])
 
     # =================================================================
-    # Step 4: Generate relation templates
+    # Step 4: Generate chainer primitives + suggested vocabulary
     # =================================================================
     if from_step <= 4:
         print("\n" + "=" * 60)
-        print("Step 4: Generating primitive logical relation templates ...")
+        print("Step 4: Generating chainer primitives + suggested vocabulary ...")
 
-        ctx["relation_templates"] = _run_step4(
+        primitives, vocabulary = _run_step4(
             chainer_analysis=ctx["chainer_analysis"],
             linguistic_phenomena=ctx["linguistic_phenomena"],
             conversion_guidelines=ctx["conversion_guidelines"],
         )
-        _save_text(paths["templates"], ctx["relation_templates"])
+        ctx["chainer_primitives"] = primitives
+        ctx["suggested_vocabulary"] = vocabulary
+        _save_text(paths["primitives"], ctx["chainer_primitives"])
+        _save_text(paths["vocabulary"], ctx["suggested_vocabulary"])
 
     # =================================================================
     # Step 5: Assemble final instructions (deterministic, no LLM)
@@ -668,7 +702,8 @@ def main():
         instructions = _assemble_instructions(
             chainer_analysis=ctx["chainer_analysis"],
             conversion_guidelines=ctx["conversion_guidelines"],
-            relation_templates=ctx["relation_templates"],
+            chainer_primitives=ctx["chainer_primitives"],
+            suggested_vocabulary=ctx["suggested_vocabulary"],
         )
         _save_text(paths["instructions"], instructions)
 
@@ -680,7 +715,7 @@ def main():
     for name, path in paths.items():
         exists = "✓" if path.exists() else " "
         print(f"  [{exists}] {path}")
-    print("\nThe relation templates are baked into the instructions file.")
+    print("\nThe primitives and suggested vocabulary are baked into the instructions file.")
     print("Review it, then run the optimizer.")
 
 

@@ -1,118 +1,17 @@
-Canonical primitive relation templates for PeTTaChainer
+# Suggested vocabulary for PeTTaChainer (NAMING SUGGESTIONS, NOT PRIMITIVES)
 
-Legend
-- `<...>` = template slot, not a literal emitted atom
-- `$x`, `$y` = entity variables
-- `$e` = event variable
-- `$s` = state variable
-- `$p` = embedded event/state/proposition variable
-- `$t` = time variable
-- `$n` = numeric/count variable
-- `$d` = distribution variable
-- `$unit` = unit atom
-- Open-class lexical families may instantiate many predicate heads.
-- Closed-class relations below should use the exact predicate names shown.
+These are open-class predicate template families and closed-class
+semantic relation names for domain concepts.  They are NAMING SUGGESTIONS
+for the LLM to maintain consistency across translations.
 
-======================================================================
-1. PUBLIC LOGICAL / QUERY SCAFFOLDING
-======================================================================
+IMPORTANT: unlike the content of chainer_primitives.txt, the names listed
+here do NOT have semantic backing in the chainer.  The chainer cannot
+derive conclusions via these names unless explicit rules are added to the
+KB.  Use these for naming consistency; use chainer_primitives.txt for
+anything that needs to drive proofs.
 
-1.1 Fact / assertion envelope
-```metta
-(: <fact-id> <proposition> (STV <strength> <confidence>))
-```
-Use for asserted facts.
-
-1.2 Rule envelope
-```metta
-(: <rule-id>
-   (Implication
-      (Premises
-         <premise1>
-         <premise2>
-         ...)
-      (Conclusions
-         <conclusion1>
-         <conclusion2>
-         ...))
-   (STV <strength> <confidence>))
-```
-Use for generics, taxonomic rules, conditionals, and derived summaries.
-
-1.3 Query envelope
-```metta
-(: $prf <pattern> $tv)
-```
-Use for yes/no and wh-queries. Put variables only in the unknown positions.
-
-======================================================================
-2. BUILT-IN LOGICAL / COMPOSITIONAL OPERATORS
-======================================================================
-
-These are fixed built-ins, not custom ontology predicates.
-
-2.1 Negation
-```metta
-(Not <proposition>)
-```
-Explicit negation with local scope.
-
-2.2 Conditional / rule structure
-```metta
-(Implication (Premises <premise> ...) (Conclusions <conclusion> ...))
-(Premises <premise1> <premise2> ...)
-(Conclusions <conclusion1> <conclusion2> ...)
-```
-Canonical encoding for if-then structure, universal/generic rules, and derived relations.
-
-2.3 Numeric comparison
-```metta
-(GreaterThan <left> <right>)
-```
-Canonical comparison primitive. Use reversed arguments for less-than meanings.
-
-2.4 Runtime computation
-```metta
-(Compute <function> (<arg1> <arg2> ...) -> $out)
-```
-Use only when a runtime function already exists.
-
-2.5 Aggregation / counting
-```metta
-(FoldAll <pattern> <value> <init> <fold-fn> -> $out)
-(FoldAllValue <pattern> <init> <fold-fn> -> $out)
-```
-Use for counts, totals, and aggregate-derived quantificational facts.
-
-2.6 Distribution mapping / aggregation
-```metta
-(MapDist <function> <pattern> $d -> $outD)
-(Map2Dist <function> <patternA> $dA <patternB> $dB -> $outD)
-(AverageDist <pattern> $d -> $outD)
-```
-Use for uncertain values stored as distributions.
-
-======================================================================
-3. TRUTH / VALUE CONSTRUCTORS
-======================================================================
-
-3.1 Truth uncertainty
-```metta
-(STV <strength> <confidence>)
-```
-
-3.2 Value uncertainty constructors
-```metta
-(NatDist ((<value> <probability>) ...))
-(FloatDist ((<value> <probability>) ...))
-(ParticleDist <ref>)
-(ParticleDist <ref> <scale>)
-(PointMass <value>)
-(ParticleFromNormal <mu> <sigma>)
-(ParticleFromPairs ((<value1> <weight1>) (<value2> <weight2>) ...))
-```
-
-These constructors appear inside propositions, typically in `...Dist` predicates.
+For the actual chainer primitives (operators, truth-value constructors,
+query scaffolding) see chainer_primitives.txt and chainer_analysis.txt.
 
 ======================================================================
 4. OPEN-CLASS LEXICAL PREDICATE FAMILIES
