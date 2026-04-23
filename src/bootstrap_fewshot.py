@@ -117,6 +117,9 @@ def main():
     dataset = build_examples_from_file(args.dataset)
     print(f"  Loaded {len(dataset)} training examples from {args.dataset}")
 
+    import random
+    random.Random(21).shuffle(dataset)
+
     module = NL2PLNModule()
     if args.input:
         input_path = Path(args.input)
