@@ -22,8 +22,8 @@ def parse_args():
                    help="LiteLLM model id used for both task LM and SIMBA's prompt-candidate LM")
     p.add_argument("--reasoning-effort", default="high",
                    help="Reasoning effort for reasoning-capable models: none, low, medium, high, xhigh")
-    p.add_argument("--dataset", default="data/all.json",
-                   help="Path to dataset JSON")
+    p.add_argument("--dataset", default="data/generated.json",
+                   help="Training dataset path (default: bootstrap-generated training data)")
     p.add_argument("--num-threads", type=int, default=10,
                    help="Parallel LM calls during optimization")
     p.add_argument("--bsize", type=int, default=8,
@@ -34,9 +34,17 @@ def parse_args():
                    help="Trajectories sampled per example per batch (also caps candidates built per batch)")
     p.add_argument("--max-demos", type=int, default=4,
                    help="Maximum few-shot demos per predictor; oldest are probabilistically dropped beyond this")
-    p.add_argument("--input", default="programs/simba_all2_gepa.json",
+    p.add_argument("--seed", type=int, default=21,
+                   help="Random seed for trainset shuffle (matches bootstrap_fewshot.py / mipro.py)")
+    p.add_argument("--instruction-file", default="instructions.md",
+                   help="File whose contents become the signature instruction "
+                        "(empty string to use the baseline NL2PLNSignature instruction)")
+    p.add_argument("--pln-spec-file", default="chainer_analysis.txt",
+                   help="File whose contents become the pln_spec input value "
+                        "(empty string to use PeTTaChainer's default LLM_RULE_SPEC.md)")
+    p.add_argument("--input", default=None,
                    help="Optional checkpoint to resume from; ignored silently if the file does not exist")
-    p.add_argument("--output", default="programs/simba_all.json",
+    p.add_argument("--output", default="programs/simba.json",
                    help="Where to save the optimized program")
     return p.parse_args()
 
@@ -57,14 +65,48 @@ def main():
             log_traces_from_compile=True  # Track program traces during optimization
         )
 
+    # Override pln_spec from file if requested. NL2PLNModule.forward() reads
+    # `pln_spec` from the module-level constant in nl2pln.py, so monkey-patching
+    # that attribute changes what every subsequent .forward() call sees.
+    if args.pln_spec_file:
+        pln_spec_path = Path(args.pln_spec_file)
+        if pln_spec_path.exists():
+            new_spec = pln_spec_path.read_text(encoding="utf-8")
+            import nl2pln
+            nl2pln.pln_spec = new_spec
+            print(f"  Overrode pln_spec from {pln_spec_path} ({len(new_spec):,} chars)")
+        else:
+            logger.warning("pln_spec file %s not found; using default", pln_spec_path)
+
     dataset = build_examples_from_file(args.dataset)
+    print(f"  Loaded {len(dataset)} training examples from {args.dataset}")
+
+    # Shuffle so SIMBA's mini-batch iteration sees phenomenon-diverse samples
+    # rather than clustering on the first few phenomena from the dataset.
+    import random
+    random.Random(args.seed).shuffle(dataset)
 
     module = NL2PLNModule()
-    checkpoint_path = Path(args.input)
-    if checkpoint_path.exists():
-        module.load(str(checkpoint_path))
-    else:
-        logger.info("No checkpoint found at %s; training from uninitialized module.", checkpoint_path)
+    if args.input:
+        input_path = Path(args.input)
+        if input_path.exists():
+            module.load(str(input_path))
+            print(f"  Loaded checkpoint from {input_path}")
+        else:
+            logger.info("No checkpoint found at %s; training from uninitialized module.", input_path)
+
+    # Override the signature instruction from file if requested. DSPy 3.2's
+    # ChainOfThought doesn't expose .signature directly; iterate via
+    # named_predictors() to reach the underlying Predict objects that do.
+    if args.instruction_file:
+        instr_path = Path(args.instruction_file)
+        if instr_path.exists():
+            new_instruction = instr_path.read_text(encoding="utf-8")
+            for _, predictor in module.named_predictors():
+                predictor.signature = predictor.signature.with_instructions(new_instruction)
+            print(f"  Overrode instruction from {instr_path} ({len(new_instruction):,} chars)")
+        else:
+            logger.warning("instruction file %s not found; using default", instr_path)
 
     teleprompter = SIMBA(
         metric=difficulty_metric,
@@ -76,11 +118,28 @@ def main():
         num_threads=args.num_threads,
     )
 
-    module = teleprompter.compile(module, trainset=dataset)
-
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    module.save(str(output_path))
+
+    # Wrap compile() so that an uncaught exception still leaves a saved
+    # snapshot.  Whether SIMBA mutates the module in place or returns a fresh
+    # one varies with internals; this at least preserves the loaded starting
+    # state plus any in-place mutations applied before the crash, which is
+    # better than losing everything (which is what bit the prior MIPROv2 run).
+    compile_succeeded = False
+    try:
+        module = teleprompter.compile(module, trainset=dataset)
+        compile_succeeded = True
+    finally:
+        try:
+            module.save(str(output_path))
+            if compile_succeeded:
+                print(f"  Saved optimized program to {output_path}")
+            else:
+                print(f"  CRASH-SAVE: wrote partial/pre-crash module state to {output_path}")
+        except Exception as save_err:
+            # Don't mask the original exception; just report save failure
+            print(f"  CRASH-SAVE FAILED: {save_err}")
 
 
 if __name__ == "__main__":
