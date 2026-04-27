@@ -235,6 +235,20 @@ class ConversionGuidelinesSignature(dspy.Signature):
 
     Produce CONVERSION GUIDELINES — systematic rules for mapping each
     linguistic phenomenon to the chainer's logic format.
+
+    Scope and conciseness:
+    - Do NOT re-document the chainer's syntax, built-in operators, or
+      truth-value forms — those are documented in the chainer_analysis
+      input.  Your job is the MAPPING from English to the chainer's
+      logic, not a restatement of what the chainer is.  You may
+      reference primitives by name and use them in worked examples,
+      but do not re-enumerate them.
+    - Be terse where a rule is self-evident or follows from the
+      chainer analysis; spend detail only where the rule is non-
+      obvious or counter to an LLM's default tendencies (e.g.,
+      predicate atomicity, rule-vs-query separation, query
+      granularity).
+
     Cover at minimum:
 
     - Naming conventions: how to derive predicate names from English
@@ -291,7 +305,11 @@ class ConversionGuidelinesSignature(dspy.Signature):
       the predicate string and the reasoner has nothing further to do.
 
       Your conversion guidelines MUST dedicate a section to predicate
-      atomicity with concrete BAD → GOOD contrastive examples.
+      atomicity with EXACTLY 4 BAD → GOOD contrastive examples — one
+      per anti-pattern category listed above (numbers/cardinalities
+      embedded in name; thresholds embedded in name; multi-concept
+      concatenation; entity-specific comparisons fused into name).
+      Do not produce additional examples beyond the 4 categories.
       Synthesize the examples yourself by reverse-engineering plausible
       English constructions against the chainer's documented primitives;
       do not rely on canned templates, and do not reuse examples from
@@ -320,9 +338,10 @@ class ConversionGuidelinesSignature(dspy.Signature):
       form into the query position, asking the reasoner to prove the
       rule itself rather than to use it. Wherever the chainer analysis
       documents this distinction, the guidelines must state the
-      rule-vs-query separation explicitly, with contrastive BAD → GOOD
-      examples synthesized from the chainer's documented surface
-      forms. (If the chainer permits querying rule forms directly or
+      rule-vs-query separation explicitly, with one contrastive
+      BAD → GOOD example synthesized from the chainer's documented
+      surface forms (add more only if a second anti-pattern requires
+      a distinct positive form). (If the chainer permits querying rule forms directly or
       uses identical syntax for rules and queries, follow whatever the
       chainer analysis specifies.)
 
@@ -342,14 +361,35 @@ class ConversionGuidelinesSignature(dspy.Signature):
 
       If the chainer analysis indicates queries have distinct
       granularity conventions from statements, articulate that
-      asymmetry in the guidelines with contrastive BAD → GOOD examples
-      synthesized from the chainer analysis.
+      asymmetry in the guidelines with one contrastive BAD → GOOD
+      example synthesized from the chainer analysis (add more only
+      if a second anti-pattern requires a distinct positive form).
 
     - When to use built-in operators vs. custom predicates
     - Variable naming conventions
     - Truth value assignment strategies
-    - How to handle each linguistic phenomenon category from the
-      phenomena list
+    - Phenomenon-specific mapping notes: address ONLY those
+      phenomena whose mapping requires non-default treatment, has a
+      counterintuitive pitfall, or needs vocabulary the general
+      rules don't determine.  For phenomena handled correctly by
+      the general rules above (atomicity, decomposition, query
+      semantics, naming), do NOT produce a per-phenomenon
+      subsection — a single sentence saying "apply general rules"
+      or omission is preferred.  The phenomena list is for
+      awareness, not exhaustive enumeration.
+
+      When a phenomenon DOES warrant its own note, write the note
+      as TEXT-ONLY guidance — name the canonical predicates to use
+      (referenced by name), describe the structural pattern in
+      prose.  Do NOT include worked metta-block examples in this
+      section: those are exactly what an optimizer's demos will
+      provide authoritatively from real successful trajectories,
+      and bootstrap-imagined worked examples here may conflict with
+      the names the optimizer eventually settles on.  Worked metta
+      examples remain appropriate ONLY in the BAD → GOOD anti-
+      pattern sections (atomicity, rule-vs-query, query-
+      granularity), where the negative signal is something demos
+      cannot teach.
 
     These guidelines will be used as a "style guide" to ensure
     consistency across all semantically parsed sentences.
@@ -406,6 +446,40 @@ class RelationTemplatesSignature(dspy.Signature):
        documents them as primitives. Mark this clearly with a preamble
        in the output.
 
+    Scope, conciseness, and anti-overlap:
+    - chainer_primitives is a quick-reference cheat sheet, not a re-
+      derivation of chainer_analysis.  Show each primitive's canonical
+      form with a one-line usage note; defer full semantics to
+      chainer_analysis.
+    - suggested_vocabulary is a NAMES-FIRST glossary, not a tutorial.
+      List canonical names grouped by semantic category.  Add a one-
+      line description ONLY when the name is ambiguous or non-obvious
+      (e.g., the Theme vs. Patient distinction is worth a line;
+      Speaker is not).  Do NOT include worked examples or prose
+      explanations of how to use these names — that belongs in
+      conversion_guidelines.
+    - Do NOT include sections describing how phenomena are handled by
+      composition, decomposition, or the chainer's general rules —
+      those are conversion_guidelines' responsibility.  This artifact
+      answers "WHICH NAME should I use for X?", not "HOW do I encode
+      X?"
+    - Both outputs must be SELF-CONTAINED: do not number sections in a
+      way that implies cross-document ordering across the two outputs,
+      and do not assume any other artifact is present in the same
+      context.
+
+    Closed-class subsection format (mandatory for closed-class
+    semantic relation categories — thematic roles, spatial relations,
+    temporal relations, modality, attitudes, etc.).  Use this exact
+    shape per category:
+
+      <category name>
+        `(Name1 args)` `(Name2 args)` ... [list of canonical names]
+        Disambiguation notes (only where names are confusable):
+        - Name1 vs Name2: [one line]
+
+    No per-name description blocks for self-descriptive names.
+
     Organize each output with clear section headers. Use the exact syntax
     from the chainer analysis. Be general-purpose (not domain-specific)
     so the templates can combine to cover the full phenomena list. Both
@@ -438,25 +512,41 @@ class RelationTemplatesSignature(dspy.Signature):
 # Step 5: Assemble final instructions (deterministic, no LLM)
 # ---------------------------------------------------------------------------
 
-def _assemble_instructions(chainer_analysis: str, conversion_guidelines: str,
+def _assemble_instructions(conversion_guidelines: str,
                            chainer_primitives: str,
                            suggested_vocabulary: str) -> str:
-    """Concatenate all four artifacts into a single instruction document."""
+    """
+    Concatenate three artifacts into instructions.md.
+
+    chainer_analysis is intentionally NOT included here — it is the
+    chainer-agnostic counterpart of PeTTaChainer's LLM_RULE_SPEC.md /
+    LANGUAGE_SPEC.md and is meant to flow into NL2PLNModule's `pln_spec`
+    input field at deployment time, occupying a distinct semantic slot
+    from the rules in this file (and avoiding token duplication when
+    both flow into the same LM call).
+    """
     return (
         "# NL to logic conversion instructions\n\n"
         "You are converting English natural language (sentences or questions) "
-        "into logical expressions (statements or queries) for a chainer/reasoner.\n\n"
-        "## Chainer syntax reference\n\n"
-        + chainer_analysis
-        + "\n\n---\n\n"
-        "## Chainer primitives\n\n"
+        "into logical expressions (statements or queries) for a chainer/reasoner.  "
+        "The chainer's syntax and semantics reference is provided separately as "
+        "the `pln_spec` input (see `chainer_analysis.txt`).\n\n"
+        "## Chainer primitives\n"
+        "*Quick-reference cheat sheet of names with semantic backing.  "
+        "Use these names verbatim wherever a primitive is needed.*\n\n"
         + chainer_primitives
         + "\n\n---\n\n"
-        "## Conversion guidelines\n\n"
-        + conversion_guidelines
-        + "\n\n---\n\n"
-        "## Suggested vocabulary\n\n"
+        "## Suggested vocabulary\n"
+        "*Naming suggestions for non-primitive concepts (thematic roles, "
+        "spatial/temporal relations, etc.).  Use for consistency across "
+        "translations; these names do NOT have chainer semantics unless "
+        "explicit rules are added to the KB.*\n\n"
         + suggested_vocabulary
+        + "\n\n---\n\n"
+        "## Conversion guidelines\n"
+        "*Mapping rules from English to the chainer's logic.  Apply these "
+        "patterns; cross-reference the vocabulary above for canonical names.*\n\n"
+        + conversion_guidelines
     )
 
 
@@ -700,7 +790,6 @@ def main():
         print("Step 5: Assembling conversion instructions ...")
 
         instructions = _assemble_instructions(
-            chainer_analysis=ctx["chainer_analysis"],
             conversion_guidelines=ctx["conversion_guidelines"],
             chainer_primitives=ctx["chainer_primitives"],
             suggested_vocabulary=ctx["suggested_vocabulary"],
@@ -715,8 +804,11 @@ def main():
     for name, path in paths.items():
         exists = "✓" if path.exists() else " "
         print(f"  [{exists}] {path}")
-    print("\nThe primitives and suggested vocabulary are baked into the instructions file.")
-    print("Review it, then run the optimizer.")
+    print("\nThe primitives, suggested vocabulary, and conversion guidelines")
+    print("are baked into instructions.md.  For deployment, pass instructions.md")
+    print("as the signature instruction AND chainer_analysis.txt separately as")
+    print("the NL2PLNModule pln_spec input (e.g. via --pln-spec-file).")
+    print("Review the artifacts, then run the optimizer.")
 
 
 if __name__ == "__main__":
