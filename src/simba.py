@@ -35,7 +35,7 @@ def parse_args():
     p.add_argument("--max-demos", type=int, default=4,
                    help="Maximum few-shot demos per predictor; oldest are probabilistically dropped beyond this")
     p.add_argument("--seed", type=int, default=21,
-                   help="Random seed for trainset shuffle (matches bootstrap_fewshot.py / mipro.py)")
+                   help="Random seed for trainset shuffle (matches bootstrapfewshot.py / mipro.py / gepa_opt.py)")
     p.add_argument("--instruction-file", default="instructions.md",
                    help="File whose contents become the signature instruction "
                         "(empty string to use the baseline NL2PLNSignature instruction)")

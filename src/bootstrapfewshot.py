@@ -13,7 +13,7 @@ without disturbing the carefully-engineered prompt.
 Comparison with the other optimizer scripts in this repo:
   - simba.py:  SIMBA — also evolves instructions via append_a_rule.  Heavier.
   - gepa_opt.py: GEPA — reflective evolution of instructions. Heaviest.
-  - bootstrap_fewshot.py (this): demos only, instruction unchanged. Lightest.
+  - bootstrapfewshot.py (this): demos only, instruction unchanged. Lightest.
 
 Worth considering as an alternative if you ever want both instruction
 refinement AND demo selection in one pass: MIPROv2 (dspy.teleprompt.MIPROv2),
@@ -21,9 +21,9 @@ which uses Bayesian optimization. Sits between BootstrapFewShot and SIMBA on
 the cost spectrum.
 
 Usage:
-    python src/bootstrap_fewshot.py
-    python src/bootstrap_fewshot.py --max-bootstrapped-demos 8 --max-rounds 2
-    python src/bootstrap_fewshot.py --metric-threshold 0.7
+    python src/bootstrapfewshot.py
+    python src/bootstrapfewshot.py --max-bootstrapped-demos 8 --max-rounds 2
+    python src/bootstrapfewshot.py --metric-threshold 0.7
 """
 import argparse
 import os
@@ -72,7 +72,9 @@ def parse_args():
                    help="Number of bootstrap iterations through the training set")
     p.add_argument("--metric-threshold", type=float, default=0.5,
                    help="Minimum metric score for keeping a trajectory as a demo")
-    p.add_argument("--instruction-file", default="conversion_guidelines.txt",
+    p.add_argument("--seed", type=int, default=21,
+                   help="Random seed for trainset shuffle (matches simba.py / mipro.py / gepa_opt.py)")
+    p.add_argument("--instruction-file", default="instructions.md",
                    help="File whose contents become the signature instruction "
                         "(empty string to use the baseline NL2PLNSignature instruction)")
     p.add_argument("--pln-spec-file", default="chainer_analysis.txt",
@@ -118,7 +120,7 @@ def main():
     print(f"  Loaded {len(dataset)} training examples from {args.dataset}")
 
     import random
-    random.Random(21).shuffle(dataset)
+    random.Random(args.seed).shuffle(dataset)
 
     module = NL2PLNModule()
     if args.input:
@@ -150,12 +152,25 @@ def main():
         max_rounds=args.max_rounds,
     )
 
-    module = teleprompter.compile(module, trainset=dataset)
-
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    module.save(str(output_path))
-    print(f"  Saved optimized program to {output_path}")
+
+    # Wrap compile() so that an uncaught exception still leaves a saved
+    # snapshot.  Mirrors the protection in simba.py / mipro.py / gepa_opt.py.
+    compile_succeeded = False
+    try:
+        module = teleprompter.compile(module, trainset=dataset)
+        compile_succeeded = True
+    finally:
+        try:
+            module.save(str(output_path))
+            if compile_succeeded:
+                print(f"  Saved optimized program to {output_path}")
+            else:
+                print(f"  CRASH-SAVE: wrote partial/pre-crash module state to {output_path}")
+        except Exception as save_err:
+            # Don't mask the original exception; just report save failure
+            print(f"  CRASH-SAVE FAILED: {save_err}")
 
 
 if __name__ == "__main__":

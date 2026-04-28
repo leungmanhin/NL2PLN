@@ -9,7 +9,7 @@ instruction — full action space for fixing wrong or confusing parts of
 the conversion guidelines.
 
 Comparison with the other optimizer scripts in this repo:
-  - bootstrap_fewshot.py: demos only, instruction unchanged.  Lightest.
+  - bootstrapfewshot.py: demos only, instruction unchanged.  Lightest.
   - simba.py: SIMBA — appends rules, cannot delete or rewrite.  Heavier.
   - gepa_opt.py: GEPA — reflective rewriting, risk of drift.  Heaviest
     in iteration cost.
@@ -89,10 +89,11 @@ def parse_args():
                    help="Max labeled demos (typically 0 — our trainset has no PLN labels)")
     p.add_argument("--num-threads", type=int, default=10,
                    help="Parallel LM calls during evaluation")
-    p.add_argument("--seed", type=int, default=9,
-                   help="Random seed for reproducibility")
+    p.add_argument("--seed", type=int, default=21,
+                   help="Random seed for trainset shuffle and MIPROv2 reproducibility "
+                        "(matches simba.py / bootstrapfewshot.py / gepa_opt.py)")
     # ---- starting content ----
-    p.add_argument("--instruction-file", default="conversion_guidelines.txt",
+    p.add_argument("--instruction-file", default="instructions.md",
                    help="File whose contents become the starting signature instruction "
                         "(empty string to use the baseline NL2PLNSignature instruction)")
     p.add_argument("--pln-spec-file", default="chainer_analysis.txt",
@@ -147,7 +148,7 @@ def main():
     # in order) sees phenomenon-diverse samples instead of clustering on the
     # first few phenomena from `data/generated.json`.
     import random
-    random.Random(21).shuffle(trainset)
+    random.Random(args.seed).shuffle(trainset)
 
     valset = None
     if args.valset:
@@ -211,12 +212,28 @@ def main():
     if auto_value is None:
         compile_kwargs["num_trials"] = args.num_trials
 
-    module = teleprompter.compile(**compile_kwargs)
-
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    module.save(str(output_path))
-    print(f"  Saved optimized program to {output_path}")
+
+    # Wrap compile() so that an uncaught exception still leaves a saved
+    # snapshot.  This is the protection that was missing on the prior
+    # MIPROv2 run that crashed post-save — that run got lucky (the save
+    # had already happened); a crash a few seconds earlier would have
+    # lost everything.
+    compile_succeeded = False
+    try:
+        module = teleprompter.compile(**compile_kwargs)
+        compile_succeeded = True
+    finally:
+        try:
+            module.save(str(output_path))
+            if compile_succeeded:
+                print(f"  Saved optimized program to {output_path}")
+            else:
+                print(f"  CRASH-SAVE: wrote partial/pre-crash module state to {output_path}")
+        except Exception as save_err:
+            # Don't mask the original exception; just report save failure
+            print(f"  CRASH-SAVE FAILED: {save_err}")
 
 
 if __name__ == "__main__":
