@@ -91,6 +91,21 @@ class ProofEvaluator(dspy.Module):
         )
 
 def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pred_name=None, pred_trace=None):
+    # Defensive guard: when the upstream LM call fails (auth/quota/rate-
+    # limit/network), DSPy passes pred=None into the metric.  Without this
+    # guard, the broad except below would catch the AttributeError on
+    # `pred.statements` and silently return score=0.0 — the failure mode
+    # that lost three optimizer runs to date (SIMBA spinning through
+    # all-zero batches with the crash-save never firing).  Fail fast so
+    # the optimizer's try/finally has a chance to preserve in-progress
+    # state.
+    if pred is None:
+        raise RuntimeError(
+            "difficulty_metric received pred=None — upstream LM call failed "
+            "(likely auth, quota, rate-limit, or network).  Failing fast so "
+            "the optimizer's crash-save can preserve in-progress state."
+        )
+
     try:
         metta_handler = PeTTaChainer()
         evaluator = ProofEvaluator()
@@ -169,6 +184,18 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
             feedback=f"Score: {total_score:.2f}/{n} questions. \n" + "\n".join(feedback_details)
         )
     except Exception as e:
+        # Re-raise LM-side errors so the optimizer fails fast and the
+        # crash-save in simba.py / mipro.py / etc. fires.  Genuine
+        # semantic failures (PeTTaChainer parse errors, missing fields,
+        # etc.) continue to score 0.0 below as before.  We match by
+        # class name so we don't have to import litellm here.
+        if type(e).__name__ in (
+            "RateLimitError", "AuthenticationError",
+            "APIConnectionError", "BadRequestError",
+            "ServiceUnavailableError", "APIError",
+            "Timeout", "InternalServerError",
+        ):
+            raise
         print(pred)
         print("Error occured in difficulty_metric:", e)
         traceback.print_exc()
