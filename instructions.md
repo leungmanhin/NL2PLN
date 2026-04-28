@@ -1,2026 +1,786 @@
 # NL to logic conversion instructions
 
-You are converting English natural language (sentences or questions) into logical expressions (statements or queries) for a chainer/reasoner.
-
-## Chainer syntax reference
-
-# PeTTaChainer source analysis
-
-## 1) Expression format
-
-The Python API expects **bare MeTTa expressions** as input strings.
-
-### Public bare format
-The core outer envelope used by both statements and queries is:
-
-```metta
-(: <proof-id> <proposition-or-pattern> <truth-value-or-pattern>)
-```
-
-Examples of bare inputs passed to the API:
-
-```metta
-(: f1 (Dog fido) (STV 1.0 1.0))
-(: $prf (Dog fido) $tv)
-(: rule1
-   (Implication
-      (Premises (Dog $x) (Not (Cat $x)))
-      (Conclusions (Mammal $x)))
-   (STV 1.0 1.0))
-```
-
-### Internal runtime wrappers
-Do **not** pass these as external API input; the chainer inserts them internally:
-
-```metta
-!(eval <bare-expression>)
-!(compileadd <kb> <evaluated-statement>)
-!(query <steps> <kb> <evaluated-query>)
-```
-
-So the rule for downstream consumers is:
-
-- **caller input**: bare MeTTa expression
-- **internal execution**: wrapped `!(eval ...)`, then `!(compileadd ...)` or `!(query ...)`
-
-The public methods `add_atom()` and `query()` both evaluate the input first, then hand the evaluated bare expression to the internal MeTTa runtime.
-
-## 2) Built-in operators / combinators
-
-The public docs and source show these main surface forms.
-
-### Statement / proof-atom envelope
-```metta
-(: <proof-id> <proposition> <tv>)
-```
-
-This is the storage/query envelope for facts and rules.
-
-### `Implication`
-```metta
-(Implication (Premises ...) (Conclusions ...))
-```
-Represents an if-then rule.
-
-### `Premises`
-```metta
-(Premises premise1 premise2 ...)
-```
-Rule antecedent list.
-
-### `Conclusions`
-```metta
-(Conclusions conclusion1 conclusion2 ...)
-```
-Rule consequent list.
-
-### `Compute`
-```metta
-(Compute f (arg1 arg2 ...) -> $out)
-```
-Compute a function result and bind it.
-
-### `FoldAll` / `FoldAllValue`
-```metta
-(FoldAll pattern value init fold-fn -> out)
-(FoldAllValue pattern init fold-fn -> out)
-```
-Aggregate over matching facts.
-
-### `Not`
-```metta
-(Not expr)
-```
-Negation / negative premise.
-
-### `GreaterThan` and alias `>`
-```metta
-(GreaterThan $distA 5)
-(GreaterThan $distA $distB)
-```
-Docs say `>` is an alias/sugar for the same comparison family.
-
-### `MapDist`, `Map2Dist`, `AverageDist`
-```metta
-(MapDist f (DistFactA ... $inDist) $inDist -> $outDist)
-(Map2Dist f (DistFactA ... $distA) $distA (DistFactB ... $distB) $distB -> $outDist)
-(AverageDist (DistFactPattern ... $inDist) $inDist -> $outDist)
-```
-
-These are helper premises for distribution-valued facts.
-
-### Lower-level / compiled distribution forms seen in source
-These are not the main user-facing rule skeleton, but they are part of the chainer’s supported operator set and should be treated as structural, not domain predicates:
-
-- `DistGreaterThanFormula`
-- `DistGreaterThanDistFormula`
-- `ParticleMap`
-- `ParticleMap2`
-- `ParticleAddBernoulliFromSTV`
-
-### Utility / store operators
-Also documented in the spec:
-
-- `ParticleStoreCount`
-- `ParticleStoreClear`
-- `ParticleStorePruneKB`
-
-## 3) Truth values
-
-The chainer distinguishes **truth uncertainty** from **value uncertainty**.
-
-### Truth uncertainty
-```metta
-(STV strength confidence)
-```
-
-- `strength` is the truth / belief mass
-- `confidence` is evidence / reliability
-- both are intended to be in `[0, 1]`
-
-`STV` is for the truth of a proposition, not for numeric measurement uncertainty.
-
-### Value uncertainty / distributions
-Supported distribution-like truth/value forms:
-
-```metta
-(NatDist ((value probability) ...))
-(FloatDist ((value probability) ...))
-(ParticleDist <ref>)
-(ParticleDist <ref> <scale>)
-(PointMass x)
-(ParticleFromNormal mu sigma)
-(ParticleFromPairs ((x1 w1) (x2 w2) ...))
-```
-
-Notes:
-
-- `NatDist` and `FloatDist` are exact discrete distributions.
-- `ParticleDist` is an opaque reference backed by the particle store.
-- `PointMass` is a degenerate distribution.
-- `ParticleFromNormal` and `ParticleFromPairs` are particle-based constructors.
-- The validator explicitly accepts the above shapes.
-
-## 4) Rule templates
-
-Rules are just statements whose proposition is an `Implication`.
-
-Exact template:
-
-```metta
-(: <rule-name>
-   (Implication
-      (Premises
-         premise1
-         premise2
-         ...)
-      (Conclusions
-         conclusion1
-         conclusion2
-         ...))
-   (STV <strength> <confidence>))
-```
-
-The source/docs use the same outer `(: ... )` envelope for facts and rules.
-
-## 5) Query patterns
-
-Query patterns use the same outer envelope, but the proof-id slot must be a **variable**.
-
-Typical query shape:
-
-```metta
-(: $prf <pattern> $tv)
-```
-
-Examples:
-
-```metta
-(: $prf (Dog fido) $tv)
-(: $prf (AreaDist rectA $areaDist) $tv)
-```
-
-Important source-derived constraints:
-
-- `check_query()` requires the proof-id slot to be a variable.
-- The validator does **not** impose the same deep truth-value restrictions on queries that it does on statements.
-- In intended usage, the truth-value slot is usually also a variable (`$tv`) so the query can return it.
-
-## 6) Naming conventions
-
-Observed conventions in docs/examples:
-
-- **Variables**: prefixed with `$`
-  - examples: `$prf`, `$tv`, `$x`, `$dist`, `$avgDist`
-- **Predicates / relations**: usually CamelCase
-  - examples: `Dog`, `HeightDist`, `AvgHeightDist`, `CountryHeightDist`, `Rectangle`, `Group`
-- **Constants / entities**: plain atoms, often lowercase or mixed case
-  - examples: `fido`, `alice`, `bob`, `carol`, `room1`, `g1`, `rectA`, `countryA`
-- **Rule / proof ids**: opaque labels, often camelCase or descriptive identifiers
-  - examples: `f1`, `r1`, `avgHeightDistG1Rule`
-
-There is no quoted-string entity syntax in the source examples.
-
-## 7) Constraints & pitfalls
-
-### Do not use internal runtime wrappers as external input
-External callers should pass bare expressions, not:
-
-```metta
-!(eval ...)
-!(compileadd ...)
-!(query ...)
-```
-
-### Statement validation is shallow but strict on the envelope
-For statements, the validator checks that the evaluated expression has the outer `(: ...)` shape, that the proof-id is not a variable, and that the TV matches one of the supported constructors.
-
-### Query validation
-For queries, the validator checks that the proof-id is a variable.
-
-### No dedicated `ForAll` / `Exists` user syntax
-The repo contains unrelated internal/Prolog `forall` / `exists` occurrences, but there is no public bare-expression quantifier operator in the chainer API.
-
-### Avoid confusing internal proof-tree tokens with domain predicates
-Source examples contain internal tokens such as:
-
-- `CPU` / `cpu`
-- `conjunction`
-- `rule-proof`
-- `fact-ev`
-- `LikelierThan`
-
-These are proof/runtime artifacts, not user-defined domain relations.
-
-### Beware of `>` vs `GreaterThan`
-`GreaterThan` is the canonical documented head; `>` is documented as an alias/sugar.
-
-### Bare syntax is prefix s-expression style
-No commas or infix statement syntax is used in the public API.
-
-## 8) Predicate extraction
-
-For bare-expression predicate/relation extraction, use a regex that captures identifier-like heads after `(` and then filters out structural symbols.
-
-Recommended regex:
-
-```python
-r'\(\s*([A-Za-z][A-Za-z0-9_+-]*)'
-```
-
-Why this works:
-
-- it captures heads from statements, queries, and nested subexpressions
-- it works with Python `re` on single-line expression strings
-- it captures normal relation names like `Dog`, `HeightDist`, `Map2Dist`
-- built-ins are then removed using an exclusion list
-
-## 9) Quantification and scope
-
-There is **no dedicated quantifier syntax** like `ForAll` / `Exists` in the public bare language.
-
-Quantifier-like meaning is expressed indirectly:
-
-- **existential** meaning: via query variables and proof search
-- **universal / rule-like** meaning: via variables in rule premises and implications
-- **count/cardinality** style constraints: via aggregation helpers such as `FoldAll` plus comparison operators
-
-Scope is syntactic/nested:
-
-- variables live in the nested MeTTa expression structure
-- `Not` scopes over its nested expression
-- premise helpers such as `Compute`, `FoldAll`, `MapDist`, and `AverageDist` scope their binders using the surrounding prefix form and `->` output binder
-
-## 10) Entity identity and representation
-
-There is no built-in entity identity system beyond symbol identity.
-
-Implications:
-
-- the same atom spelling refers to the same symbol/entity
-- different spellings are different entities
-- the source does not define a canonicalization or disambiguation layer for names
-
-Recommended practice:
-
-- use stable, unique constants for named entities
-- if surface names are ambiguous, keep a separate ID and optionally a `Name`/`Alias` relation in your own ontology
-- do not rely on natural-language surface forms alone if distinct real-world entities may share the same name
-
-Observed idioms for instance/class membership are just unary predicates:
-
-```metta
-(Dog fido)
-(Person alice)
-(Rectangle rectA)
-(Group g1)
-```
-
-No special first/second-person pronoun convention is defined in the source. If the referent is unknown, skip the pronoun or ground it externally.
+You are converting English natural language (sentences or questions) into logical expressions (statements or queries) for a chainer/reasoner.  The chainer's syntax and semantics reference is provided separately as the `pln_spec` input (see `chainer_analysis.txt`).
+
+## Chainer primitives
+*Quick-reference cheat sheet of names with semantic backing.  Use these names verbatim wherever a primitive is needed.*
+
+PeTTaChainer primitive quick reference
+
+Public bare statement and query scaffolding
+  `(: <proof-id> <proposition> <tv>)` — outer envelope for stored facts and stored rules.
+  `(: <rule-id> (Implication ...) (STV strength confidence))` — rule stored as a statement.
+  `(: $prf <pattern> $tv)` — query pattern; proof-id position must be a variable.
+  `$name` — variable syntax used in facts, rules, and queries.
+  `->` — output-binder marker used inside compute, fold, and distribution helper forms.
+
+Rule and logical forms
+  `(Implication (Premises ...) (Conclusions ...))` — if-then rule proposition.
+  `(Premises premise1 premise2 ...)` — antecedent list inside an implication.
+  `(Conclusions conclusion1 conclusion2 ...)` — consequent list inside an implication.
+  `(Not expr)` — negation / negative premise over the nested expression.
+  `(Compute f (arg1 arg2 ...) -> $out)` — compute a function result and bind it.
+  `(FoldAll pattern value init fold-fn -> out)` — aggregate over matching facts with an explicit value.
+  `(FoldAllValue pattern init fold-fn -> out)` — aggregate over matching fact values.
+  `(GreaterThan a b)` — documented numeric/distribution greater-than comparison.
+  `(> a b)` — documented alias/sugar for the greater-than comparison family.
+
+Distribution helper forms
+  `(MapDist f (DistFactA ... $inDist) $inDist -> $outDist)` — map a function over a distribution-valued fact.
+  `(Map2Dist f (DistFactA ... $distA) $distA (DistFactB ... $distB) $distB -> $outDist)` — combine two distribution-valued facts.
+  `(AverageDist (DistFactPattern ... $inDist) $inDist -> $outDist)` — average over matching distribution-valued facts.
+
+Lower-level / compiled distribution structural forms
+  `(DistGreaterThanFormula ...)` — supported structural distribution comparison form.
+  `(DistGreaterThanDistFormula ...)` — supported structural distribution-vs-distribution comparison form.
+  `(ParticleMap ...)` — supported particle-map structural form.
+  `(ParticleMap2 ...)` — supported two-input particle-map structural form.
+  `(ParticleAddBernoulliFromSTV ...)` — supported particle/STV bridge structural form.
+
+Truth-value and distribution constructors
+  `(STV strength confidence)` — truth uncertainty for a proposition.
+  `(NatDist ((value probability) ...))` — exact discrete natural-number distribution.
+  `(FloatDist ((value probability) ...))` — exact discrete floating-point distribution.
+  `(ParticleDist <ref>)` — particle distribution by opaque particle-store reference.
+  `(ParticleDist <ref> <scale>)` — scaled particle distribution reference.
+  `(PointMass x)` — degenerate distribution concentrated at one value.
+  `(ParticleFromNormal mu sigma)` — particle distribution constructor from normal parameters.
+  `(ParticleFromPairs ((x1 w1) (x2 w2) ...))` — particle distribution constructor from weighted pairs.
+
+Utility / particle-store operators
+  `(ParticleStoreCount ...)` — documented particle-store utility operator.
+  `(ParticleStoreClear ...)` — documented particle-store clearing operator.
+  `(ParticleStorePruneKB ...)` — documented particle-store / KB pruning operator.
+
+Reserved internal runtime wrappers
+  `!(eval <bare-expression>)` — internal evaluation wrapper; do not emit as external API input.
+  `!(compileadd <kb> <evaluated-statement>)` — internal add wrapper; do not emit as external API input.
+  `!(query <steps> <kb> <evaluated-query>)` — internal query wrapper; do not emit as external API input.
+
+---
+
+## Suggested vocabulary
+*Naming suggestions for non-primitive concepts (thematic roles, spatial/temporal relations, etc.).  Use for consistency across translations; these names do NOT have chainer semantics unless explicit rules are added to the KB.*
+
+IMPORTANT: The names below are naming suggestions for domain predicates and canonical relations only. They are not PeTTaChainer built-ins and have no built-in semantics unless the KB supplies facts or rules for them. Do not treat these as chainer primitives.
+
+Open-class predicate template families
+  `(ClassName entity)` — unary class/kind/category membership.
+  `(EventType event)` — event occurrence/type named by a lemmatized verb or event noun.
+  `(PropertyName entity)` — qualitative property or adjective-like attribute.
+  `(StateName bearer)` — state or condition of an entity or event.
+  `(DimensionUnit bearer value)` — measured value with dimension and unit in the predicate name.
+  `(DimensionUnitDist bearer dist)` — uncertain measured value whose value argument is a distribution.
+  `(CountName bearer count)` — count or cardinality value exposed as an argument.
+  `(RelationName arg1 arg2 ...)` — reusable domain-specific relation.
+  `(ContentType content)` — reified embedded proposition, question, command, quote, or action content.
+
+Entity naming, reference, and discourse status
+  `(Name entity nameId)` `(Alias entity nameId)` `(Mention mention)` `(RefersTo mention entity)` `(Corefers mention1 mention2)` `(Appositive entity descriptor)` `(Definite mention)` `(Indefinite mention)` `(Demonstrative mention)` `(Specific mention)` `(DiscourseNew mention)` `(DiscourseOld mention)` `(Speaker context entity)` `(Addressee context entity)`
+  Disambiguation notes:
+  - Name vs Alias: use `Name` for the primary recorded name and `Alias` for alternate names.
+  - RefersTo vs Corefers: `RefersTo` links a mention to an entity; `Corefers` links two mentions to each other.
+  - Speaker/Addressee: use for deictic or discourse context, not necessarily for every communication event.
+
+Thematic and event roles
+  `(Agent event participant)` `(Patient event participant)` `(Theme event participant)` `(Experiencer event participant)` `(Stimulus event participantOrContent)` `(Instrument event entity)` `(Recipient event participant)` `(Beneficiary event participant)` `(Source event entity)` `(Destination event entity)` `(Location event place)` `(Path event pathOrPlace)` `(Manner event manner)` `(Topic event topic)` `(Result event outcome)`
+  Disambiguation notes:
+  - Agent vs Cause: `Agent` is an event participant acting intentionally or causally; `Cause` relates two events/states or a cause to an effect.
+  - Patient vs Theme: `Patient` is affected or changed; `Theme` is moved, transferred, perceived, or discussed without necessarily being changed.
+  - Recipient vs Beneficiary: `Recipient` receives a transferred theme; `Beneficiary` benefits from the event.
+  - Source vs Destination: `Source` is the origin; `Destination` is the endpoint.
+
+Possession, part-whole, and group membership
+  `(Owns owner owned)` `(Possesses holder held)` `(CustodyOf holder item)` `(BelongsTo item ownerOrWhole)` `(AssociatedWith entity1 entity2)` `(PartOf part whole)` `(HasPart whole part)` `(ComponentOf component system)` `(MemberOf member group)` `(HasMember group member)` `(Contains container content)`
+  Disambiguation notes:
+  - Owns vs Possesses: `Owns` is legal/social ownership; `Possesses` is current holding or control.
+  - PartOf vs MemberOf: `PartOf` is component-whole structure; `MemberOf` is membership in a group or collection.
+  - Contains vs HasPart: `Contains` is containment; `HasPart` is structural composition.
+
+Spatial relations
+  `(At entity place)` `(In entity place)` `(On entity support)` `(Under entity relatum)` `(Above entity relatum)` `(Below entity relatum)` `(Beside entity relatum)` `(AdjacentTo entity relatum)` `(Near entity relatum)` `(FarFrom entity relatum)` `(Inside entity container)` `(Outside entity relatum)` `(InFrontOf entity relatum)` `(Behind entity relatum)` `(Between entity relatum1 relatum2)` `(Over entity relatum)` `(Across entity region)` `(Through entity region)` `(Around entity relatum)`
+  Disambiguation notes:
+  - In vs Inside: `In` can be broad locative inclusion; `Inside` emphasizes interior containment.
+  - On vs Above: `On` implies support/contact; `Above` does not.
+  - Under vs Below: `Under` often implies coverage or vertical relation with a relatum; `Below` is purely lower position.
+  - Across vs Through: `Across` crosses a surface/region; `Through` traverses an interior or passage.
+
+Temporal relations and schedules
+  `(Time eventuality time)` `(AtTime eventuality time)` `(Date eventuality date)` `(Before eventuality1 eventuality2OrTime)` `(After eventuality1 eventuality2OrTime)` `(During eventuality interval)` `(Overlaps intervalOrEvent1 intervalOrEvent2)` `(StartsAt eventuality time)` `(EndsAt eventuality time)` `(Until eventuality time)` `(Since eventuality time)` `(Duration eventualityOrEntity duration)` `(RecursOn eventOrPattern schedule)` `(Frequency eventOrPattern frequency)`
+  Disambiguation notes:
+  - Time vs StartsAt/EndsAt: `Time` is a general temporal attachment; `StartsAt` and `EndsAt` mark boundaries.
+  - Before vs After: choose the predicate matching the stated ordering direction.
+  - During vs Overlaps: `During` implies containment in an interval; `Overlaps` only implies shared temporal extent.
+  - Frequency vs RecursOn: `Frequency` records how often; `RecursOn` records the schedule or calendar pattern.
+
+Aspect, event status, and participation reading
+  `(Ongoing event)` `(InProgress event)` `(Completed event)` `(Habitual eventOrPattern)` `(Repeated eventOrPattern)` `(Iterative eventOrPattern)` `(Scheduled event)` `(Planned event)` `(Canceled event)` `(Attempted event)` `(Collective event)` `(Distributive eventOrRelation)`
+  Disambiguation notes:
+  - Ongoing/InProgress vs Habitual: ongoing marks a current event; habitual marks a regular pattern.
+  - Completed vs Scheduled: completed means realized; scheduled means planned for a time.
+  - Attempted vs Completed: attempted does not entail success.
+  - Collective vs Distributive: collective marks joint participation; distributive marks member-by-member participation.
+
+Quantities, counts, and ordering values
+  `(Quantity entity value)` `(Amount substanceOrEntity value)` `(Cardinality set count)` `(MemberCount group count)` `(EventCount eventPattern count)` `(Ordinal entity number)` `(Rank entity rank)` `(Total collection value)` `(Portion part whole fraction)`
+  Disambiguation notes:
+  - Quantity vs Amount: `Quantity` is general; `Amount` is preferred for masses, substances, or scalar extents.
+  - Cardinality vs MemberCount: `Cardinality` can apply to any set-like object; `MemberCount` is specifically group membership.
+  - Ordinal vs Rank: `Ordinal` is sequence position; `Rank` is ordered evaluation by a criterion.
+
+Degree, intensity, and scalar qualification
+  `(Degree bearer degree)` `(Intensity bearer level)` `(Scale dimension scale)` `(Threshold dimensionOrProperty value)` `(Modifier bearer modifier)` `(Diminished bearer level)` `(Intensified bearer level)`
+  Disambiguation notes:
+  - Degree vs Intensity: `Degree` is a scalar value on a property; `Intensity` is strength of a state/property.
+  - Threshold vs Degree: `Threshold` is a cutoff; `Degree` is the observed or asserted level.
+
+Comparison and evaluation
+  `(SameValue entity1 entity2 dimension)` `(SameDegree entity1 entity2 dimension)` `(Equivalent entity1 entity2 criterion)` `(RankedAbove entity1 entity2 criterion)` `(RankedBelow entity1 entity2 criterion)` `(BetterThan entity1 entity2 criterion)` `(WorseThan entity1 entity2 criterion)` `(Best entity contextOrCriterion)` `(Worst entity contextOrCriterion)`
+  Disambiguation notes:
+  - SameValue vs SameDegree: `SameValue` is exact value identity; `SameDegree` is qualitative/scalar equality.
+  - BetterThan vs RankedAbove: `BetterThan` is evaluative; `RankedAbove` is ordering by an explicit ranking criterion.
+  - Best vs BetterThan: `Best` is superlative within a context; `BetterThan` compares two entities.
+
+Modality, norms, and directives
+  `(Able agent actionContent)` `(Possible content)` `(Necessary content)` `(Permitted agent actionContent)` `(Obligated agent actionContent)` `(Required content)` `(Prohibited agent actionContent)` `(Directive directiveEvent)` `(Command directiveEvent)` `(Request directiveEvent)` `(TargetAction directiveEvent actionContent)`
+  Disambiguation notes:
+  - Possible vs Permitted: `Possible` is circumstantial or epistemic; `Permitted` is deontic permission.
+  - Necessary vs Obligated: `Necessary` applies to content generally; `Obligated` targets an agent.
+  - Prohibited vs Not: `Prohibited` records a norm against an action, not the non-occurrence of the action.
+  - Command vs Request: `Command` is stronger/authoritative; `Request` is weaker or polite.
+
+Propositional attitudes, intentions, and embedded content
+  `(Believe holder content)` `(Know holder content)` `(Doubt holder content)` `(Want holder content)` `(Desire holder content)` `(Hope holder content)` `(Intend holder content)` `(Expect holder content)` `(Fear holder content)` `(Prefer holder contentOrOption)` `(Content bearer content)` `(Proposition content)` `(QuestionContent content)` `(ActionContent content)`
+  Disambiguation notes:
+  - Know vs Believe: `Know` is factive if the ontology treats it that way; `Believe` need not be true.
+  - Want/Desire vs Intend: wanting is preference; intending includes commitment toward action.
+  - Hope vs Expect: hope is desire-oriented; expect is belief-oriented.
+  - Proposition vs ActionContent: `Proposition` is truth-evaluable content; `ActionContent` is an action description.
+
+Communication, reported speech, and quotation
+  `(Say event)` `(Tell event)` `(Ask event)` `(Write event)` `(Report event)` `(Announce event)` `(Claim event)` `(Quote event)` `(Speaker event participant)` `(Addressee event participant)` `(Message event message)` `(Medium event medium)` `(Language event language)`
+  Disambiguation notes:
+  - Say vs Tell: `Tell` normally has an addressee; `Say` may not.
+  - Report vs Claim: `Report` presents information as reported; `Claim` emphasizes asserted commitment.
+  - Quote vs Message: `Quote` is quoted content as an object; `Message` is the communicated item.
+
+Causation, purpose, and explanation
+  `(Cause cause effect)` `(CausedBy effect cause)` `(Enables condition eventuality)` `(Prevents condition eventuality)` `(Purpose eventuality goalContent)` `(Goal bearer goalContent)` `(Reason eventuality reason)` `(Motivation agent reason)` `(Outcome event outcome)` `(Consequence cause effect)`
+  Disambiguation notes:
+  - Cause vs Reason: `Cause` is causal production; `Reason` is explanatory or justificatory.
+  - Purpose vs Outcome: `Purpose` is intended; `Outcome` is what resulted.
+  - Goal vs Purpose: `Goal` can belong to an agent or plan; `Purpose` modifies an event/action.
+  - Prevents vs Prohibited: `Prevents` is causal blocking; `Prohibited` is normative banning.
+
+Hypotheticality and factual status
+  `(Hypothetical content)` `(Counterfactual content)` `(Presupposed content)` `(Asserted content)` `(Factual content)` `(Uncertain content)`
+  Disambiguation notes:
+  - Hypothetical vs Counterfactual: counterfactual implies contrary-to-fact status; hypothetical need not.
+  - Presupposed vs Asserted: presupposed content is backgrounded; asserted content is directly put forward.
+  - Uncertain vs Possible: `Uncertain` marks epistemic status of content; `Possible` marks modal possibility.
+
+Alternatives, focus, and exclusivity
+  `(Alternative context option)` `(Option context option)` `(Choice agent option)` `(MutuallyExclusive option1 option2)` `(Compatible option1 option2)` `(Focus content entityOrConstituent)` `(Only focus context)` `(Exclusive focus context)`
+  Disambiguation notes:
+  - Alternative vs Option: `Alternative` groups options under a contrast; `Option` is any available choice in a context.
+  - Only vs Exclusive: `Only` represents focus-sensitive exclusivity; `Exclusive` is a more general exclusion relation.
+  - MutuallyExclusive vs Compatible: mutually exclusive options cannot both hold; compatible options can.
+
+Discourse relations
+  `(Sequence segmentOrEvent1 segmentOrEvent2)` `(Contrast segment1 segment2)` `(Concession segment1 segment2)` `(Explanation segment1 segment2)` `(Elaboration segment1 segment2)` `(Background segment1 segment2)` `(Continuation segment1 segment2)` `(TopicShift segment1 segment2)`
+  Disambiguation notes:
+  - Sequence vs Before: `Sequence` is discourse/order structure; `Before` is temporal ordering.
+  - Contrast vs Concession: contrast marks opposition; concession marks an unexpected coexistence.
+  - Explanation vs Cause: `Explanation` relates discourse segments; `Cause` relates events, states, or facts.
+
+Reflexive, reciprocal, and co-participation relations
+  `(Reflexive event participant)` `(Reciprocal event groupOrParticipants)` `(Mutual event)` `(CoParticipant event participant)`
+  Disambiguation notes:
+  - Reflexive vs Reciprocal: reflexive links an argument back to itself; reciprocal marks mutual relations among participants.
+  - Reciprocal vs Mutual: reciprocal emphasizes pairwise role reversal; mutual is a broader joint/mutual marker.
 
 ---
 
 ## Conversion guidelines
+*Mapping rules from English to the chainer's logic.  Apply these patterns; cross-reference the vocabulary above for canonical names.*
 
-PeTTaChainer English-to-logic conversion guidelines
+# Conversion guidelines for English → PeTTaChainer logic
 
-1. Core surface forms
+## 1. General conversion discipline
 
-Use only bare MeTTa expressions as external input. Do not add internal wrappers such as `!(eval ...)`, `!(compileadd ...)`, or `!(query ...)`.
+Convert English into small, compositional facts, rules, and queries. Each added statement should be a bare `(: ...)` expression. Do not emit internal wrappers. Use rules only for conditional, universal, generic, or law-like content. Use queries only to ask for derivable propositions.
 
-There are three public patterns:
+Prefer decomposition over large predicate names. The chainer proves by matching predicate structure, variables, and built-in operators; if the reasoning is hidden inside a predicate string, it cannot participate compositionally in proofs.
 
-Fact / assertion:
-```metta
-(: factId <proposition> (STV s c))
-```
+---
 
-Rule:
-```metta
-(: ruleId
-   (Implication
-      (Premises premise1 premise2 ...)
-      (Conclusions conclusion1 conclusion2 ...))
-   (STV s c))
-```
+## 2. Naming conventions
 
-Query:
-```metta
-(: $prf <pattern> $tv)
-```
+### Predicates and relations
 
-Rules:
-- In statements, the proof id must be a constant atom, not a variable.
-- In queries, the proof id must be a variable, typically `$prf`.
-- Prefer `GreaterThan` over the `>` alias for consistency.
-- The truth-value slot in queries should usually be a variable, typically `$tv`.
+Use CamelCase predicate names derived from lemmatized English:
 
-2. Naming conventions
+- nouns/classes: `Dog`, `City`, `Doctor`, `Vehicle`
+- verbs/events: `Call`, `Arrive`, `Build`, `Give`
+- relations/roles: `Agent`, `Patient`, `Recipient`, `Instrument`, `Location`
+- attributes: `Red`, `Friendly`, `Noisy`, or value relations such as `HeightCm`, `WeightKg`
 
-2.1 Predicates
-- Use CamelCase for predicate names.
-- Lemmatize English words to base form:
-  - “dogs” -> `Dog`
-  - “barked” -> `Bark`
-  - “cities” -> `City`
-- Omit articles, auxiliaries, and tense morphology from predicate names.
-- Keep predicate names semantically atomic: usually 1 to 3 English words.
-- Good predicate shapes:
-  - `Dog`
-  - `City`
-  - `Own`
-  - `PartOf`
-  - `Before`
-  - `Recipient`
-  - `Height`
-  - `HeightDist`
+Normalize away tense, plurality, and inflection:
 
-2.2 Constants / entities
-- Use stable lowercase atoms, optionally with underscores:
-  - `fido`
-  - `paris_france`
-  - `book1`
-  - `e1`
-- For multiword names, normalize to one atom:
-  - “New York City” -> `new_york_city`
-  - “Big Apple” -> `big_apple`
-- Do not use quoted strings; the analyzed chainer does not define quoted-string entity syntax.
+- “dogs” → `Dog`
+- “barked”, “barking” → `Bark`
+- “was opened” → event predicate `Open` plus roles/aspect if needed
 
-2.3 Variables
-- Prefix all variables with `$`.
-- Use descriptive variable names when possible:
-  - `$x`, `$y` for general entities
-  - `$e` for events
-  - `$t` for times
-  - `$n` for numbers/counts
-  - `$d` for distributions
-  - `$prf` for query proof id
-  - `$tv` for query truth value
+Do not encode negation, modality, tense, degree, quantities, thresholds, or named-entity combinations inside predicate names.
 
-2.4 Rule / proof ids
-- Use opaque but descriptive constants:
-  - `f_paris_city`
-  - `r_whale_mammal`
-  - `r_cut_summary`
+### Constants/entities
 
-3. Entity representation and identity
+Use stable lowerCamelCase or mixed-case atoms:
 
-3.1 Identity semantics
-There is no built-in identity beyond symbol identity.
-- The same atom spelling means the same entity.
-- Different spellings mean different entities.
-- Therefore: resolve identity before emission whenever possible.
+- `alice`, `bob`, `fido`
+- `room1`, `report9`, `rectA`
+- `parisFrance`, `parisPerson1` when disambiguation is needed
 
-3.2 Named entities
-Use a stable unique entity id, not the surface name alone when ambiguity is possible.
+Avoid natural-language strings; there is no quoted-string convention. For names or aliases, use ordinary atoms as name identifiers through domain predicates such as `Name` or `Alias`.
 
-Example:
-```metta
-(: f1 (Person alex_smith_1) (STV 1.0 1.0))
-(: f2 (Name alex_smith_1 alex) (STV 1.0 1.0))
-(: f3 (Person alex_smith_2) (STV 1.0 1.0))
-(: f4 (Name alex_smith_2 alex) (STV 1.0 1.0))
-```
+### Variables
 
-3.3 Appellations and aliases
-Use separate relations such as `Name` or `Alias` if the ontology needs them. Do not rely on surface form equality for disambiguation.
+Use `$`-prefixed variables.
 
-3.4 First- and second-person pronouns
-The source defines no special semantics for `I`, `we`, or `you`.
-- If dialogue context supplies grounded participants, map them to stable constants such as `speaker_1`, `addressee_1`, `speaker_group_1`.
-- If the referent is unknown, do not invent a permanent world entity from the pronoun alone; skip assertion or leave resolution to an upstream context module.
+Recommended conventions:
 
-4. Predicate atomicity: mandatory discipline
+- `$x`, `$y`, `$z` for generic entities
+- `$e` for events
+- `$t` for times
+- `$v`, `$n`, `$w`, `$dist` for values/distributions
+- `$prf` for query proof id
+- `$tv` for query truth value
 
-Every predicate name must denote one semantic primitive, not a whole mini-sentence.
+Use readable variables in complex rules, but keep them short.
 
-Why this matters:
-PeTTaChainer composes proofs by matching predicate structures. If a predicate name hides comparison, counting, argument structure, or entity identity inside the name, the reasoner cannot reuse that internal structure compositionally.
+### Proof/rule ids
 
-4.1 General rule
-Bad predicates encode:
-- numbers in the name
-- thresholds in the name
-- multiple concepts fused into one name
-- named entities fused into the predicate
-- whole answers instead of reusable relations
+Use non-variable opaque ids for statements and rules. Use variables only in query proof-id position.
 
-Good predicates expose:
-- entities as arguments
-- numbers as arguments
-- comparisons via `GreaterThan`
-- negation via `Not`
-- conjunction via multiple premises or multiple facts
-- conditionality via `Implication`
+---
 
-4.2 BAD -> GOOD examples
+## 3. Entity representation and identity
 
-A. Numbers embedded in the predicate name
+The chainer has only symbol identity.
+
+Therefore:
+
+- same atom spelling = same entity
+- different atom spelling = different entity
+- there is no built-in `SameAs`, canonicalization, or name-resolution layer
+
+For named entities, choose one canonical constant per real-world entity. If two entities share a surface name, create distinct constants and optionally add `Name` or `Alias` facts.
+
+For apposition and naming:
+
+- “Lee, the surgeon” should use one entity constant with both a name/alias relation and a `Surgeon` classification.
+- “New York City, the Big Apple” should use one city constant with an alias relation.
+
+For first- and second-person pronouns:
+
+- resolve “I”, “we”, “you” from external context before conversion
+- if context supplies a speaker/addressee constant, use it
+- if no referent is known, do not invent a global constant like `i` or `you`
+- for questions, leave the referent as a query variable only when the English question itself asks for that referent
+
+For plural pronouns or groups, use a group constant plus `MemberOf` / `HasMember` style relations if individual members matter.
+
+---
+
+## 4. Quantification and scope
+
+### Existential statements
+
+Indefinites such as “a”, “some”, and “there is” usually introduce witness constants when asserted as facts.
+
+Example policy in prose:
+
+- “A dog barked” introduces a dog constant and a bark event constant.
+- “Some students laughed” introduces one or more student witnesses unless the exact students are already known.
+
+Do not represent existentiality by creating predicates such as `SomeStudentLaughed`.
+
+### Existential queries
+
+Use variables in the queried proposition.
+
+For “Who called?”, query the relevant role or event proposition with a variable in the unknown position.
+
+### Universal and generic statements
+
+Use rules with variables.
+
+Map:
+
+- “Every X is Y”
+- “All X do Y”
+- “If X then Y”
+- generic truths such as “Dogs bark”
+
+to an `Implication` whose premises restrict the variable and whose conclusions state what follows.
+
+Variables in rules carry the universal/generic force. Do not use nonexistent quantifier operators.
+
+### Cardinality
+
+For “N X exist/did Y”, introduce N witness constants when the sentence asserts concrete participants.
+
+For count-valued claims, expose the number as an argument of a count predicate such as `MemberCount`, `EventCount`, or another domain-specific count relation. Do not place the number in the predicate name.
+
+For derived counts, use aggregation machinery such as `FoldAll` / `FoldAllValue` where the ontology supplies the fold function. Use `GreaterThan` for documented greater-than tests. Since no public equality or less-than primitive is documented, exact and at-most constraints require either:
+
+- an explicitly asserted count fact, or
+- a domain-provided compute/fold convention that produces the needed exactness test
+
+Do not fake exact cardinality with a monolithic predicate name.
+
+### Scope with negation
+
+Respect the surface scope.
+
+- “Every X is not Y” → rule whose conclusion is `Not` of the Y proposition.
+- “No X are Y” → usually same as universal negative: X implies not Y.
+- “Some X are not Y” → existential witness with a `Not` fact.
+- “Not every X is Y” → existential counterexample if one is asserted or known.
+- “A student did not leave” is not the same as “No student left.”
+
+`Not` scopes only over its nested expression.
+
+---
+
+## 5. Predicate atomicity — critical rule
+
+Every predicate name must denote one reusable semantic primitive. Prefer 1–3 English words. The predicate should be able to appear as a premise, conclusion, or query target in other reasoning.
+
+Do not encode the answer, a whole sentence, a comparison, a number, or a named-entity configuration into the predicate name.
+
+Exactly four contrastive examples follow.
+
+### 5.1 Numbers/cardinalities embedded in the name
 
 BAD:
+
 ```metta
-(: f1 (Height180Alice) (STV 1.0 1.0))
+(: f_bad1 (TwoSurveyorsSigned report9) (STV 1.0 1.0))
 ```
 
 GOOD:
+
 ```metta
-(: f1 (Height alice 180 centimeter) (STV 1.0 1.0))
+(: f_good1 (Surveyor surveyorA) (STV 1.0 1.0))
+(: f_good2 (Surveyor surveyorB) (STV 1.0 1.0))
+(: f_good3 (Report report9) (STV 1.0 1.0))
+(: f_good4 (Sign signEvt9) (STV 1.0 1.0))
+(: f_good5 (Agent signEvt9 surveyorA) (STV 1.0 1.0))
+(: f_good6 (Agent signEvt9 surveyorB) (STV 1.0 1.0))
+(: f_good7 (Patient signEvt9 report9) (STV 1.0 1.0))
 ```
 
-B. Threshold embedded in the name
+### 5.2 Thresholds or ranges embedded in the name
 
 BAD:
-```metta
-(: f1 (HeavyOver5Kg bag1) (STV 1.0 1.0))
-```
 
-GOOD:
 ```metta
-(: f1 (Weight bag1 7 kilogram) (STV 1.0 1.0))
-(: r1
+(: r_bad2
    (Implication
-      (Premises
-         (Weight $x $w kilogram)
-         (GreaterThan $w 5))
-      (Conclusions
-         (Heavy $x)))
+      (Premises (PackageOver30Kg $p))
+      (Conclusions (NeedsCart $p)))
    (STV 1.0 1.0))
 ```
 
-C. Multi-concept concatenation in one predicate
-
-BAD:
-```metta
-(: f1 (GiveBookToMary john) (STV 1.0 1.0))
-```
-
 GOOD:
-```metta
-(: f1 (GiveEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 john) (STV 1.0 1.0))
-(: f3 (Recipient e1 mary) (STV 1.0 1.0))
-(: f4 (Theme e1 book1) (STV 1.0 1.0))
-```
 
-D. Entity-specific comparison fused into the name
-
-BAD:
 ```metta
-(: f1 (TomTallerThanSam) (STV 1.0 1.0))
-```
-
-GOOD:
-```metta
-(: f1 (Height tom 190 centimeter) (STV 1.0 1.0))
-(: f2 (Height sam 175 centimeter) (STV 1.0 1.0))
-(: r1
+(: r_good2
    (Implication
       (Premises
-         (Height $x $hx centimeter)
-         (Height $y $hy centimeter)
+         (Package $p)
+         (WeightKg $p $w)
+         (GreaterThan $w 30))
+      (Conclusions (NeedsCart $p)))
+   (STV 1.0 1.0))
+```
+
+### 5.3 Multi-concept concatenation
+
+BAD:
+
+```metta
+(: f_bad3 (CarefullySealedVialInLab rina vial7 lab2) (STV 1.0 1.0))
+```
+
+GOOD:
+
+```metta
+(: f_good31 (Seal sealEvt7) (STV 1.0 1.0))
+(: f_good32 (Agent sealEvt7 rina) (STV 1.0 1.0))
+(: f_good33 (Patient sealEvt7 vial7) (STV 1.0 1.0))
+(: f_good34 (Manner sealEvt7 careful) (STV 1.0 1.0))
+(: f_good35 (Location sealEvt7 lab2) (STV 1.0 1.0))
+(: f_good36 (Vial vial7) (STV 1.0 1.0))
+(: f_good37 (Lab lab2) (STV 1.0 1.0))
+```
+
+### 5.4 Entity-specific comparisons fused into the name
+
+BAD:
+
+```metta
+(: f_bad4 (TowerATallerThanTowerB) (STV 1.0 1.0))
+```
+
+GOOD:
+
+```metta
+(: f_good41 (HeightM towerA 91) (STV 1.0 1.0))
+(: f_good42 (HeightM towerB 84) (STV 1.0 1.0))
+(: r_good4
+   (Implication
+      (Premises
+         (HeightM $x $hx)
+         (HeightM $y $hy)
          (GreaterThan $hx $hy))
-      (Conclusions
-         (TallerThan $x $y)))
+      (Conclusions (TallerThan $x $y)))
    (STV 1.0 1.0))
 ```
 
-E. Whole-event content baked into one predicate
+---
 
-BAD:
-```metta
-(: f1 (ReadBookYesterdayQuietly alice book1) (STV 1.0 1.0))
-```
+## 6. Decomposition strategies
 
-GOOD:
-```metta
-(: f1 (ReadEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 alice) (STV 1.0 1.0))
-(: f3 (Theme e1 book1) (STV 1.0 1.0))
-(: f4 (Time e1 yesterday) (STV 1.0 1.0))
-(: f5 (Manner e1 quietly) (STV 1.0 1.0))
-```
+### Simple classification
 
-Self-check:
-If the predicate name sounds like the whole English clause, split it.
+Map “X is a Y” to a unary class predicate on the entity.
 
-5. Decomposition strategies
+Use the class noun as the predicate. Do not create predicates like `IsADoctor`; use `Doctor`.
 
-5.1 Simple facts
-If the sentence is a simple classification or property with no extra structure, use one atomic fact:
-```metta
-(: f1 (City paris_france) (STV 1.0 1.0))
-(: f2 (Red car1) (STV 1.0 1.0))
-```
+### Properties and attributes
 
-5.2 Complex clauses
-If a clause contains roles, time, location, manner, modality, cause, purpose, or embedding, introduce an event/state/proposition constant and decompose into linked facts.
+For simple qualitative adjectives, use unary property predicates.
 
-Recommended general role predicates:
+For measurable or gradable attributes, prefer value-bearing predicates with the value exposed as an argument. This allows comparisons and threshold rules.
+
+Do not bake intensifiers or values into predicates. Use separate degree/value relations where needed.
+
+### Events and thematic roles
+
+For actions, especially transitive, ditransitive, modified, passive, or temporally located actions, use event reification:
+
+- one event constant
+- one event-type predicate from the verb lemma
+- role predicates linking the event to participants
+
+Use canonical roles such as:
+
 - `Agent`
 - `Patient`
 - `Theme`
 - `Recipient`
 - `Beneficiary`
 - `Instrument`
-- `Experiencer`
 - `Source`
-- `Goal`
-- `Path`
+- `Destination`
 - `Location`
 - `Time`
 - `Manner`
-- `Frequency`
-- `Tense`
-- `Aspect`
-- `Cause`
-- `Purpose`
-- `Content`
 
-Example:
-“Alice cut the bread with a knife in the kitchen yesterday.”
-```metta
-(: f1 (CutEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 alice) (STV 1.0 1.0))
-(: f3 (Patient e1 bread1) (STV 1.0 1.0))
-(: f4 (Instrument e1 knife1) (STV 1.0 1.0))
-(: f5 (Location e1 kitchen1) (STV 1.0 1.0))
-(: f6 (Time e1 yesterday) (STV 1.0 1.0))
-```
+This keeps active/passive alternations and modifiers compositional.
 
-5.3 Derived summary relations
-Because queries are typically single-pattern, add rules that summarize decomposed structures into query-friendly relations.
+### Modifiers
 
-Example:
-```metta
-(: r_cut_summary
-   (Implication
-      (Premises
-         (CutEvent $e)
-         (Agent $e $a)
-         (Patient $e $p))
-      (Conclusions
-         (Cut $a $p)))
-   (STV 1.0 1.0))
-```
+Do not fold modifiers into the main predicate.
 
-Then query:
-```metta
-(: $prf (Cut alice $x) $tv)
-```
+Represent:
 
-6. Quantification and scope
+- adjectival modifiers as properties or value relations of the entity
+- adverbs as `Manner` or another event-level modifier
+- temporal modifiers as `Time`, `Before`, `After`, `During`, `StartsAt`, or `EndsAt`
+- spatial modifiers as spatial relations or event path/location roles
 
-6.1 Universal quantification
-There is no `ForAll`. Express universal/generic rule-like meaning with variables in an `Implication`.
+### Relative clauses
 
-“All whales are mammals.”
-```metta
-(: r1
-   (Implication
-      (Premises (Whale $x))
-      (Conclusions (Mammal $x)))
-   (STV 1.0 1.0))
-```
+Represent the head noun and the relative clause as separate facts or rule premises sharing the same entity variable/constant.
 
-6.2 Existential quantification in assertions
-There is no `Exists`. Use a witness constant.
+“The man who called” should not become one predicate. It is a `Man` entity plus a `Call` event whose agent is that entity.
 
-“A dog barked.”
-```metta
-(: f1 (Dog dog1) (STV 1.0 1.0))
-(: f2 (Bark dog1) (STV 1.0 1.0))
-```
+### Coordination
 
-If event structure is needed:
-```metta
-(: f1 (Dog dog1) (STV 1.0 1.0))
-(: f2 (BarkEvent e1) (STV 1.0 1.0))
-(: f3 (Agent e1 dog1) (STV 1.0 1.0))
-```
+For “and”, add multiple facts, multiple premises, or multiple conclusions as appropriate.
 
-6.3 Existential quantification in queries
-Use variables in the query pattern.
+For coordinated noun phrases, share the same event/relation when both participants fill the same role.
 
-“Did some dog bark?” / “Which dog barked?”
-```metta
-(: $prf (Bark $x) $tv)
-```
+For “or”, there is no documented disjunction operator. Use separate alternative facts/rules only when the source commits to each alternative; otherwise represent the unresolved alternative with a domain predicate such as `Alternative` or `Option`.
 
-If you must restrict to dogs and the query interface should remain single-pattern, derive a summary:
-```metta
-(: r1
-   (Implication
-      (Premises
-         (Dog $x)
-         (Bark $x))
-      (Conclusions
-         (BarkingDog $x)))
-   (STV 1.0 1.0))
-```
+### Conditionals
 
-Then:
-```metta
-(: $prf (BarkingDog $x) $tv)
-```
+Map “if/when/whenever/provided that” conditionals to rules. Put all conditions in premises and all consequences in conclusions.
 
-6.4 Cardinality
-No dedicated cardinal quantifier exists. Use `FoldAll` / `FoldAllValue` when the deployment provides an appropriate fold/count function.
-
-Template:
-```metta
-(: r_count
-   (Implication
-      (Premises
-         (FoldAllValue (LaughingStudent $x) 0 countFn -> $n)
-         (GreaterThan $n 2)
-         (Not (GreaterThan $n 3)))
-      (Conclusions
-         (ExactlyN laughing_students 3)))
-   (STV 1.0 1.0))
-```
-
-Guidelines:
-- At least N: `GreaterThan $n N-1`
-- At most N: `Not (GreaterThan $n N)`
-- Exactly N over naturals: `GreaterThan $n N-1` and `Not (GreaterThan $n N)`
-
-Important:
-- `countFn` must already exist in the runtime environment; do not invent undocumented arithmetic operators.
-- If no count fold function exists, do not fake the semantics by putting the number into the predicate name.
-
-6.5 Scope with negation
-Negation scopes over the nested expression:
-```metta
-(Not expr)
-```
-
-Use scope carefully:
-- “A student did not leave” -> existential witness with negated predicate
-```metta
-(: f1 (Student student1) (STV 1.0 1.0))
-(: f2 (Not (Leave student1)) (STV 1.0 1.0))
-```
-
-- “Every student did not leave” is usually not the same as “Not every student left”.
-  - Universal negative reading: rule with negated conclusion
-  - “Not every” reading: prefer a counterexample witness if available
-
-For “Not every student left”, do not encode:
-```metta
-(: r_bad
-   (Implication
-      (Premises (Student $x))
-      (Conclusions (Not (Leave $x))))
-   (STV 1.0 1.0))
-```
-That means “No student left,” which is stronger.
-
-Prefer, if a witness reading is licensed:
-```metta
-(: f1 (Student student1) (STV 1.0 1.0))
-(: f2 (Not (Leave student1)) (STV 1.0 1.0))
-```
-
-If the exact scope cannot be represented safely, leave it for upstream handling rather than emitting a stronger or weaker false parse.
-
-7. Built-in operators vs custom predicates
-
-Use built-ins when the semantics matches a documented operator:
-- `Implication` for conditionals and generics
-- `Premises` / `Conclusions` for rule structure
-- `Not` for negation
-- `GreaterThan` for numeric comparison
-- `Compute` for runtime-provided functions
-- `FoldAll` / `FoldAllValue` for aggregation
-- `MapDist`, `Map2Dist`, `AverageDist` for distribution-valued reasoning
-
-Use custom predicates for domain concepts:
-- `Dog`
-- `Own`
-- `CutEvent`
-- `Agent`
-- `Purpose`
-- `BelongTo`
-
-Do not replace built-ins with custom domain predicates:
-- BAD: `IfDogThenMammal`
-- GOOD: `Implication`
-
-- BAD: `MoreThan5`
-- GOOD: `GreaterThan`
-
-- BAD: `NotCat`
-- GOOD: `(Not (Cat ...))`
-
-8. Truth value assignment
-
-8.1 Default factual assertions
-For plain asserted facts from the source sentence, use:
-```metta
-(STV 1.0 1.0)
-```
-unless the input explicitly indicates uncertainty.
-
-8.2 Rules
-Use `STV 1.0 1.0` for strict definitional or taxonomic rules.
-Use lower confidence for defeasible generics or defaults when appropriate.
-
-Example:
-“Dogs bark” as a generic tendency may be less strict than taxonomy:
-```metta
-(: r1
-   (Implication
-      (Premises (Dog $x))
-      (Conclusions (Bark $x)))
-   (STV 0.9 0.7))
-```
-
-8.3 Negated assertions
-Negated propositions still take an `STV`:
-```metta
-(: f1 (Not (Call alice)) (STV 1.0 1.0))
-```
-
-8.4 Value uncertainty vs truth uncertainty
-Use `STV` for truth uncertainty.
-Use distributions for uncertain values.
-
-Preferred pattern:
-- keep the proposition truthful with `STV`
-- place the uncertain value inside the proposition
-
-Example:
-```metta
-(: f1 (HeightDist alice (ParticleFromNormal 180 2)) (STV 1.0 1.0))
-```
-
-Do not confuse:
-- truth uncertainty: “maybe true”
-- value uncertainty: “true, but the measured value is distributed”
-
-9. Query semantics and query granularity
-
-9.1 Statements vs queries
-Statements add knowledge.
-Queries ask for proofs of a target pattern.
-
-9.2 Rule-vs-query separation
-Do not query a rule-shaped form when the English asks about a concrete derivable fact.
-
-BAD for “Is moby a mammal?”:
-```metta
-(: $prf
-   (Implication
-      (Premises (Whale $x))
-      (Conclusions (Mammal $x)))
-   $tv)
-```
-
-GOOD:
-Store the rule:
-```metta
-(: r1
-   (Implication
-      (Premises (Whale $x))
-      (Conclusions (Mammal $x)))
-   (STV 1.0 1.0))
-```
-
-Then query the target fact:
-```metta
-(: $prf (Mammal moby) $tv)
-```
-
-9.3 Query only the unknown
-Do not emit a battery of queries for already asserted atoms.
-
-BAD for “What did Alice cut?” after decomposing one cut event:
-- query `CutEvent`
-- query `Agent`
-- query `Patient`
-separately
-
-GOOD:
-Add a summary rule:
-```metta
-(: r1
-   (Implication
-      (Premises
-         (CutEvent $e)
-         (Agent $e $a)
-         (Patient $e $p))
-      (Conclusions
-         (Cut $a $p)))
-   (STV 1.0 1.0))
-```
-
-Then ask exactly:
-```metta
-(: $prf (Cut alice $x) $tv)
-```
-
-9.4 Query granularity asymmetry
-Statements may be highly decomposed.
-Queries should usually be a single target relation that the reasoner can derive from that decomposition.
-
-If a natural-language question depends on a conjunction, prefer:
-- decompose in the KB
-- derive one queryable predicate by rule
-- query that one predicate
-
-10. Phenomenon-by-phenomenon mapping
-
-1. Entity classification
-- Use unary predicates for class membership.
-- Use implication rules for class inclusion.
-
-Examples:
-```metta
-(: f1 (City paris_france) (STV 1.0 1.0))
-(: r1
-   (Implication
-      (Premises (Whale $x))
-      (Conclusions (Mammal $x)))
-   (STV 1.0 1.0))
-```
-
-2. Determiners and definiteness
-- “a/an” in assertions -> introduce a new witness constant.
-- “the” -> reuse an already established/resolved constant.
-- “this/that” -> same entity handling as definites; optionally add `Proximal` / `Distal` if deixis matters.
-
-Example:
-```metta
-(: f1 (Dog dog1) (STV 1.0 1.0))
-(: f2 (Loud dog1) (STV 1.0 1.0))
-(: f3 (Proximal dog1) (STV 1.0 1.0))
-```
-
-3. Properties and attributes
-- Simple adjective/property -> unary predicate:
-```metta
-(: f1 (Fast car1) (STV 1.0 1.0))
-(: f2 (Hot soup1) (STV 1.0 1.0))
-```
-- If the property has an explicit value or unit, use arguments:
-```metta
-(: f1 (Height alice 180 centimeter) (STV 1.0 1.0))
-```
-
-4. Actions and events with thematic roles
-- For simple unmodified events, a direct predicate is acceptable:
-```metta
-(: f1 (Own sara bike1) (STV 1.0 1.0))
-```
-- For events with multiple roles/modifiers, use event decomposition.
-
-Example:
-```metta
-(: f1 (CutEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 alice) (STV 1.0 1.0))
-(: f3 (Patient e1 bread1) (STV 1.0 1.0))
-(: f4 (Instrument e1 knife1) (STV 1.0 1.0))
-```
-
-5. Possession and ownership
-- Use general binary predicates such as `Have`, `Own`, `BelongTo`.
-- For possessive noun compounds that are part-whole, prefer `PartOf`.
-
-Examples:
-```metta
-(: f1 (Have sara bike1) (STV 1.0 1.0))
-(: f2 (BelongTo book1 omar) (STV 1.0 1.0))
-(: f3 (PartOf engine1 car1) (STV 1.0 1.0))
-```
-
-6. Spatial relations
-- Static relations: binary predicates such as `On`, `Under`, `Beside`, `In`, `Over`.
-- Motion relations: event + `Source`, `Goal`, `Path`.
-
-Examples:
-```metta
-(: f1 (Under key1 mat1) (STV 1.0 1.0))
-(: f2 (Beside cafe1 station1) (STV 1.0 1.0))
-(: f3 (FlyEvent e1) (STV 1.0 1.0))
-(: f4 (Agent e1 plane1) (STV 1.0 1.0))
-(: f5 (Over e1 city1) (STV 1.0 1.0))
-```
-
-7. Temporal relations and tense
-- Use `Before`, `After`, `Time`, and `Tense`.
-- Tense should usually be represented as a separate feature, not baked into the main predicate.
-
-Examples:
-```metta
-(: f1 (ArriveEvent e1) (STV 1.0 1.0))
-(: f2 (Time e1 noon) (STV 1.0 1.0))
-(: f3 (Before e1 noon) (STV 1.0 1.0))
-(: f4 (Tense e1 past) (STV 1.0 1.0))
-```
-
-8. Aspect and event viewpoint
-- Use `Aspect` on an event.
-- Suggested values: `progressive`, `perfect`, `completed`, `ongoing`.
-
-Example:
-```metta
-(: f1 (ReadEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 she1) (STV 1.0 1.0))
-(: f3 (Aspect e1 progressive) (STV 1.0 1.0))
-```
-
-9. Quantification
-- Universal -> `Implication` with variables.
-- Existential assertion -> witness constant.
-- Existential question -> query variable.
-- Cardinality -> `FoldAll` / `FoldAllValue` + `GreaterThan` if supported.
-
-10. Negation
-- Use `Not` over the proposition.
-- Never treat absence of a fact as negation.
-- For negative rules, place `Not` in the conclusion if the ontology uses explicit negative propositions.
-
-Examples:
-```metta
-(: f1 (Not (Call alice)) (STV 1.0 1.0))
-(: r1
-   (Implication
-      (Premises (Dog $x))
-      (Conclusions (Not (Fly $x))))
-   (STV 1.0 1.0))
-```
-
-11. Modality
-- No built-in modal operators are documented.
-- Use custom modal predicates such as `Can`, `May`, `Must`, `Possible`, `Necessary`, `Permitted`.
-- Keep the modal separate from the action.
-
-Examples:
-```metta
-(: f1 (Can alice swim) (STV 1.0 1.0))
-(: f2 (May addressee1 leave) (STV 1.0 1.0))
-(: f3 (Must addressee1 return) (STV 1.0 1.0))
-```
-
-If event structure is needed, attach the modal to an event constant instead.
-
-12. Causation and purpose
-- Reify both events and connect them with `Cause` or `Purpose`.
-
-Example:
-```metta
-(: f1 (StudyEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 she1) (STV 1.0 1.0))
-(: f3 (PassEvent e2) (STV 1.0 1.0))
-(: f4 (Agent e2 she1) (STV 1.0 1.0))
-(: f5 (Purpose e1 e2) (STV 1.0 1.0))
-```
-
-13. Comparison
-- If a numeric scale is available, represent the measured value explicitly and use `GreaterThan`.
-- Less-than is represented by reversed arguments.
-- Equality is not built in; use same value facts or a custom relation such as `SameHeight` if needed.
-
-Examples:
-```metta
-(: f1 (Height tom 190 centimeter) (STV 1.0 1.0))
-(: f2 (Height sam 175 centimeter) (STV 1.0 1.0))
-(: r1
-   (Implication
-      (Premises
-         (Height $x $hx centimeter)
-         (Height $y $hy centimeter)
-         (GreaterThan $hx $hy))
-      (Conclusions
-         (TallerThan $x $y)))
-   (STV 1.0 1.0))
-```
-
-For superlatives, prefer explicit score/value comparisons if available. Otherwise use a custom predicate like `Best option1`, but do not bake the compared set into the predicate name.
-
-14. Conjunction and disjunction
-- Conjunction in assertions -> emit multiple facts, or one rule with multiple premises/conclusions.
-- Conjunction in noun phrases -> usually duplicate the predicate over each conjunct.
-- No built-in disjunction operator is documented.
-
-Examples:
-“Anna sang and Ben danced.”
-```metta
-(: f1 (Sing anna) (STV 1.0 1.0))
-(: f2 (Dance ben) (STV 1.0 1.0))
-```
-
-For disjunction:
-- If English means both alternatives are permitted/available, assert both.
-- If English means a true logical disjunction with unresolved branch, use a custom relation such as `Alternative` or leave to upstream handling; do not invent an undocumented `Or`.
-
-15. Conditionals
-- Use `Implication`.
-- Variables in the rule are the mechanism for general conditional meaning.
-
-Example:
-```metta
-(: r1
-   (Implication
-      (Premises (RainEvent e1))
-      (Conclusions (StayHome we1)))
-   (STV 1.0 1.0))
-```
-
-For ordinary generic conditionals over individuals:
-```metta
-(: r1
-   (Implication
-      (Premises (Tired $x))
-      (Conclusions (Rest $x)))
-   (STV 1.0 1.0))
-```
-
-Counterfactual distinctions are not natively marked; encode only if an approximation is acceptable.
-
-16. Propositional attitudes and embedded clauses
-- Reify the embedded event/state/proposition and link it with `Content`.
-- Use attitude predicates such as `Believe`, `Know`, `Want`, `Hope`, or attitude-event decomposition.
-
-Example:
-```metta
-(: f1 (LeaveEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 lee) (STV 1.0 1.0))
-(: f3 (Want lee e1) (STV 1.0 1.0))
-```
-
-For more structure:
-```metta
-(: f1 (WantEvent w1) (STV 1.0 1.0))
-(: f2 (Experiencer w1 lee) (STV 1.0 1.0))
-(: f3 (Content w1 e1) (STV 1.0 1.0))
-```
-
-17. Adverbs and manner
-- Attach adverbial information as a separate modifier on the event.
-- Prefer a general `Manner` relation when the modifier value itself may be queried.
-
-Example:
-```metta
-(: f1 (PackEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 she1) (STV 1.0 1.0))
-(: f3 (Theme e1 box1) (STV 1.0 1.0))
-(: f4 (Manner e1 carefully) (STV 1.0 1.0))
-```
-
-18. Frequency and habituality
-- Represent frequency as a separate feature: `Frequency e1 often`, `Frequency e1 usually`.
-- Mark habits with a custom predicate like `Habitual` when needed.
-
-Example:
-```metta
-(: f1 (VisitEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 she1) (STV 1.0 1.0))
-(: f3 (Frequency e1 often) (STV 1.0 1.0))
-(: f4 (Time e1 sunday) (STV 1.0 1.0))
-(: f5 (Habitual e1) (STV 1.0 1.0))
-```
-
-19. Pronouns, reference, and coreference
-- Resolve pronouns to the same constant as their antecedent.
-- Do not create a new entity for a coreferent pronoun.
-- If reference is unknown, do not guess.
-
-Example:
-“Maria saw a dog and petted it.”
-```metta
-(: f1 (Dog dog1) (STV 1.0 1.0))
-(: f2 (SeeEvent e1) (STV 1.0 1.0))
-(: f3 (Agent e1 maria) (STV 1.0 1.0))
-(: f4 (Patient e1 dog1) (STV 1.0 1.0))
-(: f5 (PetEvent e2) (STV 1.0 1.0))
-(: f6 (Agent e2 maria) (STV 1.0 1.0))
-(: f7 (Patient e2 dog1) (STV 1.0 1.0))
-```
-
-20. Reflexives and reciprocals
-- Reflexive: use the same entity constant in both roles.
-- Reciprocal: either emit paired binary facts or one event with multiple participants plus `Reciprocal`.
-
-Reflexive:
-```metta
-(: f1 (BlameEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 john) (STV 1.0 1.0))
-(: f3 (Patient e1 john) (STV 1.0 1.0))
-```
-
-Reciprocal pairwise:
-```metta
-(: f1 (Hug anna beth) (STV 1.0 1.0))
-(: f2 (Hug beth anna) (STV 1.0 1.0))
-```
-
-21. Passive voice and alternations
-- Preserve underlying semantic roles; do not let surface subjecthood change role assignment.
-- If the agent is omitted, omit it rather than inventing one.
-
-Example:
-“The cake was eaten by the children.”
-```metta
-(: f1 (EatEvent e1) (STV 1.0 1.0))
-(: f2 (Patient e1 cake1) (STV 1.0 1.0))
-(: f3 (Agent e1 children1) (STV 1.0 1.0))
-```
-
-“The door opened.”
-```metta
-(: f1 (OpenEvent e1) (STV 1.0 1.0))
-(: f2 (Patient e1 door1) (STV 1.0 1.0))
-```
-
-22. Relative clauses and nominal modification
-- Use one constant for the head noun.
-- Encode the relative clause as additional facts about that same constant.
-
-Example:
-“The man who called is waiting.”
-```metta
-(: f1 (Man man1) (STV 1.0 1.0))
-(: f2 (Call man1) (STV 1.0 1.0))
-(: f3 (Wait man1) (STV 1.0 1.0))
-```
-
-If the clause needs richer structure, use event decomposition.
-
-23. Questions and wh-phrases
-- Use the query envelope `(: $prf pattern $tv)`.
-- Yes/no question -> grounded pattern.
-- Wh-question -> variable in the queried position.
-
-Examples:
-“Did Maria call?”
-```metta
-(: $prf (Call maria) $tv)
-```
-
-“Who called?”
-```metta
-(: $prf (Call $x) $tv)
-```
-
-“What did she buy?”
-After pronoun resolution:
-```metta
-(: $prf (Buy she1 $x) $tv)
-```
-
-If the answer depends on a conjunction of facts, derive a summary predicate first and query that.
-
-24. Imperatives and directives
-- Imperatives are not ordinary world facts.
-- If you need to represent them, model them as speech acts: `Command`, `Request`, `Prohibit`.
-
-Example:
-```metta
-(: f1 (CloseEvent e1) (STV 1.0 1.0))
-(: f2 (Patient e1 door1) (STV 1.0 1.0))
-(: f3 (Command speaker_1 addressee_1 e1) (STV 1.0 1.0))
-```
-
-Negative imperative:
-```metta
-(: f1 (EnterEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 addressee_1) (STV 1.0 1.0))
-(: f3 (Prohibit speaker_1 addressee_1 e1) (STV 1.0 1.0))
-```
-
-25. Generic and kind-level statements
-- Instance-level generic that licenses inference -> rule.
-- Kind-level property that applies to the species/type itself -> use a kind constant.
-
-Examples:
-“Dogs bark.”
-```metta
-(: r1
-   (Implication
-      (Premises (Dog $x))
-      (Conclusions (Bark $x)))
-   (STV 0.9 0.7))
-```
-
-“Tigers are endangered.” If the intention is kind-level:
-```metta
-(: f1 (Endangered tiger_kind) (STV 1.0 1.0))
-```
-
-26. Part-whole and membership relations
-- Use atomic binary predicates such as `PartOf`, `MemberOf`, `BelongTo`.
-- Choose the relation that matches the intended ontology; do not overload class membership with part-whole.
-
-Examples:
-```metta
-(: f1 (PartOf wheel1 bike1) (STV 1.0 1.0))
-(: f2 (MemberOf alaska united_states) (STV 1.0 1.0))
-(: f3 (ChapterOf chapter1 book1) (STV 1.0 1.0))
-```
-
-27. Measurement, amounts, and numerals
-- Put numbers in arguments, not in predicate names.
-- Prefer a separate unit argument:
-```metta
-(: f1 (Weight bag1 2 kilogram) (STV 1.0 1.0))
-(: f2 (Duration movie1 3 hour) (STV 1.0 1.0))
-(: f3 (Height she1 180 centimeter) (STV 1.0 1.0))
-```
-- Compare numeric values using `GreaterThan`.
-
-For uncertain measured values, use distribution-valued predicates:
-```metta
-(: f1 (WeightDist bag1 (ParticleFromNormal 2 0.1)) (STV 1.0 1.0))
-```
-
-28. Degree and intensification
-- Keep the base property separate from degree.
-- Use a separate `Degree` relation or an explicit numeric scale if available.
-
-Example:
-```metta
-(: f1 (Hot coffee1) (STV 1.0 1.0))
-(: f2 (Degree coffee1 hot very) (STV 1.0 1.0))
-```
-
-For scalar properties, prefer explicit values when possible:
-```metta
-(: f1 (Slope road1 18 degree) (STV 1.0 1.0))
-```
-
-29. Discourse sequencing and connectives
-- Reify linked clauses/events and connect them with discourse relations such as `Before`, `Cause`, `Contrast`, `Explanation`.
-
-Example:
-```metta
-(: f1 (EatEvent e1) (STV 1.0 1.0))
-(: f2 (GoHomeEvent e2) (STV 1.0 1.0))
-(: f3 (After e2 e1) (STV 1.0 1.0))
-(: f4 (Cause tired1 e2) (STV 1.0 1.0))
-```
-
-Use event-to-event or proposition-to-proposition links rather than creating one large discourse predicate.
-
-30. Distributive and collective readings
-- Distributive -> separate facts/events for each participant when the members are known.
-- Collective -> one event with multiple participants, optionally marked by `Collective`.
-
-Examples:
-Distributive:
-```metta
-(: f1 (Receive anna toy1) (STV 1.0 1.0))
-(: f2 (Receive ben toy2) (STV 1.0 1.0))
-```
-
-Collective:
-```metta
-(: f1 (LiftEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 students1) (STV 1.0 1.0))
-(: f3 (Patient e1 piano1) (STV 1.0 1.0))
-(: f4 (Collective e1) (STV 1.0 1.0))
-```
-
-31. Scope interactions
-- Scope is expressed only indirectly through rule structure, witness constants, variables, and `Not`.
-- Be conservative: do not collapse distinct readings into the same encoding.
-
-Examples:
-- “A student did not leave” -> witness + `Not (Leave student1)`
-- “Every student may leave” -> rule concluding a modal fact
-```metta
-(: r1
-   (Implication
-      (Premises (Student $x))
-      (Conclusions (May $x leave)))
-   (STV 1.0 1.0))
-```
-
-If an English scope reading cannot be represented without loss, prefer a marked approximation or upstream resolution.
-
-32. Reported speech and quotation
-- Represent a speech/report event and link it to content with `Content`.
-- There is no documented raw quotation-string syntax; normalize quoted material into ordinary proposition/event structure.
-
-Example:
-```metta
-(: f1 (Late train1) (STV 1.0 1.0))
-(: f2 (SayEvent e1) (STV 1.0 1.0))
-(: f3 (Speaker e1 she1) (STV 1.0 1.0))
-(: f4 (Content e1 train1) (STV 1.0 1.0))
-```
-
-If content is more complex than one atom, reify it as its own event/state constant and attach `Content e1 p1`.
-
-33. Transfer and ditransitive arguments
-- Use either a direct ternary predicate for simple cases or event decomposition for richer structure.
-- Recommended role schema: `Agent`, `Recipient`, `Theme`, optionally `Source`.
-
-Example:
-```metta
-(: f1 (GiveEvent e1) (STV 1.0 1.0))
-(: f2 (Agent e1 she1) (STV 1.0 1.0))
-(: f3 (Recipient e1 him1) (STV 1.0 1.0))
-(: f4 (Theme e1 book1) (STV 1.0 1.0))
-```
-
-34. Apposition and naming
-- Use one entity constant.
-- Assert all appositive descriptions of that same constant.
-- Use `Name` / `Alias` when needed.
-
-Example:
-“Lee, the surgeon, arrived.”
-```metta
-(: f1 (Person lee1) (STV 1.0 1.0))
-(: f2 (Surgeon lee1) (STV 1.0 1.0))
-(: f3 (Arrive lee1) (STV 1.0 1.0))
-(: f4 (Name lee1 lee) (STV 1.0 1.0))
-```
-
-35. Ellipsis and gapping
-- Recover omitted material from context before emission.
-- Emit the fully reconstructed semantics, not a partial skeleton with missing arguments.
-- If recovery is uncertain, either omit the fact or lower confidence.
-
-Example:
-“Alice ordered tea and Bob coffee.”
-```metta
-(: f1 (Order alice tea1) (STV 1.0 1.0))
-(: f2 (Order bob coffee1) (STV 1.0 1.0))
-```
-
-36. Clefts and focus
-- Strip the cleft scaffold and encode the core proposition.
-- If focus matters, add a separate focus relation.
-
-Example:
-“It was John who called.”
-```metta
-(: f1 (Call john) (STV 1.0 1.0))
-(: f2 (Focus john) (STV 1.0 1.0))
-```
-
-For exclusives like “Only Maria laughed”:
-- If the closed set is known, encode the positive fact plus explicit negative facts for alternatives.
-- Otherwise use a custom relation such as `Only maria laugh`, keeping `Only` atomic and the property/action as an argument, not in the predicate name.
-
-11. Final consistency checklist
-
-Before emitting a parse, verify:
-- The outer form is `(: ... ... ...)`.
-- Statement proof ids are constants; query proof ids are variables.
-- Predicate names are CamelCase, lemmatized, and atomic.
-- Constants are stable, lowercase atoms.
-- Numbers are arguments, not part of predicate names.
-- Comparisons use `GreaterThan`.
-- Negation uses `Not`.
-- Universal meaning uses rules, not invented quantifier syntax.
-- Existential assertions use witness constants.
-- Complex clauses are decomposed into linked atoms.
-- Queries ask only for the requested unknown, usually as one target pattern.
-- No undocumented syntax or operators have been introduced.
+Counterfactuals can use the same structural rule form only if the KB is meant to reason over hypothetical conditions; otherwise represent counterfactuality explicitly with a domain predicate.
 
 ---
 
-## Relation templates
+## 7. Statements vs queries
 
-Canonical primitive relation templates for PeTTaChainer
+Statements add facts or rules to the KB. Queries ask whether a proposition pattern is derivable.
 
-Legend
-- `<...>` = template slot, not a literal emitted atom
-- `$x`, `$y` = entity variables
-- `$e` = event variable
-- `$s` = state variable
-- `$p` = embedded event/state/proposition variable
-- `$t` = time variable
-- `$n` = numeric/count variable
-- `$d` = distribution variable
-- `$unit` = unit atom
-- Open-class lexical families may instantiate many predicate heads.
-- Closed-class relations below should use the exact predicate names shown.
+Do not turn a generic English statement into a query for the rule itself unless the user is explicitly asking whether that rule is stored/provable as an object. Usually, add the rule as a statement and query a concrete conclusion.
 
-======================================================================
-1. PUBLIC LOGICAL / QUERY SCAFFOLDING
-======================================================================
+For the question “Given that tagged samples are archived and sample7 is tagged, is sample7 archived?”:
 
-1.1 Fact / assertion envelope
+BAD query:
+
 ```metta
-(: <fact-id> <proposition> (STV <strength> <confidence>))
-```
-Use for asserted facts.
-
-1.2 Rule envelope
-```metta
-(: <rule-id>
+(: $prf
    (Implication
-      (Premises
-         <premise1>
-         <premise2>
-         ...)
-      (Conclusions
-         <conclusion1>
-         <conclusion2>
-         ...))
-   (STV <strength> <confidence>))
-```
-Use for generics, taxonomic rules, conditionals, and derived summaries.
-
-1.3 Query envelope
-```metta
-(: $prf <pattern> $tv)
-```
-Use for yes/no and wh-queries. Put variables only in the unknown positions.
-
-======================================================================
-2. BUILT-IN LOGICAL / COMPOSITIONAL OPERATORS
-======================================================================
-
-These are fixed built-ins, not custom ontology predicates.
-
-2.1 Negation
-```metta
-(Not <proposition>)
-```
-Explicit negation with local scope.
-
-2.2 Conditional / rule structure
-```metta
-(Implication (Premises <premise> ...) (Conclusions <conclusion> ...))
-(Premises <premise1> <premise2> ...)
-(Conclusions <conclusion1> <conclusion2> ...)
-```
-Canonical encoding for if-then structure, universal/generic rules, and derived relations.
-
-2.3 Numeric comparison
-```metta
-(GreaterThan <left> <right>)
-```
-Canonical comparison primitive. Use reversed arguments for less-than meanings.
-
-2.4 Runtime computation
-```metta
-(Compute <function> (<arg1> <arg2> ...) -> $out)
-```
-Use only when a runtime function already exists.
-
-2.5 Aggregation / counting
-```metta
-(FoldAll <pattern> <value> <init> <fold-fn> -> $out)
-(FoldAllValue <pattern> <init> <fold-fn> -> $out)
-```
-Use for counts, totals, and aggregate-derived quantificational facts.
-
-2.6 Distribution mapping / aggregation
-```metta
-(MapDist <function> <pattern> $d -> $outD)
-(Map2Dist <function> <patternA> $dA <patternB> $dB -> $outD)
-(AverageDist <pattern> $d -> $outD)
-```
-Use for uncertain values stored as distributions.
-
-======================================================================
-3. TRUTH / VALUE CONSTRUCTORS
-======================================================================
-
-3.1 Truth uncertainty
-```metta
-(STV <strength> <confidence>)
+      (Premises (Tagged $s))
+      (Conclusions (Archived $s)))
+   $tv)
 ```
 
-3.2 Value uncertainty constructors
-```metta
-(NatDist ((<value> <probability>) ...))
-(FloatDist ((<value> <probability>) ...))
-(ParticleDist <ref>)
-(ParticleDist <ref> <scale>)
-(PointMass <value>)
-(ParticleFromNormal <mu> <sigma>)
-(ParticleFromPairs ((<value1> <weight1>) (<value2> <weight2>) ...))
-```
-
-These constructors appear inside propositions, typically in `...Dist` predicates.
-
-======================================================================
-4. OPEN-CLASS LEXICAL PREDICATE FAMILIES
-======================================================================
-
-These are the productive content-predicate families used across domains.
-
-4.1 Entity / kind membership
-```metta
-(<Kind> $x)
-```
-Unary class/category membership.
-Examples of the family: `Dog`, `City`, `Person`, `Doctor`.
-
-4.2 One-place properties / states
-```metta
-(<Property> $x)
-```
-Unary qualities or states.
-Examples of the family: `Red`, `Fast`, `Hot`, `Friendly`, `Endangered`.
-
-4.3 Simple intransitive predicate family
-```metta
-(<IntransitivePredicate> $x)
-```
-Compact form for simple unmodified clauses when event reification is unnecessary.
-Examples of the family: `Bark`, `Laugh`, `Arrive`, `Wait`.
-
-4.4 Simple binary predicate family
-```metta
-(<BinaryPredicate> $x $y)
-```
-Compact form for simple binary relations/events when no extra roles or modifiers are needed.
-Examples of the family: `Own`, `See`, `Read`, `Call`, `Hug`.
-
-4.5 Simple ternary predicate family
-```metta
-(<TernaryPredicate> $x $y $z)
-```
-Compact form for simple ditransitives or three-place relations.
-Examples of the family: `Give`, `Tell`, `Put`.
-
-4.6 Reified event type family
-```metta
-(<VerbLemma>Event $e)
-```
-Preferred primitive for complex clauses, modifiers, embedded content, passive alternations, and role-based querying.
-Examples of the family: `CutEvent`, `ReadEvent`, `GiveEvent`, `SayEvent`, `OpenEvent`.
-
-4.7 Reified state/situation type family
-```metta
-(<StateLemma>State $s)
-```
-Use for embedded stative content, resultant states, or reified situations.
-Examples of the family: `LateState`, `ReadyState`, `ClosedState`.
-
-4.8 Explicit scalar/measurement family
-```metta
-(<ScalarProperty> $x $n $unit)
-```
-Numeric property with explicit unit.
-Examples of the family: `Height`, `Weight`, `Duration`, `Length`, `Temperature`.
-
-4.9 Uncertain scalar/measurement family
-```metta
-(<ScalarProperty>Dist $x $d)
-```
-Distribution-valued property.
-Examples of the family: `HeightDist`, `WeightDist`, `AreaDist`.
-
-Note
-- Prefer 4.6/4.7 plus role relations once a clause has modifiers, tense/aspect, embedding, cause, purpose, negation scope, or multiple participants.
-- Derived summary predicates such as `(Cut $a $p)` are useful, but they are not primitive templates.
-
-======================================================================
-5. CLOSED-CLASS SEMANTIC RELATION TEMPLATES
-======================================================================
-
-----------------------------------------------------------------------
-5.1 Reference, naming, definiteness, and deixis
-----------------------------------------------------------------------
+GOOD: add the rule and fact, then query the target conclusion.
 
 ```metta
-(Name $x <name_atom>)
-(Alias $x <alias_atom>)
-(Definite $x)
-(Indefinite $x)
-(Specific $x)
-(Proximal $x)
-(Distal $x)
-```
-
-Descriptions
-- `Name`: canonical name or surface name token mapped to an entity.
-- `Alias`: alternate label or nickname.
-- `Definite`: referent treated as discourse-familiar/resolved.
-- `Indefinite`: referent introduced as new/non-familiar.
-- `Specific`: speaker has a particular referent in mind.
-- `Proximal`: this/these-style deixis.
-- `Distal`: that/those-style deixis.
-
-----------------------------------------------------------------------
-5.2 Event/state participant and modifier roles
-----------------------------------------------------------------------
-
-```metta
-(Agent $e $x)
-(Patient $e $x)
-(Theme $e $x)
-(Recipient $e $x)
-(Beneficiary $e $x)
-(Instrument $e $x)
-(Experiencer $e $x)
-(Stimulus $e $x)
-(Source $e $x)
-(Goal $e $x)
-(Path $e $x)
-(Location $e $x)
-(Time $e $t)
-(StartTime $e $t)
-(EndTime $e $t)
-(Manner $e <manner_atom>)
-(Frequency $e <frequency_atom>)
-(Tense $e <tense_atom>)
-(Aspect $e <aspect_atom>)
-(Content $e $p)
-(Cause $x $y)
-(Purpose $e $p)
-(Reason $e $p)
-(Result $e $s)
-(Speaker $e $x)
-(Addressee $e $x)
-(Participant $e $x)
-```
-
-Descriptions
-- `Agent`: actor, doer, or effective causer of an event.
-- `Patient`: entity directly affected or undergone.
-- `Theme`: moved, transferred, perceived, or semantically central participant.
-- `Recipient`: receiver in transfer/communication.
-- `Beneficiary`: one for whose benefit the event occurs.
-- `Instrument`: means/tool used in the event.
-- `Experiencer`: experiencer of mental/perceptual/emotional state.
-- `Stimulus`: entity causing the experience or emotion.
-- `Source`: origin in motion, transfer, or derivation.
-- `Goal`: destination/end-point in motion, transfer, or change.
-- `Path`: route traversed.
-- `Location`: place of an event/state, or anchoring location.
-- `Time`: general temporal anchor.
-- `StartTime`: event/state onset.
-- `EndTime`: event/state endpoint.
-- `Manner`: how the event happens.
-- `Frequency`: often/usually/daily-style recurrence marker.
-- `Tense`: typical values include `past`, `present`, `future`.
-- `Aspect`: typical values include `progressive`, `perfect`, `completed`, `ongoing`.
-- `Content`: embedded clause/event/state content.
-- `Cause`: general causal link; may relate event-event, state-event, or proposition-proposition.
-- `Purpose`: intended goal of an event.
-- `Reason`: explanatory/motivational reason.
-- `Result`: resulting state/situation produced by an event.
-- `Speaker`: producer of a speech/report event.
-- `Addressee`: intended hearer/recipient of a speech/directive event.
-- `Participant`: additional participant, useful for collective or reciprocal structures.
-
-----------------------------------------------------------------------
-5.3 Possession, ownership, part-whole, and membership
-----------------------------------------------------------------------
-
-```metta
-(Have $x $y)
-(Own $x $y)
-(BelongTo $x $y)
-(PartOf $x $y)
-(MemberOf $x $y)
-```
-
-Descriptions
-- `Have`: general possession/holding/association.
-- `Own`: stronger ownership relation.
-- `BelongTo`: inverse-style belonging/affiliation.
-- `PartOf`: component-whole relation.
-- `MemberOf`: member-group / element-collection relation.
-
-----------------------------------------------------------------------
-5.4 Spatial configuration and motion-related relations
-----------------------------------------------------------------------
-
-These may relate entity-entity, entity-place, or event-landmark pairs as needed.
-
-```metta
-(In $x $y)
-(On $x $y)
-(At $x $y)
-(Under $x $y)
-(Over $x $y)
-(Above $x $y)
-(Below $x $y)
-(Beside $x $y)
-(Near $x $y)
-(Inside $x $y)
-(Outside $x $y)
-(Between $x $y)
-(Through $x $y)
-(Across $x $y)
-(Around $x $y)
-(Toward $x $y)
-(Behind $x $y)
-(FrontOf $x $y)
-```
-
-Descriptions
-- `In`, `On`, `At`: basic locative relations.
-- `Under`, `Over`, `Above`, `Below`: vertical/topological relations.
-- `Beside`, `Near`, `Between`: proximity/adjacency relations.
-- `Inside`, `Outside`: interior/exterior relation.
-- `Through`, `Across`, `Around`, `Toward`: path/orientation relations, often with an event as first argument.
-- `Behind`, `FrontOf`: frontal orientation relations.
-
-----------------------------------------------------------------------
-5.5 Temporal ordering and discourse linkage
-----------------------------------------------------------------------
-
-```metta
-(Before $x $y)
-(After $x $y)
-(During $x $y)
-(Simultaneous $x $y)
-(Contrast $x $y)
-(Explanation $x $y)
-```
-
-Descriptions
-- `Before`, `After`: temporal ordering between events, states, or times.
-- `During`: containment/overlap of one interval/event within another.
-- `Simultaneous`: co-temporality.
-- `Contrast`: discourse contrast/concession-style link.
-- `Explanation`: explanatory relation between two reified clauses/events/states.
-
-Note
-- Use `Implication` as the canonical template for true conditionals and generic if-then statements.
-- Use `Before` / `After` rather than inventing tense morphology in predicate names.
-
-----------------------------------------------------------------------
-5.6 Modality
-----------------------------------------------------------------------
-
-```metta
-(Can $x $p)
-(May $x $p)
-(Must $x $p)
-(Possible $p)
-(Necessary $p)
-(Permitted $x $p)
-```
-
-Descriptions
-- `Can`: ability/capacity of an agent with respect to content.
-- `May`: permission/possibility licensed for an agent.
-- `Must`: obligation/necessity on an agent.
-- `Possible`: proposition/event is possible.
-- `Necessary`: proposition/event is necessary.
-- `Permitted`: explicit permission relation when separate from `May` is useful.
-
-`$p` should usually be a reified event/state/proposition constant.
-
-----------------------------------------------------------------------
-5.7 Propositional attitudes and intention
-----------------------------------------------------------------------
-
-```metta
-(Believe $x $p)
-(Know $x $p)
-(Want $x $p)
-(Hope $x $p)
-(Intend $x $p)
-```
-
-Descriptions
-- `Believe`: belief attitude toward content.
-- `Know`: knowledge attitude toward content.
-- `Want`: desire toward content.
-- `Hope`: hope toward content.
-- `Intend`: intention/plan toward content.
-
-Use with a reified event/state/proposition in `$p`, or decompose further with `(<AttitudeVerb>Event $e)` plus `Experiencer` and `Content`.
-
-----------------------------------------------------------------------
-5.8 Directives and speech-act force
-----------------------------------------------------------------------
-
-```metta
-(Command $x $y $p)
-(Request $x $y $p)
-(Prohibit $x $y $p)
-```
-
-Descriptions
-- `Command`: speaker `$x` commands addressee `$y` regarding content `$p`.
-- `Request`: speaker `$x` requests addressee `$y` regarding content `$p`.
-- `Prohibit`: speaker `$x` forbids addressee `$y` regarding content `$p`.
-
-These cover imperatives, prohibitions, and directive readings.
-
-----------------------------------------------------------------------
-5.9 Quantity, counting, grouping, and reading type
-----------------------------------------------------------------------
-
-```metta
-(Cardinality $x $n)
-(Quantity $x $n $unit)
-(Collective $e)
-(Distributive $e)
-(Reciprocal $e)
-(Habitual $e)
-```
-
-Descriptions
-- `Cardinality`: explicit count of a group/collection.
-- `Quantity`: measured amount of an entity/substance.
-- `Collective`: event interpreted as joint group action.
-- `Distributive`: event interpreted as individually distributed over participants.
-- `Reciprocal`: event interpreted mutually among participants.
-- `Habitual`: event/schema interpreted as habitual or regular.
-
-Note
-- Exact numeric quantification can also be derived with `FoldAll` / `FoldAllValue` plus `GreaterThan` and `Not`.
-
-----------------------------------------------------------------------
-5.10 Degree, equality, comparison, and ranking
-----------------------------------------------------------------------
-
-```metta
-(Degree $x <scale_atom> <degree_atom>)
-(Equal $x $y)
-(Maximal $x <scale_atom> $context)
-(Minimal $x <scale_atom> $context)
-```
-
-Descriptions
-- `Degree`: intensification or attenuation on a property/manner/scale.
-- `Equal`: explicit asserted equality/equivalence when needed as a custom relation.
-- `Maximal`: superlative/top-ranked item on a given scale within a context/comparison class.
-- `Minimal`: bottom-ranked item on a given scale within a context/comparison class.
-
-Notes
-- Prefer explicit scalar facts plus `GreaterThan` for ordinary comparatives.
-- Use reversed `GreaterThan` for less-than meanings.
-- `Equal` is a custom predicate, not a built-in arithmetic operator.
-
-----------------------------------------------------------------------
-5.11 Focus and alternatives
-----------------------------------------------------------------------
-
-```metta
-(Focus $p $x)
-(Only $x $p)
-(Alternative $alt $option)
-```
-
-Descriptions
-- `Focus`: content/event `$p` focuses constituent `$x`.
-- `Only`: exclusive reading; only `$x` satisfies the focused slot in content `$p`.
-- `Alternative`: reified alternative-set/choice/disjunction structure; `$alt` has option `$option`.
-
-Note
-- There is no built-in `Or`. `Alternative` is the canonical fallback when unresolved alternatives must be stored.
-
-======================================================================
-6. DISTRIBUTION-VALUED PROPOSITION TEMPLATES
-======================================================================
-
-Use these when the proposition is true but the value is uncertain.
-
-6.1 Uncertain scalar property
-```metta
-(<ScalarProperty>Dist $x $d)
-```
-
-6.2 Example shape of the distribution argument
-```metta
-(<ScalarProperty>Dist $x (ParticleFromNormal <mu> <sigma>))
-(<ScalarProperty>Dist $x (FloatDist ((<value1> <prob1>) (<value2> <prob2>) ...)))
-(<ScalarProperty>Dist $x (PointMass <value>))
-```
-
-6.3 Distribution-derived summaries in rules
-```metta
-(MapDist <function> (<ScalarProperty>Dist $x $d) $d -> $outD)
-(Map2Dist <function> (<ScalarProperty>Dist $x $d1) $d1 (<ScalarProperty>Dist $y $d2) $d2 -> $outD)
-(AverageDist (<ScalarProperty>Dist $x $d) $d -> $outD)
-```
-
-======================================================================
-7. PHENOMENA HANDLED BY COMPOSITION, NOT BY EXTRA PREDICATE HEADS
-======================================================================
-
-The following do not require additional primitive relation names:
-
-7.1 Universal quantification / generics
-- Use variables inside `Implication`.
-```metta
-(: <rule-id>
+(: archiveTaggedRule
    (Implication
-      (Premises (<Kind> $x))
-      (Conclusions (<Property> $x)))
+      (Premises (Tagged $s))
+      (Conclusions (Archived $s)))
    (STV 1.0 1.0))
+(: taggedSample7 (Tagged sample7) (STV 1.0 1.0))
+(: $prf (Archived sample7) $tv)
 ```
 
-7.2 Existential quantification
-- Use witness constants in assertions.
-- Use variables in queries.
+Use a variable proof id in queries. Usually leave the truth-value position as `$tv`.
 
-7.3 Conjunction
-- Use multiple facts, multiple premises, or multiple conclusions.
-- Do not invent `And`.
+---
 
-7.4 Negation scope
-- Use nested `Not`.
-- Do not treat missing facts as negative facts.
+## 8. Query granularity
 
-7.5 Questions and wh-phrases
-- Reuse any proposition template inside:
-```metta
-(: $prf <pattern> $tv)
-```
+Statement decomposition and query decomposition are asymmetric.
 
-7.6 Pronouns, coreference, reflexives
-- Reuse the same constant for the same referent.
-- Reflexives are ordinary repeated-role assignments.
-- No dedicated coreference predicate is required.
+Decompose rich statements into many atomic facts. But do not issue a parallel battery of queries that merely re-check every fact just added. Query only the unknown or conclusion requested by the English question.
 
-7.7 Passive voice
-- Keep the same semantic roles; do not add a passive-specific primitive.
+Queries target one proposition pattern. Let the chainer search rules to prove that target. If a question requires multiple constraints, either:
 
-7.8 Relative clauses and apposition
-- Reuse the same entity constant and add more facts about it.
-- No dedicated relative-clause primitive is required.
+- query stepwise, using returned bindings in later queries, or
+- add/use a derived relation whose rule combines the constraints
 
-7.9 Ellipsis and gapping
-- Recover omitted material upstream, then emit full ordinary predicates.
+For the question “What tool did Nora use in repair event repair17?” after the event has already been decomposed:
 
-======================================================================
-8. CANONICAL PRIORITY ORDER
-======================================================================
-
-When multiple encodings are possible, prefer this order:
-
-1. Built-in logical operators:
-   `Implication`, `Premises`, `Conclusions`, `Not`, `GreaterThan`, `Compute`, `FoldAll`, `FoldAllValue`, `MapDist`, `Map2Dist`, `AverageDist`
-
-2. Reified event/state families plus fixed role relations:
-   `(<VerbLemma>Event $e)`, `(<StateLemma>State $s)`, plus `Agent`, `Patient`, `Theme`, etc.
-
-3. Open-class kind/property predicates:
-   `(<Kind> $x)`, `(<Property> $x)`
-
-4. Compact direct lexical predicates only for simple, unmodified clauses:
-   `(<IntransitivePredicate> $x)`, `(<BinaryPredicate> $x $y)`, `(<TernaryPredicate> $x $y $z)`
-
-5. Derived summary predicates only as secondary query aids, not as primitives
-
-======================================================================
-9. MINIMAL CORE INVENTORY TO SHARE ACROSS THE PIPELINE
-======================================================================
-
-If a smaller mandatory closed-class inventory is needed, this is the core set:
+BAD:
 
 ```metta
-Name Alias Definite Indefinite Specific Proximal Distal
-Agent Patient Theme Recipient Beneficiary Instrument Experiencer Stimulus
-Source Goal Path Location Time StartTime EndTime Manner Frequency Tense Aspect
-Content Cause Purpose Reason Result Speaker Addressee Participant
-Have Own BelongTo PartOf MemberOf
-In On At Under Over Above Below Beside Near Inside Outside Between Through Across Around Toward Behind FrontOf
-Before After During Simultaneous Contrast Explanation
-Can May Must Possible Necessary Permitted
-Believe Know Want Hope Intend
-Command Request Prohibit
-Cardinality Quantity Collective Distributive Reciprocal Habitual
-Degree Equal Maximal Minimal
-Focus Only Alternative
+(: $prf (Repair repair17) $tv)
+(: $prf (Agent repair17 nora) $tv)
+(: $prf (Patient repair17 pump9) $tv)
+(: $prf (Instrument repair17 $tool) $tv)
 ```
 
-This closed-class inventory, combined with the open-class lexical families and the built-ins above, is sufficient to cover the listed linguistic phenomena.
+GOOD:
+
+```metta
+(: $prf (Instrument repair17 $tool) $tv)
+```
+
+---
+
+## 9. Built-in operators vs custom predicates
+
+Use built-ins for structural reasoning:
+
+- use `Implication` for conditionals, universals, generics, and rules
+- use `Premises` and `Conclusions` to organize rule sides
+- use `Not` for explicit negation
+- use `GreaterThan` for numeric greater-than comparisons
+- express less-than by reversing the arguments to `GreaterThan`
+- use `Compute` for available computable functions
+- use `FoldAll` / `FoldAllValue` for aggregation when the fold function is available
+- use distribution operators for uncertain numeric values, not custom “uncertain value” predicates
+
+Use custom predicates only for domain semantics: classes, event types, roles, attributes, relations, attitudes, discourse relations, and domain-specific measures.
+
+Do not create custom versions of built-ins such as `IfThen`, `AndPremises`, `NotCat`, `MoreThanFive`, or `GreaterThanAliceBob`.
+
+Do not use internal proof/runtime tokens as domain predicates.
+
+---
+
+## 10. Truth-value assignment
+
+Use `STV 1.0 1.0` for direct, certain assertions from the source.
+
+Use lower strength for uncertain truth claims when the English itself is epistemically uncertain, such as “probably”, “possibly”, or “it might be true that”, if the intended representation is graded belief in the proposition.
+
+Do not use low STV as a substitute for logical negation. For “not P”, represent `Not` of P with appropriate confidence.
+
+Do not use STV to represent measurement uncertainty. For uncertain numeric values, use the documented distribution truth/value forms and distribution operators.
+
+For rules, the rule’s STV is the confidence in the rule itself, not the truth value of each future conclusion.
+
+For modality:
+
+- epistemic uncertainty may be represented with lower STV when appropriate
+- ability, permission, obligation, and requirement should usually be represented as domain predicates such as `Able`, `Permitted`, `Required`, or `Obligated`, not as low-confidence occurrence of the embedded action
+
+---
+
+## 11. Phenomenon-specific mapping notes
+
+### Determiners and definiteness
+
+Indefinites introduce new witnesses unless already discourse-bound. Definites and demonstratives require coreference resolution to an existing constant. If unresolved, either create a context-specific constant only when the discourse clearly presupposes a specific entity, or leave the expression underspecified rather than pretending the identity is known.
+
+### Possession, ownership, and association
+
+Distinguish ownership, temporary possession, kinship/association, and part-whole relations when the wording supports it.
+
+Use predicates such as `Owns`, `Possesses`, `AssociatedWith`, and `PartOf` rather than a generic overloaded `Has` when the distinction matters.
+
+### Spatial relations and motion
+
+Static spatial prepositions map to spatial relations such as `Under`, `Beside`, `On`, `Inside`, or `Near`.
+
+Motion prepositions should attach to an event with roles such as `Source`, `Destination`, `Path`, or `Location`. Do not encode path into the motion predicate name.
+
+### Temporal relations, tense, and aspect
+
+Do not encode tense in the predicate. Represent time separately.
+
+Use temporal relations such as `Before`, `After`, `During`, `Time`, `StartsAt`, and `EndsAt`.
+
+Aspectual meanings should be separate properties of the event, such as `Ongoing`, `Completed`, or `Habitual`.
+
+Future tense alone should not make the event a present fact unless the KB treats scheduled/planned events as facts; otherwise use a planning or scheduled-event predicate.
+
+### Negation
+
+Use `Not` for explicit denial. Avoid negative predicate names such as `NonMember`, `Unhappy`, or `DidNotCall` unless the English lexical item is genuinely atomic in the domain ontology.
+
+Open-world caution: absence of a fact is not the same as `Not` of that fact.
+
+### Modality
+
+Represent ability, permission, obligation, necessity, and possibility explicitly when they are the object of reasoning.
+
+Do not assert the embedded event as having occurred merely because someone can, may, must, or wants to do it.
+
+### Comparisons
+
+Expose the compared values as arguments and use `GreaterThan` where possible.
+
+For “less than”, reverse the comparison.
+
+For equality-like comparisons such as “as tall as”, use shared measured values if known, or a domain predicate such as `SameHeight` if equality is directly asserted and no equality primitive is available.
+
+For superlatives, prefer a score/value plus comparison rules over predicates like `BestOption`; if “best” is merely asserted without data, `Best` may be used as a direct qualitative property.
+
+### Propositional attitudes and embedded clauses
+
+For belief, desire, hope, saying, knowing, and similar attitudes, do not automatically assert the embedded content as true.
+
+Represent the attitude holder and content separately, using predicates such as `Believe`, `Want`, `Hope`, `Say`, `Know`, and `Content`.
+
+For factive predicates such as “know”, only assert the embedded proposition separately if the KB policy treats the source as reliable and factivity is intended.
+
+### Reported speech and quotation
+
+Since there is no quoted-string syntax, direct quotes require an external symbol or reified content object.
+
+Represent speech/writing as an event with `Agent`, `Recipient` if present, and `Content`.
+
+### Passive voice and alternations
+
+Passive voice changes surface subject, not semantic roles.
+
+“The cake was eaten by the children” should use an eating event where the children are agents and the cake is patient/theme.
+
+For agentless passives, leave the agent absent rather than inventing one.
+
+For inchoatives such as “the door opened”, represent an opening event with the door as patient/theme and no agent unless one is stated.
+
+### Transfer and ditransitives
+
+Use event reification.
+
+For giving, sending, telling, selling, lending, and similar predicates, represent:
+
+- giver/sender/speaker as `Agent` or `Source`
+- transferred item/message as `Theme` or `Patient`
+- receiver as `Recipient`
+- beneficiary separately as `Beneficiary` when distinct
+
+### Causation and purpose
+
+Use `Cause` to relate causing events/states to effects.
+
+Use `Purpose` or `Goal` for intended outcomes. Do not assert the goal event occurred unless the English states that it did.
+
+### Frequency and habituality
+
+For repeated or habitual behavior, do not create many event facts unless individual occurrences are asserted.
+
+Use `Habitual`, `Frequency`, `RecursOn`, or temporal schedule predicates as appropriate.
+
+### Distributive and collective readings
+
+For distributive “each”, attach the predicate to each member when members are known, or use a rule over `MemberOf`.
+
+For collective “together”, represent one group event with a group agent and optionally mark it `Collective`.
+
+Do not confuse “the students each lifted a box” with “the students together lifted the piano.”
+
+### Relative clauses and nominal modification
+
+Use shared variables or constants. Restrictive relative clauses add constraints; nonrestrictive relative clauses add additional facts about the same entity.
+
+### Questions and wh-phrases
+
+Map the wh-position to a variable in the queried proposition.
+
+For event questions, usually query a role relation or a derived answer relation, not the entire decomposed event structure.
+
+### Imperatives and directives
+
+Commands, requests, permissions, and prohibitions should not be represented as completed actions.
+
+Use directive predicates such as `Command`, `Request`, `Prohibit`, `Permitted`, or `Obligated`, with addressee and action content represented separately.
+
+### Generic and kind-level statements
+
+Generic kind statements usually become rules over instances.
+
+Kind-level properties of the kind itself, such as “Tigers are endangered”, may be represented as a property of the class/kind if the intended subject is the species rather than each individual tiger.
+
+### Measurement, amounts, and units
+
+Represent the measured dimension and unit explicitly, preferably through a value predicate whose name fixes the unit, such as a height-in-centimeters or weight-in-kilograms relation.
+
+Keep numeric values as arguments. Use distributions for uncertain measurements.
+
+### Degree and intensification
+
+Avoid predicates such as `VeryHot` or `ExtremelyHappy`.
+
+Use measured values when possible. Otherwise use separate qualitative degree/intensity relations.
+
+### Discourse sequencing and contrast
+
+Temporal discourse markers such as “first”, “then”, and “afterward” map to temporal ordering among events.
+
+Causal markers such as “so” and “therefore” map to `Cause` or to a rule only when the sentence states a general conditional.
+
+Contrastive markers such as “however” can be represented with a discourse relation like `Contrast` only if discourse structure matters; otherwise they often do not affect factual content.
+
+### Ellipsis and gapping
+
+Recover omitted material from context before conversion. If the missing predicate or argument cannot be recovered, do not hallucinate a complete logical form.
+
+### Clefts, focus, and “only”
+
+Plain clefts usually preserve the same factual content while highlighting focus.
+
+“Only” adds exclusivity. Because exclusivity requires reasoning over alternatives, represent it explicitly with an `Only` / `Exclusive` style predicate or generate negative facts for known alternatives when the domain is closed enough. Do not reduce “Only Maria laughed” to merely “Maria laughed.”

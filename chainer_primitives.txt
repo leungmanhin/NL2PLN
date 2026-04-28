@@ -1,129 +1,51 @@
-# Chainer primitives for PeTTaChainer
+PeTTaChainer primitive quick reference
 
-These are the REAL primitives documented in the chainer analysis: query
-scaffolding, built-in operators, and truth/value constructors.  Names in
-this file have semantic backing in the chainer's evaluation engine — the
-reasoner will apply meaning to them during proof search.
+Public bare statement and query scaffolding
+  `(: <proof-id> <proposition> <tv>)` — outer envelope for stored facts and stored rules.
+  `(: <rule-id> (Implication ...) (STV strength confidence))` — rule stored as a statement.
+  `(: $prf <pattern> $tv)` — query pattern; proof-id position must be a variable.
+  `$name` — variable syntax used in facts, rules, and queries.
+  `->` — output-binder marker used inside compute, fold, and distribution helper forms.
 
-Treat these as the operational vocabulary of the chainer.  The LLM should
-use these names VERBATIM wherever a primitive is needed.
+Rule and logical forms
+  `(Implication (Premises ...) (Conclusions ...))` — if-then rule proposition.
+  `(Premises premise1 premise2 ...)` — antecedent list inside an implication.
+  `(Conclusions conclusion1 conclusion2 ...)` — consequent list inside an implication.
+  `(Not expr)` — negation / negative premise over the nested expression.
+  `(Compute f (arg1 arg2 ...) -> $out)` — compute a function result and bind it.
+  `(FoldAll pattern value init fold-fn -> out)` — aggregate over matching facts with an explicit value.
+  `(FoldAllValue pattern init fold-fn -> out)` — aggregate over matching fact values.
+  `(GreaterThan a b)` — documented numeric/distribution greater-than comparison.
+  `(> a b)` — documented alias/sugar for the greater-than comparison family.
 
-For the separate OPEN-CLASS predicate families and closed-class semantic
-relation suggestions, see suggested_vocabulary.txt — those are NAMING
-SUGGESTIONS, not primitives, and do NOT have chainer semantics.
+Distribution helper forms
+  `(MapDist f (DistFactA ... $inDist) $inDist -> $outDist)` — map a function over a distribution-valued fact.
+  `(Map2Dist f (DistFactA ... $distA) $distA (DistFactB ... $distB) $distB -> $outDist)` — combine two distribution-valued facts.
+  `(AverageDist (DistFactPattern ... $inDist) $inDist -> $outDist)` — average over matching distribution-valued facts.
 
-Canonical primitive relation templates for PeTTaChainer
+Lower-level / compiled distribution structural forms
+  `(DistGreaterThanFormula ...)` — supported structural distribution comparison form.
+  `(DistGreaterThanDistFormula ...)` — supported structural distribution-vs-distribution comparison form.
+  `(ParticleMap ...)` — supported particle-map structural form.
+  `(ParticleMap2 ...)` — supported two-input particle-map structural form.
+  `(ParticleAddBernoulliFromSTV ...)` — supported particle/STV bridge structural form.
 
-Legend
-- `<...>` = template slot, not a literal emitted atom
-- `$x`, `$y` = entity variables
-- `$e` = event variable
-- `$s` = state variable
-- `$p` = embedded event/state/proposition variable
-- `$t` = time variable
-- `$n` = numeric/count variable
-- `$d` = distribution variable
-- `$unit` = unit atom
-- Open-class lexical families may instantiate many predicate heads.
-- Closed-class relations below should use the exact predicate names shown.
+Truth-value and distribution constructors
+  `(STV strength confidence)` — truth uncertainty for a proposition.
+  `(NatDist ((value probability) ...))` — exact discrete natural-number distribution.
+  `(FloatDist ((value probability) ...))` — exact discrete floating-point distribution.
+  `(ParticleDist <ref>)` — particle distribution by opaque particle-store reference.
+  `(ParticleDist <ref> <scale>)` — scaled particle distribution reference.
+  `(PointMass x)` — degenerate distribution concentrated at one value.
+  `(ParticleFromNormal mu sigma)` — particle distribution constructor from normal parameters.
+  `(ParticleFromPairs ((x1 w1) (x2 w2) ...))` — particle distribution constructor from weighted pairs.
 
-======================================================================
-1. PUBLIC LOGICAL / QUERY SCAFFOLDING
-======================================================================
+Utility / particle-store operators
+  `(ParticleStoreCount ...)` — documented particle-store utility operator.
+  `(ParticleStoreClear ...)` — documented particle-store clearing operator.
+  `(ParticleStorePruneKB ...)` — documented particle-store / KB pruning operator.
 
-1.1 Fact / assertion envelope
-```metta
-(: <fact-id> <proposition> (STV <strength> <confidence>))
-```
-Use for asserted facts.
-
-1.2 Rule envelope
-```metta
-(: <rule-id>
-   (Implication
-      (Premises
-         <premise1>
-         <premise2>
-         ...)
-      (Conclusions
-         <conclusion1>
-         <conclusion2>
-         ...))
-   (STV <strength> <confidence>))
-```
-Use for generics, taxonomic rules, conditionals, and derived summaries.
-
-1.3 Query envelope
-```metta
-(: $prf <pattern> $tv)
-```
-Use for yes/no and wh-queries. Put variables only in the unknown positions.
-
-======================================================================
-2. BUILT-IN LOGICAL / COMPOSITIONAL OPERATORS
-======================================================================
-
-These are fixed built-ins, not custom ontology predicates.
-
-2.1 Negation
-```metta
-(Not <proposition>)
-```
-Explicit negation with local scope.
-
-2.2 Conditional / rule structure
-```metta
-(Implication (Premises <premise> ...) (Conclusions <conclusion> ...))
-(Premises <premise1> <premise2> ...)
-(Conclusions <conclusion1> <conclusion2> ...)
-```
-Canonical encoding for if-then structure, universal/generic rules, and derived relations.
-
-2.3 Numeric comparison
-```metta
-(GreaterThan <left> <right>)
-```
-Canonical comparison primitive. Use reversed arguments for less-than meanings.
-
-2.4 Runtime computation
-```metta
-(Compute <function> (<arg1> <arg2> ...) -> $out)
-```
-Use only when a runtime function already exists.
-
-2.5 Aggregation / counting
-```metta
-(FoldAll <pattern> <value> <init> <fold-fn> -> $out)
-(FoldAllValue <pattern> <init> <fold-fn> -> $out)
-```
-Use for counts, totals, and aggregate-derived quantificational facts.
-
-2.6 Distribution mapping / aggregation
-```metta
-(MapDist <function> <pattern> $d -> $outD)
-(Map2Dist <function> <patternA> $dA <patternB> $dB -> $outD)
-(AverageDist <pattern> $d -> $outD)
-```
-Use for uncertain values stored as distributions.
-
-======================================================================
-3. TRUTH / VALUE CONSTRUCTORS
-======================================================================
-
-3.1 Truth uncertainty
-```metta
-(STV <strength> <confidence>)
-```
-
-3.2 Value uncertainty constructors
-```metta
-(NatDist ((<value> <probability>) ...))
-(FloatDist ((<value> <probability>) ...))
-(ParticleDist <ref>)
-(ParticleDist <ref> <scale>)
-(PointMass <value>)
-(ParticleFromNormal <mu> <sigma>)
-(ParticleFromPairs ((<value1> <weight1>) (<value2> <weight2>) ...))
-```
-
-These constructors appear inside propositions, typically in `...Dist` predicates.
+Reserved internal runtime wrappers
+  `!(eval <bare-expression>)` — internal evaluation wrapper; do not emit as external API input.
+  `!(compileadd <kb> <evaluated-statement>)` — internal add wrapper; do not emit as external API input.
+  `!(query <steps> <kb> <evaluated-query>)` — internal query wrapper; do not emit as external API input.
