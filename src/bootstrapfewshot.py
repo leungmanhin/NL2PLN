@@ -37,6 +37,7 @@ from dspy.utils.callback import BaseCallback
 from pathlib import Path
 
 from nl2pln import NL2PLNModule , difficulty_metric , build_examples_from_file
+from logging_utils import setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -84,11 +85,20 @@ def parse_args():
                    help="Optional checkpoint to seed the module before bootstrapping")
     p.add_argument("--output", default="programs/bootstrap_fewshot.json",
                    help="Where to save the optimized program")
+    p.add_argument("--log-level", default="info",
+                   choices=["debug", "info", "warning", "error"],
+                   help="Logging verbosity (default: info)")
+    p.add_argument("--log-file", default="/tmp/bootstrapfewshot.log",
+                   help="Path to log file; mirrors stdout/stderr for Colab "
+                        "where streaming cell output gets truncated.")
     return p.parse_args()
 
 
 def main():
     args = parse_args()
+
+    setup_logging(args.log_file, args.log_level)
+    print(f"  Logging to {args.log_file} (level={args.log_level})")
 
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
     dspy.configure(lm=dspy.LM(args.model, **lm_kwargs))

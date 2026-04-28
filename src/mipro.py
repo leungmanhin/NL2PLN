@@ -35,6 +35,7 @@ from dspy.utils.callback import BaseCallback
 from pathlib import Path
 
 from nl2pln import NL2PLNModule , difficulty_metric , build_examples_from_file
+from logging_utils import setup_logging
 
 logger = logging.getLogger(__name__)
 
@@ -106,11 +107,20 @@ def parse_args():
     # ---- logging ----
     p.add_argument("--log-dir", default=None,
                    help="Optional directory for MIPROv2 run logs")
+    p.add_argument("--log-level", default="info",
+                   choices=["debug", "info", "warning", "error"],
+                   help="Logging verbosity (default: info)")
+    p.add_argument("--log-file", default="/tmp/mipro.log",
+                   help="Path to log file; mirrors stdout/stderr for Colab "
+                        "where streaming cell output gets truncated.")
     return p.parse_args()
 
 
 def main():
     args = parse_args()
+
+    setup_logging(args.log_file, args.log_level)
+    print(f"  Logging to {args.log_file} (level={args.log_level})")
 
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
     task_lm = dspy.LM(args.model, **lm_kwargs)
