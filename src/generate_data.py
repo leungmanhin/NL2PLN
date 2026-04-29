@@ -33,7 +33,6 @@ logger = logging.getLogger(__name__)
 
 _PROJECT_ROOT = pathlib.Path(__file__).parent.parent
 _DEFAULT_PHENOMENA = _PROJECT_ROOT / "linguistic_phenomena.txt"
-_DEFAULT_SEED_DATA = _PROJECT_ROOT / "data" / "all.json"
 _DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "generated.json"
 
 
@@ -51,15 +50,6 @@ def _parse_phenomena(path: pathlib.Path) -> list[str]:
     text = path.read_text(encoding="utf-8")
     entries = re.split(r"(?m)^\d+\.\s+", text)
     return [e.strip() for e in entries if e.strip()]
-
-
-def _load_seed_examples(path: pathlib.Path, count: int) -> list[dict]:
-    """Load a few examples from all.json to show the target schema."""
-    if count <= 0:
-        return []
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
-    return data[:count]
 
 
 # ---------------------------------------------------------------------------
@@ -150,13 +140,6 @@ class GenerateBatchSignature(dspy.Signature):
         desc="The target linguistic phenomenon to demonstrate, including "
              "its description and example English sentences."
     )
-    seed_examples: str = dspy.InputField(
-        desc="A few existing examples (JSON) for STYLE and DIVERSITY "
-             "reference only — the output schema is already enforced by "
-             "the response format. Use these to calibrate question style "
-             "and answer phrasing, and to avoid duplicating their "
-             "specific entities or scenarios. May be empty."
-    )
     count: int = dspy.InputField(
         desc="How many diverse examples to generate for this phenomenon."
     )
@@ -223,18 +206,28 @@ def _to_example_dict(raw) -> dict | None:
 def generate_per_phenomenon(
     phenomena: list[str],
     per_phenomenon: int,
-    seed_examples: list[dict],
     verify: bool,
+    max_attempts_per_phenomenon: int = 10,
 ) -> list[dict]:
     """
-    For each phenomenon, one batch LLM call produces `per_phenomenon`
-    examples. Each accepted example is deduped against prior accepted
-    ones and (optionally) passed through a second LLM call that
-    validates the sentence→answer relationship.
+    For each phenomenon, repeatedly call the generator until exactly
+    ``per_phenomenon`` *verified* examples accumulate, or
+    ``max_attempts_per_phenomenon`` LLM batch calls are exhausted —
+    whichever comes first.
+
+    Each attempt requests ``max(need, 1) * 2`` examples (overshoot to
+    amortize the per-call overhead so most phenomena finish in 1-2
+    attempts even when the verifier rejects half).  Accepted examples
+    carry a ``phenomenon`` field so downstream tooling can do
+    stratified train/val splits or stratified mini-batching.
+
+    If a phenomenon under-fills (some scope / ellipsis / quantifier-
+    interaction phenomena are inherently hard for the generator to make
+    verifiable), the function logs a WARN and moves on with however
+    many it got.
     """
     all_examples: list[dict] = []
     seen_keys: set[tuple] = set()
-    seed_json = json.dumps(seed_examples, indent=2, ensure_ascii=False)
 
     generator = dspy.Predict(GenerateBatchSignature)
     verifier = dspy.Predict(VerifyExampleSignature) if verify else None
@@ -243,53 +236,67 @@ def generate_per_phenomenon(
         short_name = phenomenon.split(":", 1)[0][:48]
         print(f"\n[{i}/{len(phenomena)}] {short_name} ...")
 
-        try:
-            result = generator(
-                phenomenon=phenomenon,
-                seed_examples=seed_json,
-                count=per_phenomenon,
-            )
-        except Exception as e:
-            print(f"  ERROR generating: {e}")
-            continue
-
-        raw_batch = result.examples or []
         kept = 0
-        for raw in raw_batch:
-            ex = _to_example_dict(raw)
-            if ex is None:
+        attempts = 0
+
+        while kept < per_phenomenon and attempts < max_attempts_per_phenomenon:
+            attempts += 1
+            need = per_phenomenon - kept
+            request_count = max(need, 1) * 2
+
+            try:
+                result = generator(
+                    phenomenon=phenomenon,
+                    count=request_count,
+                )
+            except Exception as e:
+                print(f"  ERROR generating (attempt {attempts}): {e}")
                 continue
-            sentences = ex.get("sentences") or []
-            queries = ex.get("queries") or []
-            if not sentences or not queries:
-                continue  # Pydantic validation should prevent this, but defensive
 
-            key = (tuple(sentences), queries[0]["question"])
-            if key in seen_keys:
-                print(f"  DUP: {sentences[0][:50]}... (skipped)")
-                continue
-            seen_keys.add(key)
-
-            if verifier is not None:
-                try:
-                    check = verifier(sentences=sentences, queries=queries)
-                    verdict = (check.verdict or "").strip().lower()
-                except Exception as e:
-                    print(f"  VERIFY-ERR: {e}")
+            raw_batch = result.examples or []
+            for raw in raw_batch:
+                if kept >= per_phenomenon:
+                    break  # already have enough; don't waste verifier calls
+                ex = _to_example_dict(raw)
+                if ex is None:
                     continue
-                if not verdict.startswith("yes"):
-                    print(f"  REJECT: {sentences[0][:50]}... "
-                          f"({verdict[:80]})")
-                    continue
+                sentences = ex.get("sentences") or []
+                queries = ex.get("queries") or []
+                if not sentences or not queries:
+                    continue  # Pydantic validation should prevent; defensive
 
-            all_examples.append({
-                "sentences": sentences,
-                "queries": queries,
-            })
-            kept += 1
-            q0 = queries[0]["question"][:40]
-            print(f"  OK [{kept}/{per_phenomenon}]: "
-                  f"{sentences[0][:50]}... Q: {q0}...")
+                key = (tuple(sentences), queries[0]["question"])
+                if key in seen_keys:
+                    print(f"  DUP: {sentences[0][:50]}... (skipped)")
+                    continue
+                seen_keys.add(key)
+
+                if verifier is not None:
+                    try:
+                        check = verifier(sentences=sentences, queries=queries)
+                        verdict = (check.verdict or "").strip().lower()
+                    except Exception as e:
+                        print(f"  VERIFY-ERR: {e}")
+                        continue
+                    if not verdict.startswith("yes"):
+                        print(f"  REJECT: {sentences[0][:50]}... "
+                              f"({verdict[:80]})")
+                        continue
+
+                all_examples.append({
+                    "sentences": sentences,
+                    "queries": queries,
+                    "phenomenon": short_name,
+                })
+                kept += 1
+                q0 = queries[0]["question"][:40]
+                print(f"  OK [{kept}/{per_phenomenon}] "
+                      f"(attempt {attempts}): {sentences[0][:50]}... "
+                      f"Q: {q0}...")
+
+        if kept < per_phenomenon:
+            print(f"  WARN: {short_name} accepted {kept}/{per_phenomenon} "
+                  f"after {attempts} attempts; moving on.")
 
     print(f"\nTotal accepted: {len(all_examples)}")
     return all_examples
@@ -309,11 +316,6 @@ def main():
         help=f"Path to linguistic_phenomena.txt (default: {_DEFAULT_PHENOMENA})",
     )
     parser.add_argument(
-        "--seed-data",
-        default=str(_DEFAULT_SEED_DATA),
-        help=f"JSON file providing format seeds (default: {_DEFAULT_SEED_DATA})",
-    )
-    parser.add_argument(
         "--output",
         default=str(_DEFAULT_OUTPUT),
         help=f"Output path for the generated JSON (default: {_DEFAULT_OUTPUT})",
@@ -322,14 +324,18 @@ def main():
         "--per-phenomenon",
         type=int,
         default=5,
-        help="Examples to generate per phenomenon (default: 5)",
+        help="Target number of VERIFIED examples to accumulate per "
+             "phenomenon (default: 5).  The script retries the generator "
+             "until this target is met or --max-attempts-per-phenomenon "
+             "is exhausted.",
     )
     parser.add_argument(
-        "--seed-count",
+        "--max-attempts-per-phenomenon",
         type=int,
-        default=3,
-        help="Seeds shown to the generator for format reference; set to 0 "
-             "to avoid any test-set contamination (default: 3)",
+        default=10,
+        help="Cap on generator calls per phenomenon (default: 10).  "
+             "Phenomena that can't yield --per-phenomenon verified "
+             "examples within this many attempts get a WARN and move on.",
     )
     parser.add_argument(
         "--no-verify",
@@ -355,11 +361,6 @@ def main():
     phenomena = _parse_phenomena(pathlib.Path(args.phenomena))
     print(f"Loaded {len(phenomena)} phenomena from {args.phenomena}")
 
-    seed_examples = _load_seed_examples(
-        pathlib.Path(args.seed_data), count=args.seed_count,
-    )
-    print(f"Loaded {len(seed_examples)} seed examples from {args.seed_data}")
-
     # temperature=1.0 + cache=False are essential: without them, batches
     # would be deterministic and identical across re-runs.
     lm_kwargs = {"temperature": 1.0, "cache": False,
@@ -372,8 +373,8 @@ def main():
     examples = generate_per_phenomenon(
         phenomena=phenomena,
         per_phenomenon=args.per_phenomenon,
-        seed_examples=seed_examples,
         verify=args.verify,
+        max_attempts_per_phenomenon=args.max_attempts_per_phenomenon,
     )
 
     out_path = pathlib.Path(args.output)
