@@ -1,136 +1,174 @@
-IMPORTANT: The names below are naming suggestions for domain predicates and canonical relations only. They are not PeTTaChainer built-ins and have no built-in semantics unless the KB supplies facts or rules for them. Do not treat these as chainer primitives.
+IMPORTANT: The names below are NAMING SUGGESTIONS ONLY for ordinary predicates and domain concepts. They are not PeTTaChainer primitives and have no built-in semantics unless a name is separately listed under `chainer_primitives`. Use them for consistency when creating user-level facts, rules, event roles, and query predicates.
 
 Open-class predicate template families
-  `(ClassName entity)` — unary class/kind/category membership.
-  `(EventType event)` — event occurrence/type named by a lemmatized verb or event noun.
-  `(PropertyName entity)` — qualitative property or adjective-like attribute.
-  `(StateName bearer)` — state or condition of an entity or event.
-  `(DimensionUnit bearer value)` — measured value with dimension and unit in the predicate name.
-  `(DimensionUnitDist bearer dist)` — uncertain measured value whose value argument is a distribution.
-  `(CountName bearer count)` — count or cardinality value exposed as an argument.
-  `(RelationName arg1 arg2 ...)` — reusable domain-specific relation.
-  `(ContentType content)` — reified embedded proposition, question, command, quote, or action content.
 
-Entity naming, reference, and discourse status
-  `(Name entity nameId)` `(Alias entity nameId)` `(Mention mention)` `(RefersTo mention entity)` `(Corefers mention1 mention2)` `(Appositive entity descriptor)` `(Definite mention)` `(Indefinite mention)` `(Demonstrative mention)` `(Specific mention)` `(DiscourseNew mention)` `(DiscourseOld mention)` `(Speaker context entity)` `(Addressee context entity)`
+Entity classes and kinds
+  `(Kind entity)`
+  Use UpperCamelCase noun lemmas as unary predicates: `Person`, `Dog`, `City`, `Room`, `Organization`, `Event`, `Object`, `Substance`.
+
+Event types
+  `(EventType event)`
+  Use UpperCamelCase verb/event lemmas as unary predicates: `Break`, `Open`, `Give`, `Arrive`, `Build`, `Destroy`, `Say`, `Believe`.
+
+Boolean properties and states
+  `(Property entity)` `(State entity)`
+  Use reusable adjective/state names: `Open`, `Closed`, `Broken`, `Available`, `Empty`, `Ripe`, `Valid`, `Finished`.
+
+Attribute values
+  `(Attribute entity value)`
+  Canonical families: `Color`, `Shape`, `Material`, `Size`, `Status`, `Role`, `EyeColor`, `Language`, `NameForm`.
+
+Measurements and distributions
+  `(DimensionDist entity dist)`
+  Canonical families: `HeightDist`, `LengthDist`, `WidthDist`, `DepthDist`, `WeightDist`, `MassDist`, `TemperatureDist`, `SpeedDist`, `DistanceDist`, `AreaDist`, `VolumeDist`, `AgeDist`, `CountDist`, `ScoreDist`.
+
+Aggregates and derived quantities
+  `(AvgDimensionDist group dist)` `(TotalDimension collection value)` `(Count collection n)`
+  Canonical families: `AvgHeightDist`, `AvgWeightDist`, `TotalScore`, `TotalCost`, `Count`, `MemberCount`, `RemainingCount`.
+
+Domain-specific relations
+  `(Relation arg1 arg2 ...)`
+  Use concise UpperCamelCase lemmas for stable reusable relations: `Own`, `Employs`, `Teaches`, `LivesIn`, `DependsOn`, `Represents`, `Requires`.
+
+
+Reference, names, and identity
+  `(Named entity name)` `(AliasOf entity name)` `(SurfaceForm entity form)` `(SameEntity entity1 entity2)` `(Distinct entity1 entity2)` `(RefersTo mention entity)` `(Corefers mention1 mention2)`
   Disambiguation notes:
-  - Name vs Alias: use `Name` for the primary recorded name and `Alias` for alternate names.
-  - RefersTo vs Corefers: `RefersTo` links a mention to an entity; `Corefers` links two mentions to each other.
-  - Speaker/Addressee: use for deictic or discourse context, not necessarily for every communication event.
+  - SameEntity vs AliasOf: `SameEntity` relates two entity constants; `AliasOf` or `Named` relates an entity to a name/form.
+  - Distinct records domain-level difference; it does not perform syntactic inequality by itself.
+
+Kind-level and taxonomy relations
+  `(SubkindOf kind superkind)` `(KindProperty kind property)` `(GenericOf statement kind)` `(FormerKind entity kind)` `(FakeKind entity kind)` `(AllegedKind source entity kind)`
+  Disambiguation notes:
+  - For ordinary instance membership, prefer unary class predicates such as `(Dog fido)`; use these names for explicit meta-level kind relations.
+  - FakeKind and AllegedKind should not imply actual membership in the named kind unless additional rules say so.
+
+Possession, containment, part-whole, and membership
+  `(Own owner item)` `(BelongsTo item owner)` `(Possess possessor item)` `(Controls controller item)` `(Contains container content)` `(PartOf part whole)` `(ComponentOf component whole)` `(PortionOf portion whole)` `(MemberOf member group)` `(InSet item set)` `(IncludedIn item set)` `(ExcludedFrom item set)` `(AssociatedWith entity1 entity2)`
+  Disambiguation notes:
+  - Own vs Possess: `Own` is legal/social ownership; `Possess` is current having/control.
+  - Contains vs PartOf: `Contains` is containment; `PartOf` is structural/constitutive relation.
+  - MemberOf vs PartOf: `MemberOf` is group/set membership; `PartOf` is part-whole structure.
 
 Thematic and event roles
-  `(Agent event participant)` `(Patient event participant)` `(Theme event participant)` `(Experiencer event participant)` `(Stimulus event participantOrContent)` `(Instrument event entity)` `(Recipient event participant)` `(Beneficiary event participant)` `(Source event entity)` `(Destination event entity)` `(Location event place)` `(Path event pathOrPlace)` `(Manner event manner)` `(Topic event topic)` `(Result event outcome)`
+  `(Agent event entity)` `(Patient event entity)` `(Theme event entity)` `(Experiencer event entity)` `(Stimulus event entity)` `(Recipient event entity)` `(Beneficiary event entity)` `(Source event entity)` `(Goal event entity)` `(Instrument event entity)` `(Location event place)` `(Path event path)` `(Manner event manner)` `(ResultState event state)` `(InitialState event state)` `(FinalState event state)` `(CreatedEntity event entity)` `(DestroyedEntity event entity)` `(Content event proposition)` `(Topic event entity)` `(Speaker event entity)` `(Addressee event entity)`
   Disambiguation notes:
-  - Agent vs Cause: `Agent` is an event participant acting intentionally or causally; `Cause` relates two events/states or a cause to an effect.
-  - Patient vs Theme: `Patient` is affected or changed; `Theme` is moved, transferred, perceived, or discussed without necessarily being changed.
-  - Recipient vs Beneficiary: `Recipient` receives a transferred theme; `Beneficiary` benefits from the event.
-  - Source vs Destination: `Source` is the origin; `Destination` is the endpoint.
-
-Possession, part-whole, and group membership
-  `(Owns owner owned)` `(Possesses holder held)` `(CustodyOf holder item)` `(BelongsTo item ownerOrWhole)` `(AssociatedWith entity1 entity2)` `(PartOf part whole)` `(HasPart whole part)` `(ComponentOf component system)` `(MemberOf member group)` `(HasMember group member)` `(Contains container content)`
-  Disambiguation notes:
-  - Owns vs Possesses: `Owns` is legal/social ownership; `Possesses` is current holding or control.
-  - PartOf vs MemberOf: `PartOf` is component-whole structure; `MemberOf` is membership in a group or collection.
-  - Contains vs HasPart: `Contains` is containment; `HasPart` is structural composition.
+  - Patient vs Theme: `Patient` is affected or changed; `Theme` is moved, transferred, perceived, or central without necessarily changing.
+  - Agent vs Experiencer: `Agent` intentionally acts; `Experiencer` perceives, feels, or cognizes.
+  - Recipient vs Beneficiary: `Recipient` receives a theme; `Beneficiary` benefits from the event.
+  - Source vs Goal: `Source` is origin; `Goal` is destination or endpoint.
 
 Spatial relations
-  `(At entity place)` `(In entity place)` `(On entity support)` `(Under entity relatum)` `(Above entity relatum)` `(Below entity relatum)` `(Beside entity relatum)` `(AdjacentTo entity relatum)` `(Near entity relatum)` `(FarFrom entity relatum)` `(Inside entity container)` `(Outside entity relatum)` `(InFrontOf entity relatum)` `(Behind entity relatum)` `(Between entity relatum1 relatum2)` `(Over entity relatum)` `(Across entity region)` `(Through entity region)` `(Around entity relatum)`
+  `(In entity container)` `(Inside entity container)` `(Outside entity landmark)` `(On entity support)` `(At entity place)` `(Under entity landmark)` `(Over entity landmark)` `(Above entity landmark)` `(Below entity landmark)` `(NextTo entity landmark)` `(AdjacentTo entity landmark)` `(Near entity landmark)` `(FarFrom entity landmark)` `(Between entity landmark1 landmark2)` `(Around entity landmark)` `(AcrossFrom entity landmark)` `(NorthOf entity landmark)` `(SouthOf entity landmark)` `(EastOf entity landmark)` `(WestOf entity landmark)` `(LeftOf entity landmark)` `(RightOf entity landmark)` `(InFrontOf entity landmark)` `(Behind entity landmark)` `(Along entity path)` `(Through entity path)` `(Toward entity goal)` `(AwayFrom entity source)`
   Disambiguation notes:
-  - In vs Inside: `In` can be broad locative inclusion; `Inside` emphasizes interior containment.
-  - On vs Above: `On` implies support/contact; `Above` does not.
-  - Under vs Below: `Under` often implies coverage or vertical relation with a relatum; `Below` is purely lower position.
-  - Across vs Through: `Across` crosses a surface/region; `Through` traverses an interior or passage.
+  - In vs Inside: `In` is general containment/location; `Inside` emphasizes interior containment.
+  - On vs At: `On` implies support/contact; `At` is general location.
+  - Above vs Over: `Above` is vertical ordering; `Over` may imply covering or traversal.
+  - LeftOf/RightOf require an explicit or understood viewpoint.
 
-Temporal relations and schedules
-  `(Time eventuality time)` `(AtTime eventuality time)` `(Date eventuality date)` `(Before eventuality1 eventuality2OrTime)` `(After eventuality1 eventuality2OrTime)` `(During eventuality interval)` `(Overlaps intervalOrEvent1 intervalOrEvent2)` `(StartsAt eventuality time)` `(EndsAt eventuality time)` `(Until eventuality time)` `(Since eventuality time)` `(Duration eventualityOrEntity duration)` `(RecursOn eventOrPattern schedule)` `(Frequency eventOrPattern frequency)`
+Deictic and context-relative reference
+  `(ContextSpeaker context entity)` `(ContextAddressee context entity)` `(Viewpoint context entity)` `(DeicticAnchor context entity)` `(Here place context)` `(There place context)` `(Now time context)` `(Today date context)` `(Yesterday date context)` `(Tomorrow date context)` `(Proximal entity context)` `(Distal entity context)`
   Disambiguation notes:
-  - Time vs StartsAt/EndsAt: `Time` is a general temporal attachment; `StartsAt` and `EndsAt` mark boundaries.
-  - Before vs After: choose the predicate matching the stated ordering direction.
-  - During vs Overlaps: `During` implies containment in an interval; `Overlaps` only implies shared temporal extent.
-  - Frequency vs RecursOn: `Frequency` records how often; `RecursOn` records the schedule or calendar pattern.
+  - ContextSpeaker vs Speaker: `ContextSpeaker` identifies the utterance speaker; `Speaker` is an event role for a communication event.
+  - Proximal vs Distal: `Proximal` corresponds to “this/here”; `Distal` corresponds to “that/there.”
 
-Aspect, event status, and participation reading
-  `(Ongoing event)` `(InProgress event)` `(Completed event)` `(Habitual eventOrPattern)` `(Repeated eventOrPattern)` `(Iterative eventOrPattern)` `(Scheduled event)` `(Planned event)` `(Canceled event)` `(Attempted event)` `(Collective event)` `(Distributive eventOrRelation)`
+Temporal relations
+  `(Time eventuality time)` `(StartTime eventuality time)` `(EndTime eventuality time)` `(Duration eventuality duration)` `(Before eventuality1 eventuality2)` `(After eventuality1 eventuality2)` `(During eventuality interval)` `(Within eventuality interval)` `(Overlaps eventuality1 eventuality2)` `(Simultaneous eventuality1 eventuality2)` `(StartsAt interval time)` `(EndsAt interval time)` `(ContainsInterval interval subinterval)` `(ReferenceTime context time)` `(UtteranceTime context time)`
   Disambiguation notes:
-  - Ongoing/InProgress vs Habitual: ongoing marks a current event; habitual marks a regular pattern.
-  - Completed vs Scheduled: completed means realized; scheduled means planned for a time.
-  - Attempted vs Completed: attempted does not entail success.
-  - Collective vs Distributive: collective marks joint participation; distributive marks member-by-member participation.
+  - Time vs StartTime: `Time` is a general temporal location; `StartTime` marks onset.
+  - During vs Overlaps: `During` implies containment in an interval; `Overlaps` only requires temporal intersection.
+  - Before vs After: use one consistently rather than asserting both unless needed.
 
-Quantities, counts, and ordering values
-  `(Quantity entity value)` `(Amount substanceOrEntity value)` `(Cardinality set count)` `(MemberCount group count)` `(EventCount eventPattern count)` `(Ordinal entity number)` `(Rank entity rank)` `(Total collection value)` `(Portion part whole fraction)`
+Aspect, recurrence, and frequency
+  `(Ongoing eventuality)` `(Completed eventuality)` `(Incomplete eventuality)` `(Habitual eventuality)` `(Repeated eventuality)` `(RepetitionCount eventuality n)` `(Frequency eventuality frequency)` `(Usually proposition)` `(Still eventuality)` `(Already eventuality)` `(Again eventuality)` `(Stopped eventuality)` `(Resumed eventuality)`
   Disambiguation notes:
-  - Quantity vs Amount: `Quantity` is general; `Amount` is preferred for masses, substances, or scalar extents.
-  - Cardinality vs MemberCount: `Cardinality` can apply to any set-like object; `MemberCount` is specifically group membership.
-  - Ordinal vs Rank: `Ordinal` is sequence position; `Rank` is ordered evaluation by a criterion.
+  - Habitual vs Repeated: `Habitual` is a general pattern; `Repeated` concerns multiple occurrences.
+  - Completed vs Already: `Completed` is event status; `Already` is aspect relative to expectation/reference time.
 
-Degree, intensity, and scalar qualification
-  `(Degree bearer degree)` `(Intensity bearer level)` `(Scale dimension scale)` `(Threshold dimensionOrProperty value)` `(Modifier bearer modifier)` `(Diminished bearer level)` `(Intensified bearer level)`
+Causation, purpose, reason, and means
+  `(Causes cause effect)` `(CausedBy effect cause)` `(Enables condition event)` `(Prevents preventer event)` `(ReasonFor event reason)` `(PurposeOf event goal)` `(IntendedResult event result)` `(Means event method)` `(Method event method)` `(ByMeansOf event means)`
   Disambiguation notes:
-  - Degree vs Intensity: `Degree` is a scalar value on a property; `Intensity` is strength of a state/property.
-  - Threshold vs Degree: `Threshold` is a cutoff; `Degree` is the observed or asserted level.
+  - Cause vs ReasonFor: `Causes` is causal production; `ReasonFor` records explanation/motivation.
+  - PurposeOf vs IntendedResult: `PurposeOf` is the goal of acting; `IntendedResult` is the desired outcome state.
+  - Instrument vs Means: use `Instrument` for a concrete tool role; use `Means` or `Method` for a procedure.
 
-Comparison and evaluation
-  `(SameValue entity1 entity2 dimension)` `(SameDegree entity1 entity2 dimension)` `(Equivalent entity1 entity2 criterion)` `(RankedAbove entity1 entity2 criterion)` `(RankedBelow entity1 entity2 criterion)` `(BetterThan entity1 entity2 criterion)` `(WorseThan entity1 entity2 criterion)` `(Best entity contextOrCriterion)` `(Worst entity contextOrCriterion)`
+Change of state, creation, destruction, and existence
+  `(Becomes entity state)` `(ChangesFrom entity oldState)` `(ChangesTo entity newState)` `(Creates event entity)` `(Destroys event entity)` `(Exists entity)` `(ExistedAt entity time)` `(CeasesToExist entity time)` `(Absent entity context)` `(Missing entity context)`
   Disambiguation notes:
-  - SameValue vs SameDegree: `SameValue` is exact value identity; `SameDegree` is qualitative/scalar equality.
-  - BetterThan vs RankedAbove: `BetterThan` is evaluative; `RankedAbove` is ordering by an explicit ranking criterion.
-  - Best vs BetterThan: `Best` is superlative within a context; `BetterThan` compares two entities.
+  - Absent vs Missing: `Absent` is not present in a context; `Missing` implies expected presence.
+  - Destroys vs CeasesToExist: `Destroys` is an event relation; `CeasesToExist` is an existence/status relation.
 
-Modality, norms, and directives
-  `(Able agent actionContent)` `(Possible content)` `(Necessary content)` `(Permitted agent actionContent)` `(Obligated agent actionContent)` `(Required content)` `(Prohibited agent actionContent)` `(Directive directiveEvent)` `(Command directiveEvent)` `(Request directiveEvent)` `(TargetAction directiveEvent actionContent)`
+Modality, ability, permission, and norms
+  `(Able actor action)` `(CapableOf entity action)` `(Possible proposition)` `(Probable proposition)` `(Necessary proposition)` `(Obligated actor action)` `(Required action)` `(Should actor action)` `(Permitted actor action)` `(Forbidden actor action)` `(AllowedBy authority actor action)` `(ProhibitedBy authority actor action)` `(Requested requester addressee action)` `(Commanded commander addressee action)`
   Disambiguation notes:
-  - Possible vs Permitted: `Possible` is circumstantial or epistemic; `Permitted` is deontic permission.
-  - Necessary vs Obligated: `Necessary` applies to content generally; `Obligated` targets an agent.
-  - Prohibited vs Not: `Prohibited` records a norm against an action, not the non-occurrence of the action.
-  - Command vs Request: `Command` is stronger/authoritative; `Request` is weaker or polite.
+  - Possible vs Probable: `Possible` marks compatibility; `Probable` marks likelihood.
+  - Necessary vs Obligated: `Necessary` is proposition-level necessity; `Obligated` is an agent norm.
+  - Forbidden vs ProhibitedBy: `Forbidden` records the norm; `ProhibitedBy` records its authority/source.
 
-Propositional attitudes, intentions, and embedded content
-  `(Believe holder content)` `(Know holder content)` `(Doubt holder content)` `(Want holder content)` `(Desire holder content)` `(Hope holder content)` `(Intend holder content)` `(Expect holder content)` `(Fear holder content)` `(Prefer holder contentOrOption)` `(Content bearer content)` `(Proposition content)` `(QuestionContent content)` `(ActionContent content)`
+Propositional attitudes, desires, and plans
+  `(Believes agent proposition)` `(Knows agent proposition)` `(Suspects agent proposition)` `(Doubts agent proposition)` `(Wants agent content)` `(Hopes agent proposition)` `(Intends agent action)` `(Plans agent action)` `(Fears experiencer content)` `(Realizes agent proposition)` `(Regrets agent proposition)` `(Remembers agent proposition)` `(Forgets agent proposition)`
   Disambiguation notes:
-  - Know vs Believe: `Know` is factive if the ontology treats it that way; `Believe` need not be true.
-  - Want/Desire vs Intend: wanting is preference; intending includes commitment toward action.
-  - Hope vs Expect: hope is desire-oriented; expect is belief-oriented.
-  - Proposition vs ActionContent: `Proposition` is truth-evaluable content; `ActionContent` is an action description.
+  - Believes vs Knows: `Knows` is factive in ordinary English; `Believes` is not.
+  - Wants vs Intends: `Wants` is desire; `Intends` commits the agent toward action.
+  - Hopes vs Wants: `Hopes` usually embeds an uncertain proposition; `Wants` can target an action or state.
 
-Communication, reported speech, and quotation
-  `(Say event)` `(Tell event)` `(Ask event)` `(Write event)` `(Report event)` `(Announce event)` `(Claim event)` `(Quote event)` `(Speaker event participant)` `(Addressee event participant)` `(Message event message)` `(Medium event medium)` `(Language event language)`
+Communication and reported content
+  `(Says speaker content)` `(States speaker content)` `(Claims speaker content)` `(Reports reporter content)` `(Tells speaker addressee content)` `(Asks speaker addressee content)` `(Answers speaker addressee content)` `(Promises speaker addressee content)` `(Informs speaker addressee content)` `(ReportedBy content source)`
   Disambiguation notes:
-  - Say vs Tell: `Tell` normally has an addressee; `Say` may not.
-  - Report vs Claim: `Report` presents information as reported; `Claim` emphasizes asserted commitment.
-  - Quote vs Message: `Quote` is quoted content as an object; `Message` is the communicated item.
+  - Says vs Claims: `Claims` suggests a commitment that may be disputed; `Says` is neutral speech reporting.
+  - Tells vs Informs: `Informs` suggests successful communication; `Tells` only records the act.
 
-Causation, purpose, and explanation
-  `(Cause cause effect)` `(CausedBy effect cause)` `(Enables condition eventuality)` `(Prevents condition eventuality)` `(Purpose eventuality goalContent)` `(Goal bearer goalContent)` `(Reason eventuality reason)` `(Motivation agent reason)` `(Outcome event outcome)` `(Consequence cause effect)`
+Evidentiality and information source
+  `(ObservedBy proposition observer)` `(HeardBy proposition hearer)` `(ReportedBy proposition source)` `(InferredFrom proposition evidence)` `(EvidenceFor evidence proposition)` `(EvidenceAgainst evidence proposition)` `(Apparently proposition)` `(Seems proposition)` `(SourceConfidence source confidence)` `(Reliability source reliability)`
   Disambiguation notes:
-  - Cause vs Reason: `Cause` is causal production; `Reason` is explanatory or justificatory.
-  - Purpose vs Outcome: `Purpose` is intended; `Outcome` is what resulted.
-  - Goal vs Purpose: `Goal` can belong to an agent or plan; `Purpose` modifies an event/action.
-  - Prevents vs Prohibited: `Prevents` is causal blocking; `Prohibited` is normative banning.
+  - Apparently vs Seems: `Apparently` is report/inference-like; `Seems` often marks appearance or subjective evidence.
+  - SourceConfidence vs Reliability: confidence may be claim-specific; reliability is source-level.
 
-Hypotheticality and factual status
-  `(Hypothetical content)` `(Counterfactual content)` `(Presupposed content)` `(Asserted content)` `(Factual content)` `(Uncertain content)`
+Negation, absence, exclusion, and incompatibility
+  `(Denied proposition source)` `(FalseInContext proposition context)` `(Absent entity context)` `(Missing entity context)` `(Unavailable entity context)` `(NotMemberOf entity group)` `(ExcludedFrom entity set)` `(CounterexampleTo entity claim)` `(Contradicts proposition1 proposition2)` `(IncompatibleWith proposition1 proposition2)`
   Disambiguation notes:
-  - Hypothetical vs Counterfactual: counterfactual implies contrary-to-fact status; hypothetical need not.
-  - Presupposed vs Asserted: presupposed content is backgrounded; asserted content is directly put forward.
-  - Uncertain vs Possible: `Uncertain` marks epistemic status of content; `Possible` marks modal possibility.
+  - Denied vs FalseInContext: `Denied` records a denial act/source; `FalseInContext` records modeled falsity.
+  - NotMemberOf vs ExcludedFrom: `NotMemberOf` is membership negation; `ExcludedFrom` implies active exclusion or rule-based exclusion.
 
-Alternatives, focus, and exclusivity
-  `(Alternative context option)` `(Option context option)` `(Choice agent option)` `(MutuallyExclusive option1 option2)` `(Compatible option1 option2)` `(Focus content entityOrConstituent)` `(Only focus context)` `(Exclusive focus context)`
+Quantification, cardinality, proportions, and exceptions
+  `(Cardinality collection n)` `(MinCardinality collection n)` `(MaxCardinality collection n)` `(ApproxCardinality collection n)` `(Proportion collection property ratio)` `(MostOf collection property)` `(ManyOf collection property)` `(FewOf collection property)` `(SeveralOf collection property)` `(HalfOf collection property)` `(AllExcept collection exception)` `(ExceptionTo exception ruleOrSet)` `(OnlySatisfier entity condition)`
   Disambiguation notes:
-  - Alternative vs Option: `Alternative` groups options under a contrast; `Option` is any available choice in a context.
-  - Only vs Exclusive: `Only` represents focus-sensitive exclusivity; `Exclusive` is a more general exclusion relation.
-  - MutuallyExclusive vs Compatible: mutually exclusive options cannot both hold; compatible options can.
+  - Cardinality vs Count: use `Cardinality` for asserted set size; use `Count`-style predicates for derived numeric quantities.
+  - MostOf/FewOf/ManyOf are vague/proportional labels unless rules define thresholds.
+  - ExceptionTo relates an exception to a rule or set; it does not automatically retract the general rule.
 
-Discourse relations
-  `(Sequence segmentOrEvent1 segmentOrEvent2)` `(Contrast segment1 segment2)` `(Concession segment1 segment2)` `(Explanation segment1 segment2)` `(Elaboration segment1 segment2)` `(Background segment1 segment2)` `(Continuation segment1 segment2)` `(TopicShift segment1 segment2)`
+Comparison, degree, ranking, and sequence
+  `(DegreeOf entity dimension valueOrDist)` `(GreaterDegreeThan entity1 entity2 dimension)` `(LessDegreeThan entity1 entity2 dimension)` `(EqualDegree entity1 entity2 dimension)` `(RankInSet entity set rank dimension)` `(BestInSet entity set criterion)` `(WorstInSet entity set criterion)` `(FirstInSequence entity sequence)` `(LastInSequence entity sequence)` `(NextInSequence entity1 entity2 sequence)` `(PreviousInSequence entity1 entity2 sequence)` `(OrdinalInSequence entity sequence ordinal)`
   Disambiguation notes:
-  - Sequence vs Before: `Sequence` is discourse/order structure; `Before` is temporal ordering.
-  - Contrast vs Concession: contrast marks opposition; concession marks an unexpected coexistence.
-  - Explanation vs Cause: `Explanation` relates discourse segments; `Cause` relates events, states, or facts.
+  - Degree comparison names are ordinary predicates; use distribution/comparison primitives separately when numeric reasoning is required.
+  - RankInSet gives an explicit rank; BestInSet/WorstInSet identify extrema by a criterion.
 
-Reflexive, reciprocal, and co-participation relations
-  `(Reflexive event participant)` `(Reciprocal event groupOrParticipants)` `(Mutual event)` `(CoParticipant event participant)`
+Collections, plurality, mass nouns, and distributivity
+  `(Group group)` `(Collection collection)` `(Set set)` `(MemberOf member group)` `(SubgroupOf subgroup group)` `(Substance substance)` `(QuantityOf quantity substance)` `(PortionOf portion substance)` `(UnitOf quantity unit)` `(CollectiveParticipant event group)` `(DistributiveOver event group)` `(EachMember member group)`
   Disambiguation notes:
-  - Reflexive vs Reciprocal: reflexive links an argument back to itself; reciprocal marks mutual relations among participants.
-  - Reciprocal vs Mutual: reciprocal emphasizes pairwise role reversal; mutual is a broader joint/mutual marker.
+  - Group vs Collection: `Group` can act collectively; `Collection` is any aggregate.
+  - Substance vs PortionOf: `Substance` names mass material; `PortionOf` identifies a bounded amount.
+
+Clause embedding, modification, and attachment
+  `(EmbeddedContent host proposition)` `(ComplementOf host proposition)` `(RestrictiveModifier entity condition)` `(NonrestrictiveInfo entity proposition)` `(Appositive entity description)` `(ModifierOf modifier target)` `(AttachmentReading analysis target)` `(ControlSubject embeddedEvent controller)` `(RaisedSubject embeddedPredicate entity)` `(EllipsisResolution fragment proposition)`
+  Disambiguation notes:
+  - RestrictiveModifier vs NonrestrictiveInfo: restrictive information narrows reference; nonrestrictive information adds side information.
+  - ControlSubject vs RaisedSubject: control supplies an understood actor; raising marks the subject of the embedded predicate.
+
+Focus, discourse status, and presupposition
+  `(FocusOf proposition focus)` `(OnlyFocus proposition focus)` `(AlsoFocus proposition focus)` `(EvenFocus proposition focus)` `(TopicOf discourse entity)` `(Backgrounded proposition)` `(Presupposes trigger proposition)` `(PresupposedIn proposition context)` `(ContrastSet focus set)`
+  Disambiguation notes:
+  - OnlyFocus restricts alternatives; AlsoFocus adds another true alternative; EvenFocus marks unexpectedness.
+  - Presupposes records background commitment; it does not itself decide whether to assert the presupposed proposition.
+
+Questions, directives, and speech acts
+  `(Question act)` `(YesNoQuestion act proposition)` `(WhQuestion act variable)` `(Answer answer question)` `(Directive act)` `(Imperative act)` `(Request speaker addressee action)` `(Command speaker addressee action)` `(Instruction speaker addressee action)` `(PermissionGrant authority actor action)` `(Prohibition authority actor action)`
+  Disambiguation notes:
+  - Question predicates are for storing/reporting question acts; actual PeTTaChainer queries use the query scaffold.
+  - Request vs Command: `Request` is weaker/socially optional; `Command` implies authority.
+
+Non-intersective and intensional modifiers
+  `(Former entity roleOrKind)` `(Fake entity kind)` `(Alleged source entity kindOrProposition)` `(Potential entity kind)` `(PossibleKind entity kind)` `(Prospective entity kind)` `(Counterfeit entity kind)` `(Nominal entity kind)`
+  Disambiguation notes:
+  - Former does not imply current role/kind membership.
+  - Fake, Alleged, Potential, and PossibleKind do not imply actual membership in the modified kind.

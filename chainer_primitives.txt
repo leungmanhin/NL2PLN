@@ -1,51 +1,198 @@
-PeTTaChainer primitive quick reference
+External API scaffolding
 
-Public bare statement and query scaffolding
-  `(: <proof-id> <proposition> <tv>)` — outer envelope for stored facts and stored rules.
-  `(: <rule-id> (Implication ...) (STV strength confidence))` — rule stored as a statement.
-  `(: $prf <pattern> $tv)` — query pattern; proof-id position must be a variable.
-  `$name` — variable syntax used in facts, rules, and queries.
-  `->` — output-binder marker used inside compute, fold, and distribution helper forms.
+`(: proof-id proposition-or-rule truth-value)`
+  Bare statement form for `add_atom`; `proof-id` must not be a variable and `truth-value` must be a supported non-variable TV/distribution form.
 
-Rule and logical forms
-  `(Implication (Premises ...) (Conclusions ...))` — if-then rule proposition.
-  `(Premises premise1 premise2 ...)` — antecedent list inside an implication.
-  `(Conclusions conclusion1 conclusion2 ...)` — consequent list inside an implication.
-  `(Not expr)` — negation / negative premise over the nested expression.
-  `(Compute f (arg1 arg2 ...) -> $out)` — compute a function result and bind it.
-  `(FoldAll pattern value init fold-fn -> out)` — aggregate over matching facts with an explicit value.
-  `(FoldAllValue pattern init fold-fn -> out)` — aggregate over matching fact values.
-  `(GreaterThan a b)` — documented numeric/distribution greater-than comparison.
-  `(> a b)` — documented alias/sugar for the greater-than comparison family.
+`(: $proofVar proposition-pattern $tvVar)`
+  Bare query form for `query`; proof position must be a variable, and the TV position is normally a variable such as `$tv`.
 
-Distribution helper forms
-  `(MapDist f (DistFactA ... $inDist) $inDist -> $outDist)` — map a function over a distribution-valued fact.
-  `(Map2Dist f (DistFactA ... $distA) $distA (DistFactB ... $distB) $distB -> $outDist)` — combine two distribution-valued facts.
-  `(AverageDist (DistFactPattern ... $inDist) $inDist -> $outDist)` — average over matching distribution-valued facts.
+`$variable`
+  Variables begin with `$` and unify across a query/rule expression.
 
-Lower-level / compiled distribution structural forms
-  `(DistGreaterThanFormula ...)` — supported structural distribution comparison form.
-  `(DistGreaterThanDistFormula ...)` — supported structural distribution-vs-distribution comparison form.
-  `(ParticleMap ...)` — supported particle-map structural form.
-  `(ParticleMap2 ...)` — supported two-input particle-map structural form.
-  `(ParticleAddBernoulliFromSTV ...)` — supported particle/STV bridge structural form.
+`constant`
+  Any symbol not beginning with `$` is treated as a constant/predicate symbol and matches syntactically.
 
-Truth-value and distribution constructors
-  `(STV strength confidence)` — truth uncertainty for a proposition.
-  `(NatDist ((value probability) ...))` — exact discrete natural-number distribution.
-  `(FloatDist ((value probability) ...))` — exact discrete floating-point distribution.
-  `(ParticleDist <ref>)` — particle distribution by opaque particle-store reference.
-  `(ParticleDist <ref> <scale>)` — scaled particle distribution reference.
-  `(PointMass x)` — degenerate distribution concentrated at one value.
-  `(ParticleFromNormal mu sigma)` — particle distribution constructor from normal parameters.
-  `(ParticleFromPairs ((x1 w1) (x2 w2) ...))` — particle distribution constructor from weighted pairs.
+`(no_inverse proof-id)`
+  Structured proof id wrapper that disables inverse implication support for that rule.
 
-Utility / particle-store operators
-  `(ParticleStoreCount ...)` — documented particle-store utility operator.
-  `(ParticleStoreClear ...)` — documented particle-store clearing operator.
-  `(ParticleStorePruneKB ...)` — documented particle-store / KB pruning operator.
+Do not emit Python API inputs wrapped as `!(compileadd ...)`, `!(query ...)`, or `!(eval ...)`; those are internal runtime commands, not external bare expressions.
 
-Reserved internal runtime wrappers
-  `!(eval <bare-expression>)` — internal evaluation wrapper; do not emit as external API input.
-  `!(compileadd <kb> <evaluated-statement>)` — internal add wrapper; do not emit as external API input.
-  `!(query <steps> <kb> <evaluated-query>)` — internal query wrapper; do not emit as external API input.
+
+Plain proposition shape
+
+`(Predicate arg1 arg2 ...)`
+  Ordinary user predicate/proposition form; predicate names have no built-in domain meaning but are matched and unified syntactically.
+
+
+Rule structure
+
+`(Implication (Premises premise1 premise2 ...) (Conclusions conclusion1 conclusion2 ...))`
+  Rule form used inside a top-level statement.
+
+`Premises`
+  Required marker introducing rule antecedent expressions.
+
+`Conclusions`
+  Required marker introducing rule consequent expressions.
+
+
+Computation and aggregation premises
+
+`(Compute f (arg1 arg2 ...) -> $out)`
+  Runs a reducible runtime function and binds the result to `$out`.
+
+`(FoldAll pattern value init fold-fn -> out)`
+  Folds over all facts matching `pattern`, extracting `value` from each match.
+
+`(FoldAllValue pattern init fold-fn -> out)`
+  Folds over truth values of all matches to `pattern`.
+
+`(AverageDist pattern value -> out)`
+  Aggregates matched distribution values into an average distribution.
+
+`(MapDist f pattern value -> out)`
+  Applies unary function `f` pointwise to a matched distribution.
+
+`(Map2Dist f patternA valueA patternB valueB -> out)`
+  Applies binary function `f` pointwise to two matched distributions.
+
+
+Truth/proposition operators
+
+`(Not expr)`
+  Truth-value negation of an existing matched proof of `expr`; not negation-as-failure.
+
+`(GreaterThan dist threshold)`
+  Distribution-vs-numeric-threshold comparison, producing an STV.
+
+`(> dist threshold)`
+  Alias form for distribution-vs-threshold comparison.
+
+`(GreaterThan distA distB)`
+  Distribution-vs-distribution comparison when the second argument is a variable bound to a distribution.
+
+`(> distA distB)`
+  Alias form for distribution-vs-distribution comparison.
+
+`(And expr1 expr2 ...)`
+  Compound proposition whose child truth values are combined with `AndFormula`.
+
+`(Or expr1 expr2 ...)`
+  Compound proposition whose child truth values are combined with `OrFormula`.
+
+`(LikelierThan expr1 expr2 ...)`
+  Compound proposition comparing child proposition truth values by likelihood.
+
+
+Supported statement truth/distribution forms
+
+`(STV strength confidence)`
+  Simple truth value with strength and confidence.
+
+`(NatDist pairs)`
+  Discrete natural-number distribution TV form accepted by the validator.
+
+`(FloatDist pairs)`
+  Discrete floating-point distribution TV form accepted by the validator.
+
+`(ParticleDist ref)`
+  Opaque particle distribution reference.
+
+`(ParticleDist ref scale)`
+  Opaque particle distribution reference with scale.
+
+`(PointMass x)`
+  Particle distribution constructor for an exact value.
+
+`(ParticleFromNormal mu sigma)`
+  Particle distribution constructor using a deterministic normal-like kernel.
+
+`(ParticleFromPairs ((x1 w1) (x2 w2) ...))`
+  Particle distribution constructor from weighted samples.
+
+
+Built-in reducer/formula names
+
+`Equal`
+  Syntactic equality reducer, typically used as `(Compute Equal (arg1 arg2) -> $out)`.
+
+`NotEqual`
+  Syntactic inequality reducer, typically used as `(Compute NotEqual (arg1 arg2) -> $out)`.
+
+`MpFormula`
+  Internal implication modus-ponens truth-value combination formula.
+
+`AndFormula`
+  Internal TV formula backing `And`.
+
+`OrFormula`
+  Internal TV formula backing `Or`.
+
+`LikelierThanFormula`
+  Internal TV formula backing `LikelierThan`.
+
+`AndProjection`
+  Internal projection support for compound `And` sources.
+
+`OrProjection`
+  Internal projection support for compound `Or` sources.
+
+`DistGreaterThanFormula`
+  Internal distribution-vs-threshold comparison formula backing `GreaterThan`.
+
+`DistGreaterThanDistFormula`
+  Internal distribution-vs-distribution comparison formula backing `GreaterThan`.
+
+`NotFormula`
+  Internal TV formula backing `Not`.
+
+`InversionFormula`
+  Internal formula used for inverse implication support.
+
+`ParticleFromPairs`
+  Distribution constructor/function for weighted particles.
+
+`PointMass`
+  Distribution constructor/function for exact point values.
+
+`ParticleFromNormal`
+  Distribution constructor/function for normal-like particle samples.
+
+`ParticlePairs`
+  Advanced particle distribution utility.
+
+`ParticleMap`
+  Advanced unary particle-map utility.
+
+`ParticleMap2`
+  Advanced binary particle-map utility.
+
+`ParticleAddBernoulliFromSTV`
+  Advanced fold helper for adding Bernoulli contributions from STV values.
+
+`DistMapFormula`
+  Internal formula backing `MapDist`.
+
+`DistMap2Formula`
+  Internal formula backing `Map2Dist`.
+
+`DistSumCountAcc`
+  Internal accumulator helper for distribution averaging.
+
+`DistAverageFromSumCount`
+  Internal finish helper for distribution averaging.
+
+`ParticleStoreCount`
+  Advanced particle-store utility.
+
+`ParticleStoreClear`
+  Advanced particle-store utility.
+
+`ParticleStorePruneKB`
+  Advanced particle-store utility.
+
+`ParticleSetBudget`
+  Advanced particle-budget utility.
+
+`ParticleGetBudget`
+  Advanced particle-budget utility.
