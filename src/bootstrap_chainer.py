@@ -2,29 +2,28 @@
 Bootstrap a chainer for semantic parsing.
 
 Reads the chainer's source code and generates everything needed for the
-NL-to-PLN pipeline in five steps:
+NL-to-PLN pipeline in four steps:
 
   1. Analyze the chainer (RLM) — reverse-engineer syntax, operators,
-     constraints from the source code.
+     constraints from the source code.  Includes a final cheat-sheet
+     section listing each primitive with its canonical form.
 
   2. Enumerate linguistic phenomena (Predict) — comprehensive list of
-     English constructs that the semantic parser must handle.
+     phenomena that the semantic parser must handle.
 
-  3. Generate NL→logic conversion guidelines (Predict) — systematic
-     rules for mapping each phenomenon to the chainer's logic format.
+  3. Generate NL→logic conversion guidelines (RLM) — systematic rules
+     for mapping linguistic phenomena to the chainer's logic format,
+     plus canonical naming vocabulary for closed-class semantic relations
+     (thematic roles, spatial/temporal relations, modality, attitudes,
+     etc.).  RLM-based so the LM may execute code to explore the chainer
+     source for verification when chainer_analysis seems insufficient.
 
-  4. Generate chainer primitives and suggested vocabulary (Predict) —
-     split into two outputs: the real chainer primitives (with semantic
-     backing in the chainer's evaluation engine) vs. open-class/closed-
-     class vocabulary (naming suggestions for the LLM, not primitives).
+  4. Assemble final conversion instructions (deterministic) — wraps
+     conversion_guidelines into instructions.md.
 
-  5. Assemble final conversion instructions (deterministic) — concatenates
-     the chainer analysis, primitives, guidelines, and vocabulary into
-     instructions.md.
-
-Step 1 uses RLM (Recursive LM, requires Deno) to explore the chainer
-source code via iterative code execution.  Steps 2-4 use dspy.Predict
-(single LLM call each).  Step 5 is deterministic (no LLM call).
+Steps 1 and 3 use RLM (Recursive LM, requires Deno) to explore the
+chainer source code via iterative code execution.  Step 2 uses
+dspy.Predict (single LLM call).  Step 4 is deterministic (no LLM call).
 
 Each step saves its output to a file.  Use --from-step N to skip earlier
 steps and load their outputs from disk (useful for iterating on later
@@ -32,8 +31,8 @@ steps without re-running expensive earlier ones).
 
 Usage:
     python src/bootstrap_chainer.py --chainer ../PeTTaChainer
-    python src/bootstrap_chainer.py --from-step 4 --chainer ../PeTTaChainer
-    python src/bootstrap_chainer.py --from-step 5
+    python src/bootstrap_chainer.py --from-step 3 --chainer ../PeTTaChainer
+    python src/bootstrap_chainer.py --from-step 4
 """
 import argparse
 import logging
@@ -53,8 +52,6 @@ _DEFAULTS = {
     "analysis": _PROJECT_ROOT / "chainer_analysis.txt",
     "phenomena": _PROJECT_ROOT / "linguistic_phenomena.txt",
     "guidelines": _PROJECT_ROOT / "conversion_guidelines.txt",
-    "primitives": _PROJECT_ROOT / "chainer_primitives.txt",
-    "vocabulary": _PROJECT_ROOT / "suggested_vocabulary.txt",
     "instructions": _PROJECT_ROOT / "instructions.md",
 }
 
@@ -121,9 +118,9 @@ class ChainerAnalysisSignature(dspy.Signature):
     from its source code.
 
     Your goal is to produce a comprehensive, structured analysis that will
-    serve as the FOUNDATION for all downstream work — a relation template
-    designer and an instruction writer will rely on your analysis to produce
-    correct logical expressions.
+    serve as the FOUNDATION for all downstream work, e.g. a relation template
+    designer or an instruction writer can rely on your analysis to produce
+    correct expressions that this reasoner can evaluate.
 
     From the source code, reverse-engineer and document, minimally:
 
@@ -135,27 +132,27 @@ class ChainerAnalysisSignature(dspy.Signature):
        FORMAT that external callers pass to the API vs. any internal
        runtime commands.  Downstream consumers will ONLY use the bare
        expression format, never the internal commands.
-    2. BUILT-IN OPERATORS — List every built-in operator/combinator the
+    2. BUILT-IN OPERATORS — List every built-in operator/connector the
        chainer supports.  For each, show its syntax and what it does.
     3. TRUTH VALUES — What truth value forms are supported?  How are
        uncertain numeric values represented (distributions)?
-    4. RULE TEMPLATES — How are if-then rules written?  Show the exact
-       structure.
+    4. RULE TEMPLATES — How are if-then rules written?  Any other rules
+       or logical relations that are supported? Show their structures.
     5. QUERY PATTERNS — How are queries formed for the chainer's query()
        API?  What must be a variable vs. a constant?
-    6. NAMING CONVENTIONS — What naming style does the codebase use for
-       predicates, constants, variables?
+    6. NAMING CONVENTIONS — What naming style, if any, does the codebase
+       use for predicates, constants, variables, instances, etc.?
     7. CONSTRAINTS & PITFALLS — What syntax is NOT supported?  Common
-       mistakes to avoid?  Explicitly note: expressions must be in the
-       bare format accepted by the API, NOT wrapped in internal runtime
-       commands.
+       mistakes to avoid?
     8. QUANTIFICATION AND SCOPE — How are quantifiers (universal "all",
        existential "some", cardinal "exactly N", etc.) represented?
-       Is there a dedicated quantifier operator (e.g. `ForAll`,
-       `Exists`), or are quantifier meanings expressed indirectly (e.g.
-       via `Implication` with variables in premises, or via explicit
-       witness constants)?  How is scope handled when multiple
-       quantifiers or negation interact?
+       Is there a dedicated quantifier operator (e.g. `ForAll`, `Exists`),
+       a fuzzy/probabilistic variant, or are quantifier meanings expressed
+       indirectly (e.g. via `Implication` with variables in premises, or
+       via explicit witness constants)?  How is scope handled when multiple
+       quantifiers or negation interact? Can they be nested? Do truth
+       values play a role in quantification (e.g. quantified formulas
+       carrying their own TVs)?
     9. ENTITY IDENTITY AND REPRESENTATION — Does the chainer have any
        built-in notion of entity identity, or are all symbols purely
        syntactic labels that match themselves?  How should named
@@ -167,19 +164,32 @@ class ChainerAnalysisSignature(dspy.Signature):
        is there a convention for representing these, or should they
        be skipped when their referent is unknown?
 
-    Be precise and derive everything from the source code.  If the source
-    includes reference documentation (e.g. spec files, README), use those
-    as references too.
+    10. PRIMITIVES CHEAT SHEET — At the END of the analysis, add a
+        consolidated quick-reference section titled "Primitives cheat
+        sheet" that lists every primitive documented above.  Organize
+        it by category (e.g. expression scaffolding, rule structure,
+        operators/connectives, truth-value and distribution forms,
+        computation/aggregation helpers, formula/reducer helpers).
+        For each primitive give its canonical syntactic form (one
+        line, in backticks) and a one-line semantic note.  This
+        section is the authoritative cheat sheet that downstream
+        pipeline stages and the deployed translator LM consult — do
+        not omit it, and do not introduce primitives here that are
+        not documented above.
 
-    Output the prose analysis as clear, well-organized text in
-    `chainer_analysis`.
+    Be precise and derive everything from the source code.  If the source
+    includes reference documentation (e.g. spec files, README), consult
+    those as well.
+
+    Output the prose analysis (with the cheat-sheet section appended) as
+    clear, well-organized text in `chainer_analysis`.
     """
     chainer_source: str = dspy.InputField(
         desc="Complete source code of the chainer/reasoner"
     )
     chainer_analysis: str = dspy.OutputField(
         desc="Structured analysis of the chainer's syntax, operators, "
-             "constraints, and conventions."
+             "constraints, and conventions, etc."
     )
 
 
@@ -189,8 +199,8 @@ class ChainerAnalysisSignature(dspy.Signature):
 
 class LinguisticPhenomenaSignature(dspy.Signature):
     """
-    You are a linguist enumerating the kinds of English constructs that
-    a semantic parsing system must handle.
+    You are a linguist enumerating the linguistic phenomena that a
+    semantic parsing system for English must handle.
 
     Produce a comprehensive list of linguistic phenomena.  Each item
     should be a self-contained string with: the category name, a brief
@@ -224,179 +234,234 @@ class LinguisticPhenomenaSignature(dspy.Signature):
 
 class ConversionGuidelinesSignature(dspy.Signature):
     """
-    You are a semantic parsing expert designing systematic rules for
-    converting English sentences into logical expressions for a specific
-    chainer/reasoner.
+    You are a semantic parsing expert designing systematic English→logic
+    mapping rules for a chainer/reasoner.
 
     You are given:
-    1. A complete analysis of the chainer's syntax, operators, and
-       constraints
-    2. A comprehensive list of linguistic phenomena to handle
+    1. A complete analysis of the chainer's syntax, operators,
+       constraints, etc.
+    2. A list of linguistic phenomena that a semantic parser should
+       be able to handle at minimum.
 
-    Produce CONVERSION GUIDELINES — systematic rules for mapping each
-    linguistic phenomenon to the chainer's logic format.
+    Produce CONVERSION GUIDELINES — systematic rules for mapping
+    linguistic phenomena to the chainer's logic format.
 
-    Scope and conciseness:
-    - Do NOT re-document the chainer's syntax, built-in operators, or
-      truth-value forms — those are documented in the chainer_analysis
-      input.  Your job is the MAPPING from English to the chainer's
-      logic, not a restatement of what the chainer is.  You may
-      reference primitives by name and use them in worked examples,
-      but do not re-enumerate them.
-    - Be terse where a rule is self-evident or follows from the
-      chainer analysis; spend detail only where the rule is non-
-      obvious or counter to an LLM's default tendencies (e.g.,
-      predicate atomicity, rule-vs-query separation, query
-      granularity).
+    Role separation (the basis for non-redundancy):
 
-    Cover at minimum:
+    chainer_analysis is the authoritative reference on what the chainer
+    IS — its syntactic forms, primitives, truth-value forms, constraints,
+    and surface conventions.  Your guidelines are PRESCRIPTIVE — they
+    document English→logic mapping disciplines that compose with whatever
+    the chainer provides.  They are not a restatement of the chainer.
 
-    - Naming conventions: how to derive predicate names from English
-      words (lemmatization, capitalization style, etc.)
-    - Entity representation and identity: how to map named entities
-      from English to logic symbols (e.g. instance-of-class with a
-      separate naming relation vs. using the name directly as a
-      symbol); how to disambiguate different real-world entities that
-      share the same surface name; how to handle first/second-person
-      pronouns ("I", "we", "you") when their referent is unknown.
-      Follow whatever the chainer analysis says about identity
-      semantics.
-    - Quantification and scope: how to express universal ("all",
-      "every"), existential ("some", "there is"), and cardinal
-      ("exactly N") quantifiers using the chainer's available
-      machinery (dedicated operator vs. rule-with-variables vs.
-      witness constants).  How to handle scope interactions with
-      negation and other quantifiers.
+    Concretely:
+    - Reference primitives by role/name only; never restate their
+      syntactic templates, never re-enumerate which operators or forms
+      exist in the chainer.
+    - Use literal-syntax-bearing examples ONLY where prescriptive
+      content genuinely requires them (the BAD → GOOD anti-pattern
+      sections below).  Everywhere else, name what the rule produces
+      structurally in prose; the consumer LLM will consult
+      chainer_analysis for syntactic form.
+    - Where the analysis specifies a convention or constraint, defer to
+      it without restating; where the analysis is silent on something
+      downstream translation needs, fill the gap (see "Translation
+      conventions" below).
+
+    Source-code fallback:
+
+    chainer_source contains the full source of the chainer/reasoner.
+    You may execute code (read specific files, search for patterns,
+    try small examples) to verify a claim or fill a gap when
+    chainer_analysis seems incomplete.  Use sparingly — the analysis
+    is your primary reference; most guidelines are derivable from
+    analysis + phenomena alone, and exhaustive re-reading wastes
+    iterations.
+
+    Mapping disciplines:
+
     - Predicate atomicity (the MOST CRITICAL discipline): every
       predicate name must denote a single semantic primitive — typically
-      1-3 English words (a noun, verb, or short phrase). Predicate
+      1-3 English words (a noun, verb, or short phrase).  Predicate
       names are the handles by which the reasoner composes facts and
       rules into proofs; monolithic names that bake in compound
       structures (multiple concepts, numerical constants, entity-
       specific configurations) become opaque to the reasoner's
       compositional machinery and can only participate in proofs by
-      matching themselves literally. Consult the chainer analysis for
-      exactly how predicate names are used during proof construction.
+      matching themselves literally.
 
-      Anti-patterns to forbid (consult the chainer analysis for which
-      built-in operators and truth-value constructors are available to
-      express each correctly):
+      Anti-patterns to forbid (express each correctly using whatever
+      primitives the chainer analysis documents):
 
         * Numbers, cardinalities, or counts embedded in the name.
-          Introduce witness constants or variables and use the chainer's
-          comparison or counting primitives instead.
+          Introduce witness constants or variables and use the
+          chainer's counting/comparison facilities instead.
 
-        * Numerical thresholds or ranges embedded in the name. Expose
+        * Numerical thresholds or ranges embedded in the name.  Expose
           the measured value as an argument of a predicate and use the
-          chainer's comparison operators as separate premises.
+          chainer's comparison facilities as separate premises.
 
         * Multi-concept concatenations where one name stands for a
-          compound relationship. Split into multiple predicates each
+          compound relationship.  Split into multiple predicates each
           denoting one concept, linked by shared variables or constants.
 
         * Entity-specific comparisons (pairs or triples of named
-          entities fused into the name). Express the relation between
+          entities fused into the name).  Express the relation between
           two first-class values using general binary or n-ary operators.
 
       Self-check: could this predicate appear in a position that feeds
       into further inference — as an input to another rule, as part of
-      a larger pattern, as an argument to another operator? If the name
-      describes the whole answer, the reasoning has been absorbed into
-      the predicate string and the reasoner has nothing further to do.
+      a larger pattern, as an argument to another operator?  If the
+      name describes the whole answer, the reasoning has been absorbed
+      into the predicate string and the reasoner has nothing further
+      to do.
 
       Your conversion guidelines MUST dedicate a section to predicate
       atomicity with EXACTLY 4 BAD → GOOD contrastive examples — one
-      per anti-pattern category listed above (numbers/cardinalities
-      embedded in name; thresholds embedded in name; multi-concept
-      concatenation; entity-specific comparisons fused into name).
-      Do not produce additional examples beyond the 4 categories.
-      Synthesize the examples yourself by reverse-engineering plausible
-      English constructions against the chainer's documented primitives;
-      do not rely on canned templates, and do not reuse examples from
+      per anti-pattern category listed above.  Do not produce
+      additional examples beyond the 4 categories.  Synthesize the
+      examples yourself by reverse-engineering plausible English
+      constructions against the chainer's documented primitives; do
+      not rely on canned templates, and do not reuse examples from
       this instruction.
 
     - Decomposition strategies: how to break complex sentences into
       multiple atomic statements, linked through whatever binding
-      mechanism the chainer analysis documents (typically shared
-      variables or shared constants). This is the structural
-      complement to predicate atomicity — one applies at the
-      sentence-to-atoms boundary, the other at the predicate-naming
-      boundary.
+      mechanism the chainer provides (typically shared variables or
+      shared constants — defer to the analysis).  This is the
+      structural complement to predicate atomicity — one applies at
+      the sentence-to-atoms boundary, the other at the predicate-
+      naming boundary.
 
-    - Query semantics: statements and queries are different speech
-      acts — statements contribute to the KB, queries request proofs.
-      Consult the chainer analysis for how the chainer distinguishes
-      these roles: whether they share surface shapes or use distinct
-      constructs, what a query is permitted to target, and how the
-      reasoner treats each.
+    - Rule-vs-query separation: statements and queries are different
+      speech acts — statements contribute to the KB, queries request
+      proofs.  How the chainer surfaces this distinction (shared
+      shapes, distinct constructs, or no distinction at all) is for
+      chainer_analysis to document; defer to it.
 
-      A failure mode worth guarding against (relevant wherever the
-      chainer analysis indicates queries target derivable facts rather
-      than rule forms): when the English expresses universal, generic,
-      or conditional content ("all X are Y", "if X then Y", "every X
-      is a Y"), the LLM may mistakenly copy the rule-shaped surface
-      form into the query position, asking the reasoner to prove the
-      rule itself rather than to use it. Wherever the chainer analysis
-      documents this distinction, the guidelines must state the
-      rule-vs-query separation explicitly, with one contrastive
-      BAD → GOOD example synthesized from the chainer's documented
-      surface forms (add more only if a second anti-pattern requires
-      a distinct positive form). (If the chainer permits querying rule forms directly or
-      uses identical syntax for rules and queries, follow whatever the
-      chainer analysis specifies.)
+      A failure mode worth guarding against (relevant where the
+      chainer treats queries as targeting derivable facts rather than
+      rule forms): when the English expresses universal, generic, or
+      conditional content ("all X are Y", "if X then Y", "every X is
+      a Y"), the LLM may mistakenly copy the rule-shaped surface form
+      into the query position, asking the reasoner to prove the rule
+      itself rather than to use it.  Where the chainer's analysis
+      exhibits this distinction, the guidelines must state the
+      separation explicitly with one contrastive BAD → GOOD example
+      synthesized from the chainer's documented surface forms (add
+      more only if a second anti-pattern requires a distinct positive
+      form).  If the analysis indicates queries and rules share syntax
+      or rule-shaped queries are first-class, follow whatever the
+      analysis specifies and adapt this guidance accordingly.
 
     - Query granularity: whatever decomposition discipline applies to
-      STATEMENTS may not apply identically to QUERIES. Consult the
-      chainer analysis for how queries are consumed (single-shot
-      unification, multi-step search, interactive refinement, etc.)
-      and derive appropriate granularity guidance from that operational
-      model.
+      STATEMENTS may not apply identically to QUERIES.
 
       A failure mode worth guarding against: after decomposing a
       sentence into many atomic facts, the LLM emits a parallel
-      battery of queries re-verifying every atomic piece. Those facts
+      battery of queries re-verifying every atomic piece.  Those facts
       are already in the KB; re-querying them dilutes the proof search
-      without adding information. Queries should target only the
+      without adding information.  Queries should target only the
       specific unknown the English question asks about.
 
-      If the chainer analysis indicates queries have distinct
+      If the chainer's analysis indicates queries have distinct
       granularity conventions from statements, articulate that
-      asymmetry in the guidelines with one contrastive BAD → GOOD
-      example synthesized from the chainer analysis (add more only
-      if a second anti-pattern requires a distinct positive form).
+      asymmetry with one contrastive BAD → GOOD example synthesized
+      from the analysis (add more only if a second anti-pattern
+      requires a distinct positive form).
 
-    - When to use built-in operators vs. custom predicates
-    - Variable naming conventions
-    - Truth value assignment strategies
-    - Phenomenon-specific mapping notes: address ONLY those
-      phenomena whose mapping requires non-default treatment, has a
-      counterintuitive pitfall, or needs vocabulary the general
-      rules don't determine.  For phenomena handled correctly by
-      the general rules above (atomicity, decomposition, query
-      semantics, naming), do NOT produce a per-phenomenon
-      subsection — a single sentence saying "apply general rules"
-      or omission is preferred.  The phenomena list is for
-      awareness, not exhaustive enumeration.
+    - Truth-value assignment strategies for English uncertainty: how
+      to map English hedges, modals, hearsay, generics, defeasibility,
+      and negation onto whatever truth-value forms the chainer
+      provides.  This is the prescriptive side; the chainer's
+      available truth-value forms themselves are documented in the
+      analysis.
 
-      When a phenomenon DOES warrant its own note, write the note
-      as TEXT-ONLY guidance — name the canonical predicates to use
-      (referenced by name), describe the structural pattern in
-      prose.  Do NOT include worked metta-block examples in this
-      section: those are exactly what an optimizer's demos will
-      provide authoritatively from real successful trajectories,
-      and bootstrap-imagined worked examples here may conflict with
-      the names the optimizer eventually settles on.  Worked metta
-      examples remain appropriate ONLY in the BAD → GOOD anti-
-      pattern sections (atomicity, rule-vs-query, query-
+    - Phenomenon-specific mapping notes: address ONLY those phenomena
+      whose mapping requires non-default treatment, has a
+      counterintuitive pitfall, or needs vocabulary the disciplines
+      above don't determine.  For phenomena handled correctly by the
+      disciplines above (atomicity, decomposition, rule-vs-query,
+      query-granularity, truth-value strategy), do NOT produce a
+      per-phenomenon subsection — a single sentence saying "apply
+      general rules" or omission is preferred.  The phenomena list is
+      for awareness, not exhaustive enumeration.
+
+      When a phenomenon DOES warrant its own note, write the note as
+      TEXT-ONLY guidance — reference canonical predicates by name
+      (drawn from the canonical relation vocabulary section below; do
+      not re-list names there), and describe the structural pattern
+      in prose.  Do NOT include worked literal-syntax examples in
+      this section: those are exactly what an optimizer's demos will
+      provide authoritatively from real successful trajectories, and
+      bootstrap-imagined worked examples here may conflict with the
+      names the optimizer eventually settles on.  Worked literal-
+      syntax examples remain appropriate ONLY in the BAD → GOOD
+      anti-pattern sections (atomicity, rule-vs-query, query-
       granularity), where the negative signal is something demos
       cannot teach.
 
-    These guidelines will be used as a "style guide" to ensure
-    consistency across all semantically parsed sentences.
+    Translation conventions:
 
-    All guidelines must use the exact syntax documented in the chainer
-    analysis.  Do not invent syntax not documented there otherwise it
-    won't work.
+    These document translator-side naming choices that must be
+    consistent across all translations.  Where the chainer analysis
+    specifies any of them, defer to it without restating; where the
+    analysis is silent, document a sensible convention here.
+
+    - Predicate naming style for names DERIVED from English content
+      (lemmatization, capitalization, compound handling).  This covers
+      translator-introduced predicates, not chainer-defined primitives.
+    - Variable naming conventions for translator-introduced variables.
+    - Entity-id schema for resolving named entities, disambiguating
+      entities sharing surface names, and handling first/second-person
+      pronouns when their referent is unknown.
+
+    Canonical relation vocabulary (closed-class):
+
+    Document a glossary of canonical names for closed-class semantic
+    relations — relations English uses routinely but the chainer
+    typically does not provide as primitives (thematic roles,
+    spatial/temporal relations, modality, propositional attitudes,
+    evidentiality, etc.).  Phenomenon-specific mapping notes (above)
+    reference these names without re-listing them.
+
+    Format (mandatory, one block per category):
+
+      <category name>
+        `(Name1 args)` `(Name2 args)` ... [list of canonical names]
+        Disambiguation notes (only where names are confusable):
+        - Name1 vs Name2: [one line]
+
+    No per-name description blocks for self-descriptive names.
+
+    Categories to cover (typical, non-exhaustive): reference and
+    identity; possession, containment, part-whole, and membership;
+    thematic and event roles; spatial relations; deictic and context-
+    relative reference; temporal relations; aspect, recurrence, and
+    frequency; causation, purpose, reason, and means; change of state,
+    creation, destruction, and existence; modality, ability,
+    permission, and norms; propositional attitudes, desires, and
+    plans; communication and reported content; evidentiality and
+    information source; negation, absence, exclusion, and
+    incompatibility; quantification, cardinality, proportions, and
+    exceptions; comparison, degree, ranking, and sequence;
+    collections, plurality, mass nouns, and distributivity; clause
+    embedding, modification, and attachment; focus, discourse status,
+    and presupposition; questions, directives, and speech acts;
+    non-intersective and intensional modifiers.
+
+    These names are NAMING SUGGESTIONS for translator consistency —
+    they do NOT have chainer semantics unless the chainer analysis
+    lists them as primitives.  Do not duplicate any name the analysis
+    lists as a primitive; defer to the analysis for those.
+
+    These guidelines act as a "style guide" applied alongside
+    chainer_analysis to ensure consistency across all semantically
+    parsed sentences.
+
+    All literal-syntax content must use the exact forms documented in
+    the chainer analysis.  Do not invent forms not documented there,
+    otherwise they won't work.
 
     Output as clear, well-organized text.
     """
@@ -406,124 +471,33 @@ class ConversionGuidelinesSignature(dspy.Signature):
     linguistic_phenomena: str = dspy.InputField(
         desc="Comprehensive list of linguistic phenomena to handle"
     )
+    chainer_source: str = dspy.InputField(
+        desc="Complete source code of the chainer/reasoner.  Available "
+             "for optional verification or filling gaps in chainer_analysis; "
+             "the analysis is your primary reference, not this."
+    )
     conversion_guidelines: str = dspy.OutputField(
-        desc="Systematic rules for mapping English constructs to the "
-             "chainer's logic format.  Plain text."
+        desc="Systematic rules for mapping linguistic phenomena to the "
+             "chainer's logic format."
     )
 
 
 # ---------------------------------------------------------------------------
-# Step 4: Generate chainer primitives + suggested vocabulary
+# Step 4: Assemble final instructions (deterministic, no LLM)
 # ---------------------------------------------------------------------------
 
-class RelationTemplatesSignature(dspy.Signature):
+def _assemble_instructions(conversion_guidelines: str) -> str:
     """
-    You are producing TWO separate bodies of content for a semantic parsing
-    pipeline that converts natural language to logical expressions against
-    a specific chainer/reasoner.
-
-    The distinction between the two outputs is CRITICAL and must be
-    preserved — conflating them causes downstream LLMs to treat
-    vocabulary-style suggestions as if they were chainer primitives, which
-    produces KB facts the reasoner cannot unify or chain through.
-
-    1. chainer_primitives:
-       The REAL primitives documented in the chainer analysis — query
-       scaffolding, built-in operators, truth-value constructors, and any
-       other constructs that have SEMANTIC BACKING in the chainer's
-       evaluation engine. Names listed here will be used VERBATIM by
-       downstream LLMs, and the reasoner will apply meaning to them during
-       proof search. Include only what the chainer analysis documents as a
-       built-in or operational construct.
-
-    2. suggested_vocabulary:
-       Open-class predicate template families AND closed-class canonical
-       relation names for domain concepts (e.g., canonical names for
-       thematic roles, spatial relations, temporal relations, modality,
-       propositional attitudes, etc.). These are NAMING SUGGESTIONS for
-       the LLM to maintain consistency across translations. They do NOT
-       have chainer semantics unless the chainer analysis explicitly
-       documents them as primitives. Mark this clearly with a preamble
-       in the output.
-
-    Scope, conciseness, and anti-overlap:
-    - chainer_primitives is a quick-reference cheat sheet, not a re-
-      derivation of chainer_analysis.  Show each primitive's canonical
-      form with a one-line usage note; defer full semantics to
-      chainer_analysis.
-    - suggested_vocabulary is a NAMES-FIRST glossary, not a tutorial.
-      List canonical names grouped by semantic category.  Add a one-
-      line description ONLY when the name is ambiguous or non-obvious
-      (e.g., the Theme vs. Patient distinction is worth a line;
-      Speaker is not).  Do NOT include worked examples or prose
-      explanations of how to use these names — that belongs in
-      conversion_guidelines.
-    - Do NOT include sections describing how phenomena are handled by
-      composition, decomposition, or the chainer's general rules —
-      those are conversion_guidelines' responsibility.  This artifact
-      answers "WHICH NAME should I use for X?", not "HOW do I encode
-      X?"
-    - Both outputs must be SELF-CONTAINED: do not number sections in a
-      way that implies cross-document ordering across the two outputs,
-      and do not assume any other artifact is present in the same
-      context.
-
-    Closed-class subsection format (mandatory for closed-class
-    semantic relation categories — thematic roles, spatial relations,
-    temporal relations, modality, attitudes, etc.).  Use this exact
-    shape per category:
-
-      <category name>
-        `(Name1 args)` `(Name2 args)` ... [list of canonical names]
-        Disambiguation notes (only where names are confusable):
-        - Name1 vs Name2: [one line]
-
-    No per-name description blocks for self-descriptive names.
-
-    Organize each output with clear section headers. Use the exact syntax
-    from the chainer analysis. Be general-purpose (not domain-specific)
-    so the templates can combine to cover the full phenomena list. Both
-    outputs must be plain text.
-    """
-    chainer_analysis: str = dspy.InputField(
-        desc="Complete analysis of the chainer's syntax and capabilities"
-    )
-    linguistic_phenomena: str = dspy.InputField(
-        desc="Comprehensive list of linguistic phenomena to cover"
-    )
-    conversion_guidelines: str = dspy.InputField(
-        desc="Systematic conversion rules (naming, decomposition, etc.)"
-    )
-    chainer_primitives: str = dspy.OutputField(
-        desc="The real chainer primitives — query scaffolding, built-in "
-             "operators, truth-value constructors — that have semantic "
-             "backing in the chainer.  Use these verbatim.  Plain text, "
-             "organized by category."
-    )
-    suggested_vocabulary: str = dspy.OutputField(
-        desc="Open-class predicate template families and closed-class "
-             "canonical relation names for domain concepts.  NAMING "
-             "SUGGESTIONS only, NOT chainer primitives.  Include a clear "
-             "preamble stating this.  Plain text, organized by category."
-    )
-
-
-# ---------------------------------------------------------------------------
-# Step 5: Assemble final instructions (deterministic, no LLM)
-# ---------------------------------------------------------------------------
-
-def _assemble_instructions(conversion_guidelines: str,
-                           chainer_primitives: str,
-                           suggested_vocabulary: str) -> str:
-    """
-    Concatenate three artifacts into instructions.md.
+    Wrap conversion_guidelines into instructions.md.
 
     chainer_analysis is intentionally NOT included here — it is the
     chainer-agnostic counterpart of PeTTaChainer's LLM_RULE_SPEC.md /
     LANGUAGE_SPEC.md and is meant to flow into NL2PLNModule's `pln_spec`
     input field at deployment time, occupying a distinct semantic slot
     from the rules in this file (and avoiding token duplication when
-    both flow into the same LM call).
+    both flow into the same LM call).  The chainer_analysis already
+    includes a primitives cheat sheet section; downstream LMs reach
+    for primitive names there, not here.
     """
     return (
         "# NL to logic conversion instructions\n\n"
@@ -531,46 +505,8 @@ def _assemble_instructions(conversion_guidelines: str,
         "into logical expressions (statements or queries) for a chainer/reasoner.  "
         "The chainer's syntax and semantics reference is provided separately as "
         "the `pln_spec` input (see `chainer_analysis.txt`).\n\n"
-        "## Chainer primitives\n"
-        "*Quick-reference cheat sheet of names with semantic backing.  "
-        "Use these names verbatim wherever a primitive is needed.*\n\n"
-        + chainer_primitives
-        + "\n\n---\n\n"
-        "## Suggested vocabulary\n"
-        "*Naming suggestions for non-primitive concepts (thematic roles, "
-        "spatial/temporal relations, etc.).  Use for consistency across "
-        "translations; these names do NOT have chainer semantics unless "
-        "explicit rules are added to the KB.*\n\n"
-        + suggested_vocabulary
-        + "\n\n---\n\n"
-        "## Conversion guidelines\n"
-        "*Mapping rules from English to the chainer's logic.  Apply these "
-        "patterns; cross-reference the vocabulary above for canonical names.*\n\n"
         + conversion_guidelines
     )
-
-
-# ---------------------------------------------------------------------------
-# Step 4 orchestrator
-# ---------------------------------------------------------------------------
-
-def _run_step4(chainer_analysis: str, linguistic_phenomena: str,
-               conversion_guidelines: str) -> tuple[str, str]:
-    """
-    Generate the two template outputs (chainer primitives + suggested
-    vocabulary).  Returns them as a (primitives, vocabulary) pair.
-    """
-    print("  Generating chainer primitives + suggested vocabulary ...")
-    result = dspy.Predict(RelationTemplatesSignature)(
-        chainer_analysis=chainer_analysis,
-        linguistic_phenomena=linguistic_phenomena,
-        conversion_guidelines=conversion_guidelines,
-    )
-    primitives = result.chainer_primitives
-    vocabulary = result.suggested_vocabulary
-    print(f"  Generated primitives ({len(primitives):,} chars), "
-          f"vocabulary ({len(vocabulary):,} chars)")
-    return primitives, vocabulary
 
 
 # ---------------------------------------------------------------------------
@@ -579,18 +515,19 @@ def _run_step4(chainer_analysis: str, linguistic_phenomena: str,
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Bootstrap a chainer for semantic parsing (5 steps)"
+        description="Bootstrap a chainer for semantic parsing (4 steps)"
     )
     parser.add_argument(
         "--chainer",
         default=None,
-        help="Path to the chainer directory (required for Step 1)",
+        help="Path to the chainer directory (required for Steps 1 and 3, "
+             "which read the chainer source)",
     )
     parser.add_argument(
         "--from-step",
         type=int,
         default=1,
-        choices=[1, 2, 3, 4, 5],
+        choices=[1, 2, 3, 4],
         help="Start from this step, loading earlier outputs from disk (default: 1)",
     )
     parser.add_argument(
@@ -607,8 +544,6 @@ def main():
     parser.add_argument("--output-analysis", default=str(_DEFAULTS["analysis"]))
     parser.add_argument("--output-phenomena", default=str(_DEFAULTS["phenomena"]))
     parser.add_argument("--output-guidelines", default=str(_DEFAULTS["guidelines"]))
-    parser.add_argument("--output-primitives", default=str(_DEFAULTS["primitives"]))
-    parser.add_argument("--output-vocabulary", default=str(_DEFAULTS["vocabulary"]))
     parser.add_argument("--output-instructions", default=str(_DEFAULTS["instructions"]))
     parser.add_argument(
         "--log-level",
@@ -623,9 +558,10 @@ def main():
     )
     args = parser.parse_args()
 
-    # Validate: --chainer required for Step 1
-    if args.from_step <= 1 and args.chainer is None:
-        parser.error("--chainer is required when running Step 1")
+    # Validate: --chainer required for Steps 1 and 3 (both read source)
+    if args.from_step <= 3 and args.chainer is None:
+        parser.error("--chainer is required when --from-step <= 3 "
+                     "(Steps 1 and 3 read the chainer source)")
 
     # Configure logging
     log_level = getattr(logging, args.log_level.upper(), logging.INFO)
@@ -697,8 +633,6 @@ def main():
         "analysis": pathlib.Path(args.output_analysis),
         "phenomena": pathlib.Path(args.output_phenomena),
         "guidelines": pathlib.Path(args.output_guidelines),
-        "primitives": pathlib.Path(args.output_primitives),
-        "vocabulary": pathlib.Path(args.output_vocabulary),
         "instructions": pathlib.Path(args.output_instructions),
     }
 
@@ -714,9 +648,13 @@ def main():
         ctx["linguistic_phenomena"] = _load_text(paths["phenomena"], "linguistic_phenomena")
     if from_step >= 4:
         ctx["conversion_guidelines"] = _load_text(paths["guidelines"], "conversion_guidelines")
-    if from_step >= 5:
-        ctx["chainer_primitives"] = _load_text(paths["primitives"], "chainer_primitives")
-        ctx["suggested_vocabulary"] = _load_text(paths["vocabulary"], "suggested_vocabulary")
+
+    # Load chainer source once if any step that reads it (1, 3) will run.
+    chainer_source = None
+    if from_step <= 3:
+        print(f"\nReading chainer source from {args.chainer} ...")
+        chainer_source = _read_chainer_source_code(pathlib.Path(args.chainer))
+        print(f"  Source size: {len(chainer_source):,} characters")
 
     # =================================================================
     # Step 1: Analyze chainer (RLM)
@@ -724,12 +662,10 @@ def main():
     if from_step <= 1:
         print("\n" + "=" * 60)
         print("Step 1: Analyzing chainer syntax and capabilities (RLM) ...")
-        source = _read_chainer_source_code(pathlib.Path(args.chainer))
-        print(f"  Source size: {len(source):,} characters")
 
         predictor = RLM(ChainerAnalysisSignature,
-                        max_iterations=60, max_llm_calls=90, verbose=True)
-        result = predictor(chainer_source=source)
+                        max_iterations=30, max_llm_calls=50, verbose=True)
+        result = predictor(chainer_source=chainer_source)
         ctx["chainer_analysis"] = result.chainer_analysis
         _save_text(paths["analysis"], ctx["chainer_analysis"])
         print(f"  Analysis complete ({len(ctx['chainer_analysis']):,} chars)")
@@ -753,46 +689,31 @@ def main():
         print(f"  Enumerated {len(phenomena_list)} phenomena")
 
     # =================================================================
-    # Step 3: Generate conversion guidelines
+    # Step 3: Generate conversion guidelines (RLM)
     # =================================================================
     if from_step <= 3:
         print("\n" + "=" * 60)
-        print("Step 3: Generating conversion guidelines ...")
+        print("Step 3: Generating conversion guidelines (RLM) ...")
 
-        ctx["conversion_guidelines"] = dspy.Predict(ConversionGuidelinesSignature)(
+        predictor = RLM(ConversionGuidelinesSignature,
+                        max_iterations=30, max_llm_calls=50, verbose=True)
+        result = predictor(
             chainer_analysis=ctx["chainer_analysis"],
             linguistic_phenomena=ctx["linguistic_phenomena"],
-        ).conversion_guidelines
+            chainer_source=chainer_source,
+        )
+        ctx["conversion_guidelines"] = result.conversion_guidelines
         _save_text(paths["guidelines"], ctx["conversion_guidelines"])
 
     # =================================================================
-    # Step 4: Generate chainer primitives + suggested vocabulary
+    # Step 4: Assemble final instructions (deterministic, no LLM)
     # =================================================================
     if from_step <= 4:
         print("\n" + "=" * 60)
-        print("Step 4: Generating chainer primitives + suggested vocabulary ...")
-
-        primitives, vocabulary = _run_step4(
-            chainer_analysis=ctx["chainer_analysis"],
-            linguistic_phenomena=ctx["linguistic_phenomena"],
-            conversion_guidelines=ctx["conversion_guidelines"],
-        )
-        ctx["chainer_primitives"] = primitives
-        ctx["suggested_vocabulary"] = vocabulary
-        _save_text(paths["primitives"], ctx["chainer_primitives"])
-        _save_text(paths["vocabulary"], ctx["suggested_vocabulary"])
-
-    # =================================================================
-    # Step 5: Assemble final instructions (deterministic, no LLM)
-    # =================================================================
-    if from_step <= 5:
-        print("\n" + "=" * 60)
-        print("Step 5: Assembling conversion instructions ...")
+        print("Step 4: Assembling conversion instructions ...")
 
         instructions = _assemble_instructions(
             conversion_guidelines=ctx["conversion_guidelines"],
-            chainer_primitives=ctx["chainer_primitives"],
-            suggested_vocabulary=ctx["suggested_vocabulary"],
         )
         _save_text(paths["instructions"], instructions)
 
@@ -804,10 +725,11 @@ def main():
     for name, path in paths.items():
         exists = "✓" if path.exists() else " "
         print(f"  [{exists}] {path}")
-    print("\nThe primitives, suggested vocabulary, and conversion guidelines")
-    print("are baked into instructions.md.  For deployment, pass instructions.md")
-    print("as the signature instruction AND chainer_analysis.txt separately as")
-    print("the NL2PLNModule pln_spec input (e.g. via --pln-spec-file).")
+    print("\nFor deployment, pass instructions.md as the signature instruction")
+    print("AND chainer_analysis.txt separately as the NL2PLNModule pln_spec")
+    print("input (e.g. via --pln-spec-file).  The chainer_analysis includes the")
+    print("primitives cheat sheet; instructions.md carries the prescriptive")
+    print("guidelines (with canonical relation vocabulary).")
     print("Review the artifacts, then run the optimizer.")
 
 
