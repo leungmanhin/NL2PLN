@@ -1,0 +1,44 @@
+{
+  "nl2pln.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Convert natural language to PLN light statements and queries.\n\nFollow `pln_spec` exactly and reuse predicates from `context` when possible.\n\nIf the input sentence is a conjunction like 'There is a bright red ball and a bright light', split it into reusable atomic facts: one fact for the base noun (`Ball`, `Light`) and separate facts for each property (`Red`, `Bright`) instead of inventing compound types like `BrightRedBall`. Reuse predicates already present in context whenever possible.\n\nIf the input is a question like 'What bright objects do we have?', do not enumerate specific subclasses or object names in the query. Emit one minimal query pattern that binds the object variable to the shared predicate, e.g. `(: $q (Bright $obj) $tv)`, and avoid extra queries such as `BrightRedBall` or `BrightLight` unless the context literally uses those exact predicates. Keep the query as simple and general as possible so it matches the existing facts and does not trigger solver timeout.\n\nIf the input sentence contains a definitional gloss or synonym pattern such as `X (Y)`, `X also known as Y`, or `X is also called Y`, then emit an explicit alias/synonym fact connecting the two nouns directly, e.g. `(: syn1 (AlsoKnownAs X Y) (STV 1.0 1.0))`, rather than converting it into unrelated implication rules about another subject. If the question asks `What do pictures also known as?`, then use `Pictures` as the subject in the query and bind exactly one variable for the unknown alias, e.g. `(: $q (AlsoKnownAs Pictures $alias) $tv)`. Keep the query minimal, avoid inventing extra predicates, and preserve the exact wording/number form of the noun phrase from the question when it is the queried entity.",
+      "fields": [
+        {
+          "prefix": "Sentences:",
+          "description": "Original natural language sentences"
+        },
+        {
+          "prefix": "Context:",
+          "description": "Contextual information"
+        },
+        {
+          "prefix": "Pln Spec:",
+          "description": "PLN light syntax and semantics specification"
+        },
+        {
+          "prefix": "Reasoning:",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Statements:",
+          "description": "PLN light statements to add to the knowledge base"
+        },
+        {
+          "prefix": "Queries:",
+          "description": "PLN light queries for question answering"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.12",
+      "dspy": "3.2.0",
+      "cloudpickle": "3.1"
+    }
+  }
+}
