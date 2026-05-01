@@ -8,9 +8,6 @@ of diverse training examples for each phenomenon. Each example contains
 schema in `data/all.json` so the output can be passed directly to
 `NL2PLNModule` / SIMBA / GEPA via `--dataset`.
 
-`data/all.json` is kept as a held-out eval set; this script produces
-a *new* file (default `data/generated.json`).
-
 Each generated example is optionally verified by a second LLM call
 that checks the answer is derivable from the sentences alone, the
 example is consistent, and the answer is unambiguous.
@@ -123,9 +120,9 @@ class GenerateBatchSignature(dspy.Signature):
         sentences alone, without outside world knowledge.
 
     Diversity requirements for the batch:
-      - Use different entity names across examples (varied cultural
-        origin: Nadia, Carlos, Amina, Ethan, Priya, Dmitri, etc., plus
-        common nouns like "the cat", "the lamp", "the teacher").
+      - Use varied entity names across examples; do not reuse the same
+        characters across the batch.  Mix in common nouns and definite
+        descriptions where natural rather than always using proper names.
       - Use different verbs, relations, and topic domains (cooking,
         work, nature, travel, sports, family, weather, etc.).
       - Vary sentence structures and lengths.
@@ -233,7 +230,7 @@ def generate_per_phenomenon(
     verifier = dspy.Predict(VerifyExampleSignature) if verify else None
 
     for i, phenomenon in enumerate(phenomena, 1):
-        short_name = phenomenon.split(":", 1)[0][:48]
+        short_name = phenomenon.split(":", 1)[0]
         print(f"\n[{i}/{len(phenomena)}] {short_name} ...")
 
         kept = 0
