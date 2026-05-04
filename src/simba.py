@@ -20,9 +20,18 @@ def parse_args():
         description="Run SIMBA optimization on NL2PLNModule"
     )
     p.add_argument("--model", default="openai/gpt-5.4-mini",
-                   help="LiteLLM model id used for both task LM and SIMBA's prompt-candidate LM")
+                   help="LiteLLM model id used for the task LM (translator + judge).  "
+                        "Also used as SIMBA's prompt-candidate LM by default unless "
+                        "--reflection-model is set.")
+    p.add_argument("--reflection-model", default=None,
+                   help="LiteLLM model id for SIMBA's prompt-candidate LM (used by "
+                        "append_a_rule to propose new rules from failure traces).  "
+                        "Recommended: a stronger model than --model — rule-proposer "
+                        "is called few times but benefits from sharper synthesis.  "
+                        "If unset, uses --model.")
     p.add_argument("--reasoning-effort", default="high",
-                   help="Reasoning effort for reasoning-capable models: none, low, medium, high, xhigh")
+                   help="Reasoning effort for reasoning-capable models: none, low, medium, high, xhigh.  "
+                        "Applies to both task LM and reflection LM.")
     p.add_argument("--dataset", default="data/generated.json",
                    help="Training dataset path (default: bootstrap-generated training data)")
     p.add_argument("--num-threads", type=int, default=10,
@@ -64,6 +73,9 @@ def main():
 
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
     dspy.configure(lm=dspy.LM(args.model, **lm_kwargs))
+    reflection_model_id = args.reflection_model or args.model
+    if args.reflection_model:
+        print(f"  Reflection LM: {args.reflection_model} (task LM: {args.model})")
 
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
     if tracking_uri:
@@ -120,7 +132,7 @@ def main():
 
     teleprompter = SIMBA(
         metric=difficulty_metric,
-        prompt_model=dspy.LM(args.model, temperature=1.0, **lm_kwargs),
+        prompt_model=dspy.LM(reflection_model_id, temperature=1.0, **lm_kwargs),
         bsize=args.bsize,
         max_steps=args.max_steps,
         num_candidates=args.num_candidates,
