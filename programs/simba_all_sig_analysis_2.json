@@ -1,0 +1,44 @@
+{
+  "nl2pln.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Convert natural language to PLN light statements and queries.\n\nFollow `pln_spec` exactly and reuse predicates from `context` when possible.\n\nIf converting a declarative sentence like 'There are N humans that can fly' with no named individuals and N is small, do not encode it only as an opaque custom count predicate such as `(: s1 (CntHumanCanFly (PointMass 10)) (STV 1.0 1.0))`. Instead, create explicit witness constants and separate class/ability facts, e.g. `(: h1 (Human e1) (STV 1.0 1.0))` and `(: f1 (CanFly e1) (STV 1.0 1.0))`, repeated through `eN`. When translating a later question, preserve the distinction between ability and current action: 'can fly' should map to `CanFly`, but 'are flying'/'is flying' should map to `Flying`. If the context only contains `CanFly` facts and no explicit rule/fact saying `CanFly -> Flying`, do not query `CanFly` to answer 'How many humans are flying?' and do not invent such a rule. Generate a query for the actual requested condition, e.g. `(: $prf (And (Human $x) (Flying $x)) $tv)`, so the executor can correctly return no proof. For 'how many' questions, prefer variable-binding queries over individual witnesses that the downstream system can count, rather than querying invented aggregate count predicates.\n\nIf a declarative sentence enumerates named individuals with a count, e.g. 'Tom, Mary, and Alex are the 3 cats in the park,' encode each named individual explicitly as a member of the class and location, using stable lowercase constants and consistent argument order, e.g. `(: s1 (Cat tom) (STV 1.0 1.0))` and `(: s2 (In tom park) (STV 1.0 1.0))`. Also add pairwise distinctness facts such as `(: s7 (DifferentFrom tom mary) (STV 1.0 1.0))`, because later questions like 'Name any 2...' require two different entities. If a question asks to name any 2 objects satisfying a condition, do not emit only a single-variable query like `(: $prf (And (Cat $x) (In $x park)) $tv)`. Instead bind two variables and require both to satisfy the condition plus explicit distinctness, reusing the exact predicates and argument order from context: `(: $prf (And (Cat $x) (In $x park) (Cat $y) (In $y park) (DifferentFrom $x $y)) $tv)`. If compound `And` queries over several predicates are prone to timeout and the named pairs are already explicit, consider adding simple pair facts such as `(CatInParkPair tom mary)` and querying `(: $prf (CatInParkPair $x $y) $tv)` rather than relying on a broad single-variable conjunction.\n\nIf given a sentence like “There are N cats in the park, all of these cats are cute,” create explicit witness constants such as `cat1`, `cat2`, `cat3`; assert `(Cat cat1)`, `(In cat1 park)`, and `(Cute cat1)` for each witness. Use argument order `(In entity location)`, not `(In location entity)`, because later questions will need to query `(In $x park)`. Also add `DifferentFrom` facts in both directions for every pair, e.g. both `(DifferentFrom cat1 cat2)` and `(DifferentFrom cat2 cat1)`, so two-variable cardinality queries can bind in either order. If asked “Is there any cute cat in the park?”, emit a variable-binding conjunction using the same predicates and argument order from context: `(: $prf (And (Cat $x) (In $x park) (Cute $x)) $tv)`. If asked “Are there at least 2 cute cats in the park?”, emit two variables with the same conditions plus distinctness: `(: $prf (And (Cat $x) (In $x park) (Cute $x) (Cat $y) (In $y park) (Cute $y) (DifferentFrom $x $y)) $tv)`. If asked “Are all cats cute?” when the context explicitly enumerates a small known set of cats, avoid one large ground `And` query over all `Cat` and `Cute` facts because it can time out. Prefer several simple ground checks such as `(: $prf (Cute cat1) $tv)`, `(: $prf (Cute cat2) $tv)`, `(: $prf (Cute cat3) $tv)` or another compact helper fact/rule, rather than a long conjunction like `(And (Cat cat1) (Cute cat1) ... )`.",
+      "fields": [
+        {
+          "prefix": "Sentences:",
+          "description": "Original natural language sentences"
+        },
+        {
+          "prefix": "Context:",
+          "description": "Contextual information"
+        },
+        {
+          "prefix": "Pln Spec:",
+          "description": "PLN light syntax and semantics specification"
+        },
+        {
+          "prefix": "Reasoning:",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Statements:",
+          "description": "PLN light statements to add to the knowledge base"
+        },
+        {
+          "prefix": "Queries:",
+          "description": "PLN light queries for question answering"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.12",
+      "dspy": "3.2.0",
+      "cloudpickle": "3.1"
+    }
+  }
+}
