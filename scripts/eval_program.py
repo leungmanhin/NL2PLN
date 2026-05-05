@@ -134,6 +134,15 @@ def parse_args():
         help="Reasoning effort for reasoning-capable models",
     )
     p.add_argument(
+        "--max-tokens", type=int, default=8192,
+        help="Output token cap (default: 8192).  DSPy's underlying default is "
+             "~4000, which is borderline for reasoning models that consume "
+             "tokens for reasoning before the final answer.  Bump higher for "
+             "demo-heavy programs (long input prompts can also push reasoning "
+             "to use more tokens).  Symptoms of too-low cap: empty "
+             "pred.statements/pred.queries → puzzles land in hard_zero/early_return.",
+    )
+    p.add_argument(
         "--syntax-only", action="store_true",
         help="Skip the judge LM; report parse-success rate only.  Cheaper.",
     )
@@ -469,8 +478,14 @@ def main():
 
     # Configure DSPy LM
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
-    dspy.configure(lm=dspy.LM(args.model, timeout=600, num_retries=3, **lm_kwargs))
-    print(f"  LM: {args.model} (effort={args.reasoning_effort})")
+    dspy.configure(lm=dspy.LM(
+        args.model,
+        timeout=600,
+        num_retries=3,
+        max_tokens=args.max_tokens,
+        **lm_kwargs,
+    ))
+    print(f"  LM: {args.model} (effort={args.reasoning_effort}, max_tokens={args.max_tokens})")
 
     # Load dataset
     dataset = build_examples_from_file(args.dataset)
