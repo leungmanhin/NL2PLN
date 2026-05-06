@@ -12,36 +12,133 @@ from typing import List
 from textwrap import dedent
 from pettachainer import PeTTaChainer, get_language_spec
 
+# Module-level pln_spec.  Kept as a global so existing scripts that
+# monkey-patch it (simba.py / bootstrapfewshot.py / eval_program.py /
+# etc.) continue to work unchanged.  Its content is no longer passed
+# per-call as an InputField — that approach saved a full copy of
+# pln_spec into every demo at training time, bloating prompts at
+# inference (e.g. 6 demos × 28KB = 173KB of duplicated content per
+# call).  Instead, the content is injected into the signature
+# instruction (system-prompt slot) at module construction and after
+# every load(), so the LM still sees the spec but it's rendered once
+# per call rather than once per demo.
 pln_spec = get_language_spec(llm_focused=True)
 
-class NL2PLNSingature(dspy.Signature):
-    """Convert natural language to PLN light statements and queries.
+# Markers bracketing the auto-injected pln_spec section in the
+# signature instruction.  Used to make injection idempotent (re-
+# injection strips any prior section before adding a fresh one) and
+# to leave any user-provided instruction text around the section
+# untouched.
+_PLN_SPEC_BEGIN = "<!-- BEGIN_PLN_SPEC_INJECTION -->"
+_PLN_SPEC_END = "<!-- END_PLN_SPEC_INJECTION -->"
 
-    Follow `pln_spec` exactly and reuse predicates from `context` when possible.
+
+class NL2PLNSingature(dspy.Signature):
+    """
+    Convert natural language to PLN light statements and queries.
+
+    Follow the PLN spec described at the top of these instructions
+    and reuse predicates from `context` when possible.
     """
     #Inputs
     sentences: List[str] = dspy.InputField(desc="Original natural language sentences")
     context: List[str] = dspy.InputField(desc="Contextual information")
-    pln_spec: str = dspy.InputField(desc="PLN light syntax and semantics specification")
 
     #Outputs
     statements: List[str] = dspy.OutputField(desc="PLN light statements to add to the knowledge base")
     queries: List[str] = dspy.OutputField(desc="PLN light queries for question answering")
 
+
 class NL2PLNModule(dspy.Module):
 
     def __init__(self):
-        self.nl2pln : dspy.Module = dspy.ChainOfThought(NL2PLNSingature)
+        self.nl2pln: dspy.Module = dspy.ChainOfThought(NL2PLNSingature)
+        self._inject_pln_spec()
 
-    def forward(self, sentences : List[str], queries: List[dict]):
-        base = self.nl2pln(sentences=sentences, context=[], pln_spec=pln_spec)
+    def _inject_pln_spec(self):
+        """
+        Inject the current module-level ``pln_spec`` content into the
+        signature instructions of every predictor.  Idempotent: strips
+        any prior auto-injected section first, then re-adds.  Also
+        strips legacy ``pln_spec`` keys from any loaded demos
+        (backward-compat cleanup for programs trained when pln_spec was
+        an InputField — those demos still carry full pln_spec snapshots
+        in their dicts).
+        """
+        for _, predictor in self.named_predictors():
+            instr = predictor.signature.instructions
+            instr = self._strip_pln_spec_section(instr)
+            new_instr = (
+                f"{_PLN_SPEC_BEGIN}\n"
+                f"## PLN spec\n\n{pln_spec}\n"
+                f"{_PLN_SPEC_END}\n\n"
+                f"{instr}"
+            )
+            predictor.signature = predictor.signature.with_instructions(new_instr)
+            self._strip_pln_spec_from_demos(predictor)
+
+    @staticmethod
+    def _strip_pln_spec_section(instr: str) -> str:
+        """
+        Remove any prior auto-injected pln_spec section, leaving the
+        rest of the instruction untouched.  No-op if the markers aren't
+        present.
+        """
+        begin = instr.find(_PLN_SPEC_BEGIN)
+        if begin == -1:
+            return instr
+        end = instr.find(_PLN_SPEC_END, begin)
+        if end == -1:
+            return instr
+        end_after = end + len(_PLN_SPEC_END)
+        before = instr[:begin]
+        after = instr[end_after:].lstrip("\n")
+        return before + after
+
+    @staticmethod
+    def _strip_pln_spec_from_demos(predictor) -> None:
+        """
+        Remove the legacy ``pln_spec`` key from saved demos.  Old
+        programs (pre-this-refactor) saved pln_spec as an InputField,
+        so each demo dict carries a full copy.  Removing pln_spec from
+        the signature stops it being rendered into prompts, but the
+        demo dicts still hold the data — strip it for cleanliness so
+        re-saving the program writes out lighter JSON too.
+        """
+        for demo in predictor.demos:
+            try:
+                if hasattr(demo, "_store") and "pln_spec" in demo._store:
+                    del demo._store["pln_spec"]
+                elif isinstance(demo, dict) and "pln_spec" in demo:
+                    del demo["pln_spec"]
+            except Exception:
+                pass
+
+    def load(self, path):
+        """
+        Load saved program state, then re-inject pln_spec.
+
+        DSPy's load_state restores the signature's instructions from the
+        saved JSON.  Old programs' saved instructions don't contain a
+        pln_spec section (it was a separate InputField), and even
+        new-format programs saved with one pln_spec may now want a
+        different one applied (e.g. user changed the global before
+        loading).  Re-injecting after load handles both cases.
+        """
+        super().load(path)
+        self._inject_pln_spec()
+
+    def forward(self, sentences: List[str], queries: List[dict]):
+        # pln_spec is no longer passed per-call — it's in the signature
+        # instructions, applied automatically on every LM call.
+        base = self.nl2pln(sentences=sentences, context=[])
         stmts = [] if base.statements is None else list(base.statements)
         seen = set(stmts)
         context_stmts = list(stmts)
 
         queries_pln = []
         for q in queries:
-            pln_q = self.nl2pln(sentences=[q['question']], context=context_stmts, pln_spec=pln_spec)
+            pln_q = self.nl2pln(sentences=[q['question']], context=context_stmts)
             q_stmts = [] if pln_q.statements is None else list(pln_q.statements)
             for s in q_stmts:
                 if s not in seen:
@@ -54,7 +151,8 @@ class NL2PLNModule(dspy.Module):
         return dspy.Prediction(statements=stmts, queries=queries_pln)
 
 class ProofEvaluatorSignature(dspy.Signature):
-    """Evaluate how well a proof answers a question and suggest improvements.
+    """
+    Evaluate how well a proof answers a question and suggest improvements.
 
     You are evaluating PLN (Probabilistic Logic Networks) proofs generated from natural language.
     Assess whether the proof correctly answers the question and provide constructive feedback.

@@ -150,6 +150,9 @@ def main():
             new_instruction = instr_path.read_text(encoding="utf-8")
             for _, predictor in module.named_predictors():
                 predictor.signature = predictor.signature.with_instructions(new_instruction)
+            # Manual instruction override wipes the auto-injected pln_spec
+            # section.  Re-inject it so the LM still sees the spec.
+            module._inject_pln_spec()
             print(f"  Overrode instruction from {instr_path} ({len(new_instruction):,} chars)")
         else:
             logger.warning("instruction file %s not found; using default", instr_path)

@@ -507,6 +507,9 @@ def main():
             instruction = instr_path.read_text(encoding="utf-8")
             for _, predictor in m.named_predictors():
                 predictor.signature = predictor.signature.with_instructions(instruction)
+            # Manual instruction override wipes the auto-injected pln_spec
+            # section.  Re-inject it so the LM still sees the spec.
+            m._inject_pln_spec()
             print(f"  Baseline instruction overridden from {instr_path}")
         programs.append(("baseline", m, None, args.pln_spec_file or "module-default"))
     for entry in args.program_paths:
@@ -530,6 +533,11 @@ def main():
             nl2pln.pln_spec = GLOBAL_DEFAULT_SPEC
         else:
             nl2pln.pln_spec = ORIGINAL_PLN_SPEC
+        # Re-inject pln_spec into the program's signature instructions
+        # under the new global value.  Necessary because each program was
+        # loaded earlier (which injected based on whatever pln_spec was
+        # active then); this resyncs to the per-program spec we just set.
+        prog._inject_pln_spec()
 
         print(f"\nEvaluating {label} (pln_spec: {spec_label}) ...")
         if args.syntax_only:
