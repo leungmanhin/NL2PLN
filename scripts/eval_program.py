@@ -170,7 +170,20 @@ def _eval_one_full(program, example):
     try:
         prediction = program(**example.inputs())
     except Exception as e:
-        return {"score": 0.0, "error": f"program: {type(e).__name__}: {e}"}
+        return {
+            "score": 0.0,
+            "error": f"program: {type(e).__name__}: {e}",
+            "pred_statements": None,
+            "pred_queries": None,
+            "pred_reasoning": None,
+        }
+
+    # Capture the prediction's output before computing the score, so we
+    # still log it even if the metric raises.
+    pred_statements = list(prediction.statements) if prediction.statements is not None else None
+    pred_queries = list(prediction.queries) if prediction.queries is not None else None
+    pred_reasoning = getattr(prediction, "reasoning", None)
+
     try:
         output = difficulty_metric(example, prediction)
         if hasattr(output, "score"):
@@ -180,8 +193,20 @@ def _eval_one_full(program, example):
         else:
             score = 0.0
     except Exception as e:
-        return {"score": 0.0, "error": f"metric: {type(e).__name__}: {e}"}
-    return {"score": score, "error": error}
+        return {
+            "score": 0.0,
+            "error": f"metric: {type(e).__name__}: {e}",
+            "pred_statements": pred_statements,
+            "pred_queries": pred_queries,
+            "pred_reasoning": pred_reasoning,
+        }
+    return {
+        "score": score,
+        "error": error,
+        "pred_statements": pred_statements,
+        "pred_queries": pred_queries,
+        "pred_reasoning": pred_reasoning,
+    }
 
 
 def _classify_score(score: float) -> str:
@@ -251,6 +276,14 @@ def report_full(label: str, results: list[dict], examples: list) -> dict:
                 "error": r.get("error"),
                 "source": getattr(ex, "source", None),
                 "phenomenon": getattr(ex, "phenomenon", None),
+                "sentences": list(getattr(ex, "sentences", None) or []),
+                "queries_nl": [
+                    {"question": q.get("question"), "expected_answer": q.get("expected_answer")}
+                    for q in (getattr(ex, "queries", None) or [])
+                ],
+                "pred_statements": r.get("pred_statements"),
+                "pred_queries": r.get("pred_queries"),
+                "pred_reasoning": r.get("pred_reasoning"),
             }
             for r, ex in zip(results, examples)
         ],
@@ -271,11 +304,21 @@ def _eval_one_syntax(program, example):
             "bucket": "program_failed",
             "n_stmts": 0, "n_queries": 0,
             "error": f"{type(e).__name__}: {e}",
+            "pred_statements": None,
+            "pred_queries": None,
+            "pred_reasoning": None,
         }
+
+    # Capture the full prediction once so every return path below carries it.
+    pred_extras = {
+        "pred_statements": list(pred.statements) if pred.statements is not None else None,
+        "pred_queries": list(pred.queries) if pred.queries is not None else None,
+        "pred_reasoning": getattr(pred, "reasoning", None),
+    }
 
     stmts = list(pred.statements or [])
     if not stmts:
-        return {"bucket": "no_statements", "n_stmts": 0, "n_queries": 0}
+        return {"bucket": "no_statements", "n_stmts": 0, "n_queries": 0, **pred_extras}
 
     chainer = PeTTaChainer()
     n_added = 0
@@ -296,6 +339,7 @@ def _eval_one_syntax(program, example):
             "n_queries": 0,
             "rejected_stmt": rejected_stmt,
             "error": rejected_stmt_err,
+            **pred_extras,
         }
 
     n_queries_run = 0
@@ -319,12 +363,14 @@ def _eval_one_syntax(program, example):
             "n_queries": n_queries_run,
             "rejected_query": rejected_query,
             "error": rejected_query_err,
+            **pred_extras,
         }
 
     return {
         "bucket": "syntax_ok",
         "n_stmts": n_added,
         "n_queries": n_queries_run,
+        **pred_extras,
     }
 
 
@@ -391,9 +437,16 @@ def report_syntax(label: str, results: list[dict], examples: list) -> dict:
         "n": n,
         "buckets": dict(buckets),
         "per_puzzle": [
-            {**r,
-             "source": getattr(ex, "source", None),
-             "phenomenon": getattr(ex, "phenomenon", None)}
+            {
+                **r,
+                "source": getattr(ex, "source", None),
+                "phenomenon": getattr(ex, "phenomenon", None),
+                "sentences": list(getattr(ex, "sentences", None) or []),
+                "queries_nl": [
+                    {"question": q.get("question"), "expected_answer": q.get("expected_answer")}
+                    for q in (getattr(ex, "queries", None) or [])
+                ],
+            }
             for r, ex in zip(results, examples)
         ],
     }
