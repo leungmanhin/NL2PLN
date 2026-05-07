@@ -113,21 +113,29 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
 
         metta_handler.print_kb()
 
+        # Inner query lists are conjunctive (witness sets for universal/cardinal claims), so run all per question.
         proofs = []
         for qr in pred.queries:
-            try:
-                proofs.append(metta_handler.query(qr[0]))
-            except Exception as e:
-                return dspy.Prediction(
-                    score=score,
-                    feedback=f"""The query {qr[0]} did not follow the right syntax. Follow the pln light spec {pln_spec}. Details: {e}"""
-                )
-            score += 0.001
+            qr_proofs = []
+            for q in qr:
+                try:
+                    qr_proofs.append(metta_handler.query(q))
+                except Exception as e:
+                    return dspy.Prediction(
+                        score=score,
+                        feedback=f"""The query {q} did not follow the right syntax. Follow the pln light spec {pln_spec}. Details: {e}"""
+                    )
+                score += 0.001
+            proofs.append(qr_proofs)
 
         total_score = 0.0
         feedback_details = []
 
-        for q, query_pln, proof in zip(gold.queries, pred.queries, proofs):
+        for q, query_pln, proof_list in zip(gold.queries, pred.queries, proofs):
+            formatted_proof = "\n".join(
+                f"Query: {qry}\nProof: {p}"
+                for qry, p in zip(query_pln, proof_list)
+            )
             evaluation = evaluator(
                 sentences=gold.sentences,
                 question=q['question'],
@@ -135,7 +143,7 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
                 pln_spec=pln_spec,
                 statements=pred.statements,
                 query=query_pln,
-                proof=str(proof)
+                proof=formatted_proof
             )
 
             eval_score = 0.0 if evaluation.score is None else float(evaluation.score)
@@ -144,7 +152,8 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
             feedback_details.append(dedent(f"""
                 Question: '{q['question']}'
                 Expected: {q['expected_answer']}
-                Proof: {proof}
+                Proofs:
+{formatted_proof}
                 Score: {eval_score}
                 Feedback: {evaluation.feedback}
                 Improved statements: {evaluation.improved_statements}
