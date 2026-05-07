@@ -32,6 +32,12 @@ def parse_args():
     p.add_argument("--reasoning-effort", default="high",
                    help="Reasoning effort for reasoning-capable models: none, low, medium, high, xhigh.  "
                         "Applies to both task LM and reflection LM.")
+    p.add_argument("--max-tokens", type=int, default=32768,
+                   help="Output token cap for both task LM and reflection LM.  "
+                        "DSPy/LiteLLM default is ~4k which routinely truncates "
+                        "reasoning models at high effort (reasoning tokens count "
+                        "against this budget).  Symptom of too-low: empty "
+                        "pred.statements/pred.queries → puzzles land in hard_zero.")
     p.add_argument("--dataset", default="data/generated.json",
                    help="Training dataset path (default: bootstrap-generated training data)")
     p.add_argument("--num-threads", type=int, default=10,
@@ -72,6 +78,7 @@ def main():
     print(f"  Logging to {args.log_file} (level={args.log_level})")
 
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
+    lm_kwargs["max_tokens"] = args.max_tokens
     dspy.configure(lm=dspy.LM(args.model, **lm_kwargs))
     reflection_model_id = args.reflection_model or args.model
     if args.reflection_model:

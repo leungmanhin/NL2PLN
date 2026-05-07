@@ -68,6 +68,12 @@ def parse_args():
                         "model than --model (e.g. openai/gpt-5.4).  If unset, uses --model.")
     p.add_argument("--reasoning-effort", default="high",
                    help="Reasoning effort for both LMs: none, low, medium, high, xhigh")
+    p.add_argument("--max-tokens", type=int, default=32768,
+                   help="Output token cap for both task LM and proposer LM.  "
+                        "DSPy/LiteLLM default is ~4k which routinely truncates "
+                        "reasoning models at high effort (reasoning tokens count "
+                        "against this budget).  Symptom of too-low: empty "
+                        "pred.statements/pred.queries → puzzles land in hard_zero.")
     # ---- data ----
     p.add_argument("--dataset", default="data/generated.json",
                    help="Training dataset path")
@@ -123,6 +129,7 @@ def main():
     print(f"  Logging to {args.log_file} (level={args.log_level})")
 
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
+    lm_kwargs["max_tokens"] = args.max_tokens
     task_lm = dspy.LM(args.model, **lm_kwargs)
     prompt_lm = dspy.LM(args.prompt_model, **lm_kwargs) if args.prompt_model else task_lm
     # Configure task_lm as the default so NL2PLNModule.forward() uses it
