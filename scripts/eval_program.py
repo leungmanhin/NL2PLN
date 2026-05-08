@@ -26,10 +26,9 @@ to spend judge quota on a full eval.
 
 A per-program pln_spec can be set with `path:spec_path` syntax on the
 positional argument.  Programs without an explicit spec fall back to
-the global `--pln-spec-file` if given, or otherwise to the module's
-default pln_spec (PeTTaChainer's LLM_RULE_SPEC.md).  This makes it
-easy to evaluate each program against the spec it was trained with,
-side by side, in one run.
+the global `--pln-spec-file` if given, or otherwise leave nl2pln.pln_spec
+as currently set (default empty).  This makes it easy to evaluate each
+program against the spec it was trained with, side by side, in one run.
 
 Usage:
   # Compare two programs, each with its training-time pln_spec
@@ -37,7 +36,7 @@ Usage:
       programs/simba_all_sig.json \
       programs/simba_all_instruct_analysis.json:chainer_analysis.txt \
       --dataset data/all.json
-  # (simba_all_sig.json uses module-default LLM_RULE_SPEC.md)
+  # (simba_all_sig.json runs with whatever nl2pln.pln_spec is currently set to)
 
   # Force both programs to use the same pln_spec (deployment-fair):
   python scripts/eval_program.py \
@@ -111,10 +110,10 @@ def parse_args():
     p.add_argument(
         "--pln-spec-file", default=None,
         help="Default pln_spec file for programs without a per-program override "
-             "(e.g. chainer_analysis.txt).  pln_spec is a module-level constant, "
+             "(e.g. chainer_analysis.txt).  pln_spec is a module-level global, "
              "so it's reset before each program's evaluation.  If neither this "
-             "flag nor a per-program override is given, the module default "
-             "(PeTTaChainer's LLM_RULE_SPEC.md) is used.",
+             "flag nor a per-program override is given, nl2pln.pln_spec is left "
+             "as currently set (default empty).",
     )
     p.add_argument(
         "--dataset", required=True,
@@ -564,7 +563,7 @@ def main():
             # section.  Re-inject it so the LM still sees the spec.
             m._inject_pln_spec()
             print(f"  Baseline instruction overridden from {instr_path}")
-        programs.append(("baseline", m, None, args.pln_spec_file or "module-default"))
+        programs.append(("baseline", m, None, args.pln_spec_file or "(empty)"))
     for entry in args.program_paths:
         path_str, spec_path = _parse_program_entry(entry)
         path_obj = pathlib.Path(path_str)
@@ -573,7 +572,7 @@ def main():
         m = NL2PLNModule()
         m.load(str(path_obj))
         spec_content = _read_spec(spec_path)
-        spec_label = spec_path or args.pln_spec_file or "module-default"
+        spec_label = spec_path or args.pln_spec_file or "(empty)"
         programs.append((path_obj.stem, m, spec_content, spec_label))
 
     # Evaluate each program (resetting pln_spec to its per-program value first)

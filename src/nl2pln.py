@@ -10,19 +10,19 @@ logger = logging.getLogger(__name__)
 
 from typing import List
 from textwrap import dedent
-from pettachainer import PeTTaChainer, get_language_spec
+from pettachainer import PeTTaChainer
 
-# Module-level pln_spec.  Kept as a global so existing scripts that
-# monkey-patch it (simba.py / bootstrapfewshot.py / eval_program.py /
-# etc.) continue to work unchanged.  Its content is no longer passed
-# per-call as an InputField — that approach saved a full copy of
-# pln_spec into every demo at training time, bloating prompts at
-# inference (e.g. 6 demos × 28KB = 173KB of duplicated content per
-# call).  Instead, the content is injected into the signature
-# instruction (system-prompt slot) at module construction and after
-# every load(), so the LM still sees the spec but it's rendered once
-# per call rather than once per demo.
-pln_spec = get_language_spec(llm_focused=True)
+# Module-level pln_spec.  Defaults to empty; callers (optimizer scripts,
+# eval_program.py, usage_example.py, etc.) set this from a chainer-
+# specific spec file (e.g. chainer_analysis.txt produced by
+# bootstrap_chainer.py) before constructing NL2PLNModule.  The content
+# is injected into the signature instruction (system-prompt slot) at
+# module construction and after every load(), so the LM still sees the
+# spec but it's rendered once per call rather than once per demo —
+# whereas storing pln_spec per-call as an InputField bloated prompts
+# at inference (e.g. 6 demos × 28KB = 173KB of duplicated content per
+# call).
+pln_spec = ""
 
 # Markers bracketing the auto-injected pln_spec section in the
 # signature instruction.  Used to make injection idempotent (re-
@@ -68,13 +68,14 @@ class NL2PLNModule(dspy.Module):
         for _, predictor in self.named_predictors():
             instr = predictor.signature.instructions
             instr = self._strip_pln_spec_section(instr)
-            new_instr = (
-                f"{_PLN_SPEC_BEGIN}\n"
-                f"## PLN spec\n\n{pln_spec}\n"
-                f"{_PLN_SPEC_END}\n\n"
-                f"{instr}"
-            )
-            predictor.signature = predictor.signature.with_instructions(new_instr)
+            if pln_spec:
+                instr = (
+                    f"{_PLN_SPEC_BEGIN}\n"
+                    f"## PLN spec\n\n{pln_spec}\n"
+                    f"{_PLN_SPEC_END}\n\n"
+                    f"{instr}"
+                )
+            predictor.signature = predictor.signature.with_instructions(instr)
             self._strip_pln_spec_from_demos(predictor)
 
     @staticmethod

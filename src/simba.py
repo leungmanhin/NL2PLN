@@ -57,7 +57,7 @@ def parse_args():
                         "(empty string to use the baseline NL2PLNSignature instruction)")
     p.add_argument("--pln-spec-file", default="chainer_analysis.txt",
                    help="File whose contents become the pln_spec input value "
-                        "(empty string to use PeTTaChainer's default LLM_RULE_SPEC.md)")
+                        "(empty string leaves nl2pln.pln_spec as currently set, default empty)")
     p.add_argument("--input", default=None,
                    help="Optional checkpoint to resume from; ignored silently if the file does not exist")
     p.add_argument("--output", default="programs/simba.json",
