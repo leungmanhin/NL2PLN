@@ -1,7 +1,7 @@
 """
 Generate per-phenomenon training data for NL2PLN.
 
-Reads the phenomena list from `linguistic_phenomena.txt` (produced by
+Reads the phenomena list from `bootstrap/linguistic_phenomena.txt` (produced by
 Step 2 of `bootstrap_chainer.py`) and uses an LLM to generate a batch
 of diverse training examples for each phenomenon. Each example contains
 1-3 sentences and 1-3 question/expected_answer pairs, matching the
@@ -29,7 +29,7 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger(__name__)
 
 _PROJECT_ROOT = pathlib.Path(__file__).parent.parent
-_DEFAULT_PHENOMENA = _PROJECT_ROOT / "linguistic_phenomena.txt"
+_DEFAULT_PHENOMENA = _PROJECT_ROOT / "bootstrap" / "linguistic_phenomena.txt"
 _DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "generated.json"
 
 
@@ -39,7 +39,7 @@ _DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "generated.json"
 
 def _parse_phenomena(path: pathlib.Path) -> list[str]:
     """
-    Parse linguistic_phenomena.txt into a list of phenomenon strings.
+    Parse bootstrap/linguistic_phenomena.txt into a list of phenomenon strings.
     Each entry in the file looks like:
         1. Entity classification: <description>. Examples: <sentences>.
     Returns the per-phenomenon text (without the leading number/dot).
@@ -310,7 +310,7 @@ def main():
     parser.add_argument(
         "--phenomena",
         default=str(_DEFAULT_PHENOMENA),
-        help=f"Path to linguistic_phenomena.txt (default: {_DEFAULT_PHENOMENA})",
+        help=f"Path to bootstrap/linguistic_phenomena.txt (default: {_DEFAULT_PHENOMENA})",
     )
     parser.add_argument(
         "--output",

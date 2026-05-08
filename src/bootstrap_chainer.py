@@ -38,8 +38,8 @@ _PROJECT_ROOT = pathlib.Path(__file__).parent.parent
 
 # Default output paths (all relative to project root)
 _DEFAULTS = {
-    "analysis": _PROJECT_ROOT / "chainer_analysis.txt",
-    "phenomena": _PROJECT_ROOT / "linguistic_phenomena.txt",
+    "analysis": _PROJECT_ROOT / "bootstrap" / "chainer_analysis.txt",
+    "phenomena": _PROJECT_ROOT / "bootstrap" / "linguistic_phenomena.txt",
 }
 
 
@@ -385,8 +385,8 @@ def main():
         exists = "✓" if path.exists() else " "
         print(f"  [{exists}] {path}")
     print("\nNext steps:")
-    print("  - chainer_analysis.txt → NL2PLNModule pln_spec (via --pln-spec-file)")
-    print("  - linguistic_phenomena.txt → generate_data.py input")
+    print("  - bootstrap/chainer_analysis.txt → NL2PLNModule pln_spec (via --pln-spec-file)")
+    print("  - bootstrap/linguistic_phenomena.txt → generate_data.py input")
 
 
 if __name__ == "__main__":

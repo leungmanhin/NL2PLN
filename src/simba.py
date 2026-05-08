@@ -55,7 +55,7 @@ def parse_args():
     p.add_argument("--instruction-file", default="",
                    help="File whose contents become the signature instruction "
                         "(empty string to use the baseline NL2PLNSignature instruction)")
-    p.add_argument("--pln-spec-file", default="chainer_analysis.txt",
+    p.add_argument("--pln-spec-file", default="bootstrap/chainer_analysis.txt",
                    help="File whose contents become the pln_spec input value "
                         "(empty string leaves nl2pln.pln_spec as currently set, default empty)")
     p.add_argument("--input", default=None,

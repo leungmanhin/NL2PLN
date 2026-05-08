@@ -34,7 +34,7 @@ Usage:
   # Compare two programs, each with its training-time pln_spec
   python scripts/eval_program.py \
       programs/simba_all_sig.json \
-      programs/simba_all_instruct_analysis.json:chainer_analysis.txt \
+      programs/simba_all_instruct_analysis.json:bootstrap/chainer_analysis.txt \
       --dataset data/all.json
   # (simba_all_sig.json runs with whatever nl2pln.pln_spec is currently set to)
 
@@ -42,31 +42,31 @@ Usage:
   python scripts/eval_program.py \
       programs/simba_all_sig.json \
       programs/simba_all_instruct_analysis.json \
-      --pln-spec-file chainer_analysis.txt \
+      --pln-spec-file bootstrap/chainer_analysis.txt \
       --dataset data/all.json
 
   # Mix and match — global default + per-program override
   python scripts/eval_program.py \
       programs/simba_all_sig.json:LLM_RULE_SPEC.md \
       programs/simba_all_instruct_analysis.json \
-      --pln-spec-file chainer_analysis.txt \
+      --pln-spec-file bootstrap/chainer_analysis.txt \
       --dataset data/all.json
 
   # Include the un-optimized baseline alongside saved programs
   python scripts/eval_program.py \
       programs/simba_all_instruct_analysis.json \
       --baseline --instruction-file instructions.md \
-      --pln-spec-file chainer_analysis.txt \
+      --pln-spec-file bootstrap/chainer_analysis.txt \
       --dataset data/eval.json
 
   # Syntax-only (no judge LM) — much cheaper, surfaces parse-success rate
   python scripts/eval_program.py \
-      programs/simba_all_instruct_analysis.json:chainer_analysis.txt \
+      programs/simba_all_instruct_analysis.json:bootstrap/chainer_analysis.txt \
       --dataset data/eval.json --syntax-only
 
   # Limit to first N examples for a quick smoke test
   python scripts/eval_program.py \
-      programs/simba_all_instruct_analysis.json:chainer_analysis.txt \
+      programs/simba_all_instruct_analysis.json:bootstrap/chainer_analysis.txt \
       --dataset data/eval.json --limit 10
 """
 import argparse
@@ -110,7 +110,7 @@ def parse_args():
     p.add_argument(
         "--pln-spec-file", default=None,
         help="Default pln_spec file for programs without a per-program override "
-             "(e.g. chainer_analysis.txt).  pln_spec is a module-level global, "
+             "(e.g. bootstrap/chainer_analysis.txt).  pln_spec is a module-level global, "
              "so it's reset before each program's evaluation.  If neither this "
              "flag nor a per-program override is given, nl2pln.pln_spec is left "
              "as currently set (default empty).",

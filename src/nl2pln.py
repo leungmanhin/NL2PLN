@@ -14,7 +14,7 @@ from pettachainer import PeTTaChainer
 
 # Module-level pln_spec.  Defaults to empty; callers (optimizer scripts,
 # eval_program.py, usage_example.py, etc.) set this from a chainer-
-# specific spec file (e.g. chainer_analysis.txt produced by
+# specific spec file (e.g. bootstrap/chainer_analysis.txt produced by
 # bootstrap_chainer.py) before constructing NL2PLNModule.  The content
 # is injected into the signature instruction (system-prompt slot) at
 # module construction and after every load(), so the LM still sees the
