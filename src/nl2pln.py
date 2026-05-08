@@ -189,6 +189,13 @@ class ProofEvaluator(dspy.Module):
         )
 
 def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pred_name=None, pred_trace=None):
+    # Fail fast on pred=None (upstream LM failure) — otherwise the broad except below silently returns 0.0.
+    if pred is None:
+        raise RuntimeError(
+            "difficulty_metric received pred=None — upstream LM call failed "
+            "(likely auth, quota, rate-limit, or network)."
+        )
+
     try:
         metta_handler = PeTTaChainer()
         evaluator = ProofEvaluator()
@@ -266,6 +273,14 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
             feedback=f"Score: {total_score:.2f}/{n} questions. \n" + "\n".join(feedback_details)
         )
     except Exception as e:
+        # Re-raise LM-side errors (matched by class name to avoid importing litellm); semantic failures still score 0.0.
+        if type(e).__name__ in (
+            "RateLimitError", "AuthenticationError",
+            "APIConnectionError", "BadRequestError",
+            "ServiceUnavailableError", "APIError",
+            "Timeout", "InternalServerError",
+        ):
+            raise
         print(pred)
         print("Error occured in difficulty_metric:", e)
         traceback.print_exc()
