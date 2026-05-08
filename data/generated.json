@@ -1,0 +1,6432 @@
+[
+  {
+    "sentences": [
+      "A puffin is a seabird, and the gray animal beside it is a seal."
+    ],
+    "queries": [
+      {
+        "question": "What kind of animal is a puffin?",
+        "expected_answer": "A puffin is a seabird."
+      },
+      {
+        "question": "What is the gray animal beside the puffin?",
+        "expected_answer": "The gray animal is a seal."
+      }
+    ],
+    "phenomenon": "Entity classification"
+  },
+  {
+    "sentences": [
+      "Nadia is an architect who works at the city planning office.",
+      "Her brother Tomas is a nurse at the clinic."
+    ],
+    "queries": [
+      {
+        "question": "What is Nadia?",
+        "expected_answer": "Nadia is an architect."
+      },
+      {
+        "question": "Who is a nurse?",
+        "expected_answer": "Tomas is a nurse."
+      },
+      {
+        "question": "Is Nadia an architect?",
+        "expected_answer": "Yes, Nadia is an architect."
+      }
+    ],
+    "phenomenon": "Entity classification"
+  },
+  {
+    "sentences": [
+      "The blue kettle on the stove is a kitchen tool.",
+      "The chipped mug next to it is a cup."
+    ],
+    "queries": [
+      {
+        "question": "What is the blue kettle on the stove?",
+        "expected_answer": "The blue kettle is a kitchen tool."
+      },
+      {
+        "question": "Which object is a cup?",
+        "expected_answer": "The chipped mug is a cup."
+      }
+    ],
+    "phenomenon": "Entity classification"
+  },
+  {
+    "sentences": [
+      "The cargo ship Silver Gull docked at Port Azul before sunrise.",
+      "Captain Reyes signed the arrival log."
+    ],
+    "queries": [
+      {
+        "question": "What docked at Port Azul?",
+        "expected_answer": "The cargo ship Silver Gull"
+      },
+      {
+        "question": "Where did the Silver Gull dock?",
+        "expected_answer": "Port Azul"
+      },
+      {
+        "question": "Who signed the arrival log?",
+        "expected_answer": "Captain Reyes"
+      }
+    ],
+    "phenomenon": "Entity identification and naming"
+  },
+  {
+    "sentences": [
+      "Mira labeled the green jar \"Basil Oil\" and placed it beside the stove.",
+      "The red jar was labeled \"Chili Salt\"."
+    ],
+    "queries": [
+      {
+        "question": "Who labeled the green jar?",
+        "expected_answer": "Mira"
+      },
+      {
+        "question": "What was the green jar labeled?",
+        "expected_answer": "Basil Oil"
+      },
+      {
+        "question": "Which jar was labeled \"Chili Salt\"?",
+        "expected_answer": "The red jar"
+      }
+    ],
+    "phenomenon": "Entity identification and naming"
+  },
+  {
+    "sentences": [
+      "The rescue dog named Jasper found the missing glove near Willow Creek.",
+      "Officer Dana carried Jasper back to the van."
+    ],
+    "queries": [
+      {
+        "question": "What was the rescue dog named?",
+        "expected_answer": "Jasper"
+      },
+      {
+        "question": "What did Jasper find?",
+        "expected_answer": "The missing glove"
+      },
+      {
+        "question": "Who carried Jasper back to the van?",
+        "expected_answer": "Officer Dana"
+      }
+    ],
+    "phenomenon": "Entity identification and naming"
+  },
+  {
+    "sentences": [
+      "The suitcase by the elevator is heavy, and its handle is cracked."
+    ],
+    "queries": [
+      {
+        "question": "What is heavy?",
+        "expected_answer": "The suitcase by the elevator."
+      },
+      {
+        "question": "What is cracked?",
+        "expected_answer": "The suitcase's handle."
+      }
+    ],
+    "phenomenon": "Properties and attributes"
+  },
+  {
+    "sentences": [
+      "Mira placed a green apple and a yellow pear in the wooden bowl."
+    ],
+    "queries": [
+      {
+        "question": "What color is the apple?",
+        "expected_answer": "Green."
+      },
+      {
+        "question": "Which fruit is yellow?",
+        "expected_answer": "The pear."
+      },
+      {
+        "question": "What is wooden?",
+        "expected_answer": "The bowl."
+      }
+    ],
+    "phenomenon": "Properties and attributes"
+  },
+  {
+    "sentences": [
+      "The old bridge over the canal is narrow, but the nearby footpath is wide."
+    ],
+    "queries": [
+      {
+        "question": "What is old?",
+        "expected_answer": "The bridge over the canal."
+      },
+      {
+        "question": "What is narrow?",
+        "expected_answer": "The bridge over the canal."
+      },
+      {
+        "question": "What is wide?",
+        "expected_answer": "The nearby footpath."
+      }
+    ],
+    "phenomenon": "Properties and attributes"
+  },
+  {
+    "sentences": [
+      "Mira is more experienced than Jonah at repairing bicycles."
+    ],
+    "queries": [
+      {
+        "question": "Who is Mira more experienced than at repairing bicycles?",
+        "expected_answer": "Jonah."
+      },
+      {
+        "question": "Is Mira more experienced than Jonah at repairing bicycles?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Relational properties"
+  },
+  {
+    "sentences": [
+      "The copper wrench is too heavy for the small toolbox."
+    ],
+    "queries": [
+      {
+        "question": "What is the copper wrench too heavy for?",
+        "expected_answer": "The small toolbox."
+      },
+      {
+        "question": "Which item is too heavy for the small toolbox?",
+        "expected_answer": "The copper wrench."
+      }
+    ],
+    "phenomenon": "Relational properties"
+  },
+  {
+    "sentences": [
+      "During the rehearsal, the flute sounded softer than the violin."
+    ],
+    "queries": [
+      {
+        "question": "What sounded softer than the violin?",
+        "expected_answer": "The flute."
+      },
+      {
+        "question": "What was the flute softer than?",
+        "expected_answer": "The violin."
+      },
+      {
+        "question": "When did the flute sound softer than the violin?",
+        "expected_answer": "During the rehearsal."
+      }
+    ],
+    "phenomenon": "Relational properties"
+  },
+  {
+    "sentences": [
+      "Lena owns a blue bicycle, and her brother keeps the helmet in the hallway."
+    ],
+    "queries": [
+      {
+        "question": "Who owns the blue bicycle?",
+        "expected_answer": "Lena."
+      },
+      {
+        "question": "What does Lena own?",
+        "expected_answer": "A blue bicycle."
+      },
+      {
+        "question": "Where does her brother keep the helmet?",
+        "expected_answer": "In the hallway."
+      }
+    ],
+    "phenomenon": "Possession and ownership"
+  },
+  {
+    "sentences": [
+      "The music teacher has a silver flute in her office.",
+      "A borrowed metronome sits beside the flute."
+    ],
+    "queries": [
+      {
+        "question": "Who has a silver flute?",
+        "expected_answer": "The music teacher."
+      },
+      {
+        "question": "What does the music teacher have in her office?",
+        "expected_answer": "A silver flute."
+      },
+      {
+        "question": "What sits beside the flute?",
+        "expected_answer": "A borrowed metronome."
+      }
+    ],
+    "phenomenon": "Possession and ownership"
+  },
+  {
+    "sentences": [
+      "Maya's phone is on the kitchen table, but her charger is in the drawer."
+    ],
+    "queries": [
+      {
+        "question": "Whose phone is on the kitchen table?",
+        "expected_answer": "Maya's."
+      },
+      {
+        "question": "Where is Maya's phone?",
+        "expected_answer": "On the kitchen table."
+      },
+      {
+        "question": "Where is Maya's charger?",
+        "expected_answer": "In the drawer."
+      }
+    ],
+    "phenomenon": "Possession and ownership"
+  },
+  {
+    "sentences": [
+      "The red bicycle in the shed has a silver bell, two pedals, and a cracked rear reflector."
+    ],
+    "queries": [
+      {
+        "question": "What does the red bicycle have?",
+        "expected_answer": "A silver bell, two pedals, and a cracked rear reflector."
+      },
+      {
+        "question": "How many pedals does the red bicycle have?",
+        "expected_answer": "Two pedals."
+      },
+      {
+        "question": "Which reflector is part of the red bicycle?",
+        "expected_answer": "The cracked rear reflector."
+      }
+    ],
+    "phenomenon": "Part-whole relations"
+  },
+  {
+    "sentences": [
+      "In the anthology, the final poem belongs to the winter section.",
+      "The winter section is one part of the larger collection."
+    ],
+    "queries": [
+      {
+        "question": "Which section does the final poem belong to?",
+        "expected_answer": "The winter section."
+      },
+      {
+        "question": "What is the winter section part of?",
+        "expected_answer": "The larger collection."
+      },
+      {
+        "question": "Does the final poem belong to the winter section?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Part-whole relations"
+  },
+  {
+    "sentences": [
+      "The museum's audio guide includes an introduction, five artist interviews, and a closing message."
+    ],
+    "queries": [
+      {
+        "question": "What does the museum's audio guide include?",
+        "expected_answer": "An introduction, five artist interviews, and a closing message."
+      },
+      {
+        "question": "How many artist interviews are included in the museum's audio guide?",
+        "expected_answer": "Five artist interviews."
+      },
+      {
+        "question": "What message is part of the museum's audio guide?",
+        "expected_answer": "A closing message."
+      }
+    ],
+    "phenomenon": "Part-whole relations"
+  },
+  {
+    "sentences": [
+      "At the fundraiser, the anonymous donor was Dr. Laila Moreno.",
+      "Dr. Laila Moreno pledged the final $5,000."
+    ],
+    "queries": [
+      {
+        "question": "Who was the anonymous donor?",
+        "expected_answer": "Dr. Laila Moreno."
+      },
+      {
+        "question": "Who pledged the final $5,000?",
+        "expected_answer": "Dr. Laila Moreno."
+      },
+      {
+        "question": "Was the anonymous donor Dr. Laila Moreno?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Identity and equivalence"
+  },
+  {
+    "sentences": [
+      "The code name for the beach cleanup project is Tide Lantern.",
+      "Tide Lantern begins on Saturday morning."
+    ],
+    "queries": [
+      {
+        "question": "What is the code name for the beach cleanup project?",
+        "expected_answer": "Tide Lantern."
+      },
+      {
+        "question": "When does Tide Lantern begin?",
+        "expected_answer": "Saturday morning."
+      },
+      {
+        "question": "Does the beach cleanup project have the code name Tide Lantern?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Identity and equivalence"
+  },
+  {
+    "sentences": [
+      "In the recipe, one stick of butter equals eight tablespoons.",
+      "The pastry chef added one stick of butter to the dough."
+    ],
+    "queries": [
+      {
+        "question": "How many tablespoons does one stick of butter equal in the recipe?",
+        "expected_answer": "Eight tablespoons."
+      },
+      {
+        "question": "What did the pastry chef add to the dough?",
+        "expected_answer": "One stick of butter."
+      },
+      {
+        "question": "Did the pastry chef add the equivalent of eight tablespoons of butter?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Identity and equivalence"
+  },
+  {
+    "sentences": [
+      "There is a silver key under the doormat at the blue cottage.",
+      "No spare key is hanging by the back door."
+    ],
+    "queries": [
+      {
+        "question": "What is under the doormat at the blue cottage?",
+        "expected_answer": "A silver key."
+      },
+      {
+        "question": "Is there a spare key hanging by the back door?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Where is the silver key?",
+        "expected_answer": "Under the doormat at the blue cottage."
+      }
+    ],
+    "phenomenon": "Existence and nonexistence"
+  },
+  {
+    "sentences": [
+      "A cancellation occurred during the afternoon workshop.",
+      "There were no schedule changes before lunch."
+    ],
+    "queries": [
+      {
+        "question": "What occurred during the afternoon workshop?",
+        "expected_answer": "A cancellation."
+      },
+      {
+        "question": "When did the cancellation occur?",
+        "expected_answer": "During the afternoon workshop."
+      },
+      {
+        "question": "Were there any schedule changes before lunch?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Existence and nonexistence"
+  },
+  {
+    "sentences": [
+      "In the storage closet, there are three unopened paint cans on the top shelf.",
+      "There are no brushes in the storage closet."
+    ],
+    "queries": [
+      {
+        "question": "What is on the top shelf in the storage closet?",
+        "expected_answer": "Three unopened paint cans."
+      },
+      {
+        "question": "How many unopened paint cans are on the top shelf?",
+        "expected_answer": "Three."
+      },
+      {
+        "question": "Are there any brushes in the storage closet?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Existence and nonexistence"
+  },
+  {
+    "sentences": [
+      "The gallery door is open, and the ticket counter is closed."
+    ],
+    "queries": [
+      {
+        "question": "What is open?",
+        "expected_answer": "The gallery door."
+      },
+      {
+        "question": "What is closed?",
+        "expected_answer": "The ticket counter."
+      },
+      {
+        "question": "Is the gallery door open?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "States and stative predication"
+  },
+  {
+    "sentences": [
+      "Marisol knows Italian and understands the safety rules for the workshop."
+    ],
+    "queries": [
+      {
+        "question": "Who knows Italian?",
+        "expected_answer": "Marisol."
+      },
+      {
+        "question": "What does Marisol understand?",
+        "expected_answer": "The safety rules for the workshop."
+      },
+      {
+        "question": "Does Marisol know Italian?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "States and stative predication"
+  },
+  {
+    "sentences": [
+      "The picnic basket contains sandwiches, and the blue cooler holds lemonade."
+    ],
+    "queries": [
+      {
+        "question": "What contains sandwiches?",
+        "expected_answer": "The picnic basket."
+      },
+      {
+        "question": "What does the blue cooler hold?",
+        "expected_answer": "Lemonade."
+      },
+      {
+        "question": "Does the picnic basket contain sandwiches?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "States and stative predication"
+  },
+  {
+    "sentences": [
+      "The dog chased the cat across the yard."
+    ],
+    "queries": [
+      {
+        "question": "Who chased the cat?",
+        "expected_answer": "The dog."
+      },
+      {
+        "question": "What did the dog chase?",
+        "expected_answer": "The cat."
+      },
+      {
+        "question": "Where did the dog chase the cat?",
+        "expected_answer": "Across the yard."
+      }
+    ],
+    "phenomenon": "Actions and events"
+  },
+  {
+    "sentences": [
+      "Omar opened the kitchen window before dinner."
+    ],
+    "queries": [
+      {
+        "question": "Who opened the kitchen window?",
+        "expected_answer": "Omar."
+      },
+      {
+        "question": "What did Omar open?",
+        "expected_answer": "The kitchen window."
+      },
+      {
+        "question": "When did Omar open the kitchen window?",
+        "expected_answer": "Before dinner."
+      }
+    ],
+    "phenomenon": "Actions and events"
+  },
+  {
+    "sentences": [
+      "A sudden storm damaged the roof of the bakery."
+    ],
+    "queries": [
+      {
+        "question": "What damaged the roof of the bakery?",
+        "expected_answer": "A sudden storm."
+      },
+      {
+        "question": "What did the sudden storm damage?",
+        "expected_answer": "The roof of the bakery."
+      },
+      {
+        "question": "Which building's roof did the storm damage?",
+        "expected_answer": "The bakery's roof."
+      }
+    ],
+    "phenomenon": "Actions and events"
+  },
+  {
+    "sentences": [
+      "Priya gave Leo a blue notebook after the meeting."
+    ],
+    "queries": [
+      {
+        "question": "Who gave the blue notebook?",
+        "expected_answer": "Priya."
+      },
+      {
+        "question": "What did Priya give Leo?",
+        "expected_answer": "A blue notebook."
+      },
+      {
+        "question": "Who received the blue notebook?",
+        "expected_answer": "Leo."
+      }
+    ],
+    "phenomenon": "Thematic roles"
+  },
+  {
+    "sentences": [
+      "The chef sliced the rye bread with a serrated knife for the lunch guests."
+    ],
+    "queries": [
+      {
+        "question": "Who sliced the rye bread?",
+        "expected_answer": "The chef."
+      },
+      {
+        "question": "What did the chef slice?",
+        "expected_answer": "The rye bread."
+      },
+      {
+        "question": "What did the chef use to slice the rye bread?",
+        "expected_answer": "A serrated knife."
+      }
+    ],
+    "phenomenon": "Thematic roles"
+  },
+  {
+    "sentences": [
+      "Marta carried a sealed envelope from the archive to the director's office."
+    ],
+    "queries": [
+      {
+        "question": "What did Marta carry?",
+        "expected_answer": "A sealed envelope."
+      },
+      {
+        "question": "Where did Marta carry the sealed envelope from?",
+        "expected_answer": "The archive."
+      },
+      {
+        "question": "Where did Marta carry the sealed envelope to?",
+        "expected_answer": "The director's office."
+      }
+    ],
+    "phenomenon": "Thematic roles"
+  },
+  {
+    "sentences": [
+      "During the thunderstorm, the old oak fell beside the barn.",
+      "Afterward, Mara dragged the wet branches to the road."
+    ],
+    "queries": [
+      {
+        "question": "What fell beside the barn?",
+        "expected_answer": "the old oak"
+      },
+      {
+        "question": "Who dragged the wet branches to the road?",
+        "expected_answer": "Mara"
+      },
+      {
+        "question": "What did Mara drag to the road?",
+        "expected_answer": "the wet branches"
+      }
+    ],
+    "phenomenon": "Transitive and intransitive events"
+  },
+  {
+    "sentences": [
+      "The soup simmered quietly on the stove.",
+      "Chef Tomas chopped the onions for the sauce."
+    ],
+    "queries": [
+      {
+        "question": "What simmered quietly on the stove?",
+        "expected_answer": "the soup"
+      },
+      {
+        "question": "Who chopped the onions?",
+        "expected_answer": "Chef Tomas"
+      },
+      {
+        "question": "What did Chef Tomas chop?",
+        "expected_answer": "the onions"
+      }
+    ],
+    "phenomenon": "Transitive and intransitive events"
+  },
+  {
+    "sentences": [
+      "At the school concert, the audience clapped loudly.",
+      "Lina played the violin under the bright lights."
+    ],
+    "queries": [
+      {
+        "question": "Who clapped loudly?",
+        "expected_answer": "the audience"
+      },
+      {
+        "question": "Who played the violin?",
+        "expected_answer": "Lina"
+      },
+      {
+        "question": "What did Lina play?",
+        "expected_answer": "the violin"
+      }
+    ],
+    "phenomenon": "Transitive and intransitive events"
+  },
+  {
+    "sentences": [
+      "Emma gave Noah a ticket for the evening concert."
+    ],
+    "queries": [
+      {
+        "question": "Who gave Noah a ticket?",
+        "expected_answer": "Emma."
+      },
+      {
+        "question": "What did Emma give Noah?",
+        "expected_answer": "A ticket for the evening concert."
+      },
+      {
+        "question": "Who received a ticket from Emma?",
+        "expected_answer": "Noah."
+      }
+    ],
+    "phenomenon": "Ditransitive and transfer events"
+  },
+  {
+    "sentences": [
+      "Before the staff meeting, the manager sent the design team a revised agenda."
+    ],
+    "queries": [
+      {
+        "question": "Who sent the design team a revised agenda?",
+        "expected_answer": "The manager."
+      },
+      {
+        "question": "What did the manager send the design team?",
+        "expected_answer": "A revised agenda."
+      },
+      {
+        "question": "When did the manager send the design team a revised agenda?",
+        "expected_answer": "Before the staff meeting."
+      }
+    ],
+    "phenomenon": "Ditransitive and transfer events"
+  },
+  {
+    "sentences": [
+      "At the community center, Liam taught Ava chess during the winter program."
+    ],
+    "queries": [
+      {
+        "question": "Who taught Ava chess?",
+        "expected_answer": "Liam."
+      },
+      {
+        "question": "What did Liam teach Ava?",
+        "expected_answer": "Chess."
+      },
+      {
+        "question": "Where did Liam teach Ava chess?",
+        "expected_answer": "At the community center."
+      }
+    ],
+    "phenomenon": "Ditransitive and transfer events"
+  },
+  {
+    "sentences": [
+      "Marta opened the paint tin with a flat screwdriver in the garage."
+    ],
+    "queries": [
+      {
+        "question": "What did Marta use to open the paint tin?",
+        "expected_answer": "a flat screwdriver"
+      },
+      {
+        "question": "What did Marta open with a flat screwdriver?",
+        "expected_answer": "the paint tin"
+      },
+      {
+        "question": "Where did Marta open the paint tin?",
+        "expected_answer": "in the garage"
+      }
+    ],
+    "phenomenon": "Instrumental relations"
+  },
+  {
+    "sentences": [
+      "The hikers crossed the wide river by ferry before sunset."
+    ],
+    "queries": [
+      {
+        "question": "How did the hikers cross the wide river?",
+        "expected_answer": "by ferry"
+      },
+      {
+        "question": "What did the hikers cross by ferry?",
+        "expected_answer": "the wide river"
+      },
+      {
+        "question": "When did the hikers cross the wide river?",
+        "expected_answer": "before sunset"
+      }
+    ],
+    "phenomenon": "Instrumental relations"
+  },
+  {
+    "sentences": [
+      "In the clinic, Dr. Nair measured the child's temperature using a digital thermometer."
+    ],
+    "queries": [
+      {
+        "question": "What did Dr. Nair use to measure the child's temperature?",
+        "expected_answer": "a digital thermometer"
+      },
+      {
+        "question": "Whose temperature did Dr. Nair measure using a digital thermometer?",
+        "expected_answer": "the child's"
+      },
+      {
+        "question": "Where did Dr. Nair measure the child's temperature?",
+        "expected_answer": "in the clinic"
+      }
+    ],
+    "phenomenon": "Instrumental relations"
+  },
+  {
+    "sentences": [
+      "Priya knitted a blue scarf for her grandfather before the first frost."
+    ],
+    "queries": [
+      {
+        "question": "Who did Priya knit a blue scarf for?",
+        "expected_answer": "her grandfather"
+      },
+      {
+        "question": "What did Priya knit for her grandfather?",
+        "expected_answer": "a blue scarf"
+      }
+    ],
+    "phenomenon": "Beneficiaries and maleficiaries"
+  },
+  {
+    "sentences": [
+      "The new shuttle route helped night-shift nurses reach the hospital on time."
+    ],
+    "queries": [
+      {
+        "question": "Who did the new shuttle route help?",
+        "expected_answer": "night-shift nurses"
+      },
+      {
+        "question": "What helped night-shift nurses reach the hospital on time?",
+        "expected_answer": "the new shuttle route"
+      },
+      {
+        "question": "Where did the new shuttle route help night-shift nurses reach on time?",
+        "expected_answer": "the hospital"
+      }
+    ],
+    "phenomenon": "Beneficiaries and maleficiaries"
+  },
+  {
+    "sentences": [
+      "A misplaced invoice cost the small bakery three catering orders."
+    ],
+    "queries": [
+      {
+        "question": "What harmed the small bakery?",
+        "expected_answer": "a misplaced invoice"
+      },
+      {
+        "question": "Who lost three catering orders because of a misplaced invoice?",
+        "expected_answer": "the small bakery"
+      },
+      {
+        "question": "What did the misplaced invoice cost the small bakery?",
+        "expected_answer": "three catering orders"
+      }
+    ],
+    "phenomenon": "Beneficiaries and maleficiaries"
+  },
+  {
+    "sentences": [
+      "From the balcony, Priya noticed the red kite circling above the courtyard."
+    ],
+    "queries": [
+      {
+        "question": "Who noticed the red kite?",
+        "expected_answer": "Priya."
+      },
+      {
+        "question": "What did Priya notice?",
+        "expected_answer": "The red kite circling above the courtyard."
+      },
+      {
+        "question": "Where was Priya when she noticed the kite?",
+        "expected_answer": "On the balcony."
+      }
+    ],
+    "phenomenon": "Experiencer and stimulus roles"
+  },
+  {
+    "sentences": [
+      "The sudden thunder startled the twins during their card game."
+    ],
+    "queries": [
+      {
+        "question": "What startled the twins?",
+        "expected_answer": "The sudden thunder."
+      },
+      {
+        "question": "Who was startled by the sudden thunder?",
+        "expected_answer": "The twins."
+      },
+      {
+        "question": "When did the thunder startle the twins?",
+        "expected_answer": "During their card game."
+      }
+    ],
+    "phenomenon": "Experiencer and stimulus roles"
+  },
+  {
+    "sentences": [
+      "After tasting the soup, Omar disliked the bitter aftertaste."
+    ],
+    "queries": [
+      {
+        "question": "Who disliked the bitter aftertaste?",
+        "expected_answer": "Omar."
+      },
+      {
+        "question": "What did Omar dislike?",
+        "expected_answer": "The bitter aftertaste."
+      },
+      {
+        "question": "When did Omar dislike the bitter aftertaste?",
+        "expected_answer": "After tasting the soup."
+      }
+    ],
+    "phenomenon": "Experiencer and stimulus roles"
+  },
+  {
+    "sentences": [
+      "During the warm afternoon, the snow on the cabin roof melted and dripped into the gutter."
+    ],
+    "queries": [
+      {
+        "question": "What melted during the warm afternoon?",
+        "expected_answer": "The snow on the cabin roof."
+      },
+      {
+        "question": "Where did the melted snow drip?",
+        "expected_answer": "Into the gutter."
+      }
+    ],
+    "phenomenon": "Agentless and natural events"
+  },
+  {
+    "sentences": [
+      "It rained throughout the night, and by morning the alley behind the bakery was flooded."
+    ],
+    "queries": [
+      {
+        "question": "When did it rain?",
+        "expected_answer": "Throughout the night."
+      },
+      {
+        "question": "What was flooded by morning?",
+        "expected_answer": "The alley behind the bakery."
+      }
+    ],
+    "phenomenon": "Agentless and natural events"
+  },
+  {
+    "sentences": [
+      "The old picture frame slipped from the wall and landed face down on the hallway floor."
+    ],
+    "queries": [
+      {
+        "question": "What slipped from the wall?",
+        "expected_answer": "The old picture frame."
+      },
+      {
+        "question": "Where did the picture frame land?",
+        "expected_answer": "Face down on the hallway floor."
+      }
+    ],
+    "phenomenon": "Agentless and natural events"
+  },
+  {
+    "sentences": [
+      "The stained-glass window was repaired by Mira after the storm.",
+      "A small crack was left near the blue panel."
+    ],
+    "queries": [
+      {
+        "question": "What was repaired after the storm?",
+        "expected_answer": "The stained-glass window."
+      },
+      {
+        "question": "Who repaired the stained-glass window?",
+        "expected_answer": "Mira."
+      },
+      {
+        "question": "Where was a small crack left?",
+        "expected_answer": "Near the blue panel."
+      }
+    ],
+    "phenomenon": "Passive voice"
+  },
+  {
+    "sentences": [
+      "At the bakery, the last tray of almond cookies was sold before noon.",
+      "The receipt was printed by the cashier."
+    ],
+    "queries": [
+      {
+        "question": "What was sold before noon?",
+        "expected_answer": "The last tray of almond cookies."
+      },
+      {
+        "question": "When was the last tray of almond cookies sold?",
+        "expected_answer": "Before noon."
+      },
+      {
+        "question": "Who printed the receipt?",
+        "expected_answer": "The cashier."
+      }
+    ],
+    "phenomenon": "Passive voice"
+  },
+  {
+    "sentences": [
+      "The hiking route was marked with orange ribbons by the park volunteers.",
+      "Two fallen branches were removed from the narrow bridge."
+    ],
+    "queries": [
+      {
+        "question": "What was marked with orange ribbons?",
+        "expected_answer": "The hiking route."
+      },
+      {
+        "question": "Who marked the hiking route?",
+        "expected_answer": "The park volunteers."
+      },
+      {
+        "question": "What was removed from the narrow bridge?",
+        "expected_answer": "Two fallen branches."
+      }
+    ],
+    "phenomenon": "Passive voice"
+  },
+  {
+    "sentences": [
+      "After several minutes on the stove, the soup thickened.",
+      "Mira thickened the sauce with cornstarch."
+    ],
+    "queries": [
+      {
+        "question": "What thickened after several minutes on the stove?",
+        "expected_answer": "The soup."
+      },
+      {
+        "question": "Who thickened the sauce?",
+        "expected_answer": "Mira."
+      },
+      {
+        "question": "What did Mira thicken with cornstarch?",
+        "expected_answer": "The sauce."
+      }
+    ],
+    "phenomenon": "Causative alternation"
+  },
+  {
+    "sentences": [
+      "The old gate swung open in the wind.",
+      "The groundskeeper opened the side gate before sunrise."
+    ],
+    "queries": [
+      {
+        "question": "What swung open in the wind?",
+        "expected_answer": "The old gate."
+      },
+      {
+        "question": "Who opened the side gate before sunrise?",
+        "expected_answer": "The groundskeeper."
+      },
+      {
+        "question": "Which gate did the groundskeeper open?",
+        "expected_answer": "The side gate."
+      }
+    ],
+    "phenomenon": "Causative alternation"
+  },
+  {
+    "sentences": [
+      "The small boat sank near the pier.",
+      "A sudden leak sank the cargo skiff in the channel."
+    ],
+    "queries": [
+      {
+        "question": "Where did the small boat sink?",
+        "expected_answer": "Near the pier."
+      },
+      {
+        "question": "What sank the cargo skiff?",
+        "expected_answer": "A sudden leak."
+      },
+      {
+        "question": "What did a sudden leak sink?",
+        "expected_answer": "The cargo skiff."
+      }
+    ],
+    "phenomenon": "Causative alternation"
+  },
+  {
+    "sentences": [
+      "A power surge caused the laboratory freezer to shut down overnight.",
+      "The shutdown spoiled the stored vaccine samples."
+    ],
+    "queries": [
+      {
+        "question": "What caused the laboratory freezer to shut down overnight?",
+        "expected_answer": "A power surge."
+      },
+      {
+        "question": "What did the shutdown spoil?",
+        "expected_answer": "The stored vaccine samples."
+      },
+      {
+        "question": "Did the power surge cause the vaccine samples to spoil indirectly?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Causation"
+  },
+  {
+    "sentences": [
+      "During the rehearsal, tapping the drum three times signaled the dancers to begin.",
+      "The signal made the youngest dancer step onto the stage first."
+    ],
+    "queries": [
+      {
+        "question": "What signaled the dancers to begin?",
+        "expected_answer": "Tapping the drum three times."
+      },
+      {
+        "question": "Who stepped onto the stage first because of the signal?",
+        "expected_answer": "The youngest dancer."
+      },
+      {
+        "question": "Did tapping the drum three times lead to the dancers beginning?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Causation"
+  },
+  {
+    "sentences": [
+      "Because the kitchen window was left open, cold air entered the bakery before dawn.",
+      "The cold air made the bread dough rise slowly."
+    ],
+    "queries": [
+      {
+        "question": "Why did cold air enter the bakery before dawn?",
+        "expected_answer": "Because the kitchen window was left open."
+      },
+      {
+        "question": "What made the bread dough rise slowly?",
+        "expected_answer": "The cold air."
+      },
+      {
+        "question": "What rose slowly because of the cold air?",
+        "expected_answer": "The bread dough."
+      }
+    ],
+    "phenomenon": "Causation"
+  },
+  {
+    "sentences": [
+      "Maya left the office before five to pick up her son from soccer practice."
+    ],
+    "queries": [
+      {
+        "question": "Why did Maya leave the office before five?",
+        "expected_answer": "To pick up her son from soccer practice."
+      },
+      {
+        "question": "Who did Maya intend to pick up?",
+        "expected_answer": "Her son."
+      },
+      {
+        "question": "Where did Maya plan to pick up her son from?",
+        "expected_answer": "Soccer practice."
+      }
+    ],
+    "phenomenon": "Purpose and intention"
+  },
+  {
+    "sentences": [
+      "The hikers packed extra water so that they could cross the dry ridge safely."
+    ],
+    "queries": [
+      {
+        "question": "Why did the hikers pack extra water?",
+        "expected_answer": "So that they could cross the dry ridge safely."
+      },
+      {
+        "question": "What did the hikers pack?",
+        "expected_answer": "Extra water."
+      },
+      {
+        "question": "How did the hikers want to cross the dry ridge?",
+        "expected_answer": "Safely."
+      }
+    ],
+    "phenomenon": "Purpose and intention"
+  },
+  {
+    "sentences": [
+      "Jonas bought cinnamon and apples for making a pie for the school fundraiser."
+    ],
+    "queries": [
+      {
+        "question": "What did Jonas buy cinnamon and apples for?",
+        "expected_answer": "For making a pie for the school fundraiser."
+      },
+      {
+        "question": "What did Jonas intend to make?",
+        "expected_answer": "A pie."
+      },
+      {
+        "question": "Which event was the pie meant for?",
+        "expected_answer": "The school fundraiser."
+      }
+    ],
+    "phenomenon": "Purpose and intention"
+  },
+  {
+    "sentences": [
+      "Maya left the cake in the oven too long, so the top burned."
+    ],
+    "queries": [
+      {
+        "question": "What happened to the top of the cake?",
+        "expected_answer": "The top burned."
+      },
+      {
+        "question": "Why did the top of the cake burn?",
+        "expected_answer": "Maya left the cake in the oven too long."
+      }
+    ],
+    "phenomenon": "Result and consequence"
+  },
+  {
+    "sentences": [
+      "A strong gust knocked over the sign, and it blocked the sidewalk."
+    ],
+    "queries": [
+      {
+        "question": "What knocked over the sign?",
+        "expected_answer": "A strong gust."
+      },
+      {
+        "question": "What did the fallen sign block?",
+        "expected_answer": "The sidewalk."
+      },
+      {
+        "question": "Did the sign block the sidewalk after being knocked over?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Result and consequence"
+  },
+  {
+    "sentences": [
+      "Dario practiced the violin every evening for a month. As a result, he played the solo confidently at the recital."
+    ],
+    "queries": [
+      {
+        "question": "How did Dario play the solo at the recital?",
+        "expected_answer": "Confidently."
+      },
+      {
+        "question": "What led to Dario playing the solo confidently?",
+        "expected_answer": "He practiced the violin every evening for a month."
+      }
+    ],
+    "phenomenon": "Result and consequence"
+  },
+  {
+    "sentences": [
+      "The brass keys are in the top drawer of the desk.",
+      "A blue notebook is outside the desk, on the chair."
+    ],
+    "queries": [
+      {
+        "question": "Where are the brass keys?",
+        "expected_answer": "In the top drawer of the desk."
+      },
+      {
+        "question": "What is outside the desk?",
+        "expected_answer": "A blue notebook."
+      },
+      {
+        "question": "Are the brass keys in the top drawer?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Spatial containment"
+  },
+  {
+    "sentences": [
+      "During the storm, the border collie stayed inside the farmhouse.",
+      "The muddy boots were left outside the farmhouse by the porch."
+    ],
+    "queries": [
+      {
+        "question": "Where did the border collie stay during the storm?",
+        "expected_answer": "Inside the farmhouse."
+      },
+      {
+        "question": "What was left outside the farmhouse?",
+        "expected_answer": "The muddy boots."
+      },
+      {
+        "question": "Were the muddy boots inside the farmhouse?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Spatial containment"
+  },
+  {
+    "sentences": [
+      "The silver coin rolled into the velvet pouch.",
+      "The paper receipt remained outside the pouch on the counter."
+    ],
+    "queries": [
+      {
+        "question": "Where did the silver coin roll?",
+        "expected_answer": "Into the velvet pouch."
+      },
+      {
+        "question": "What remained outside the pouch?",
+        "expected_answer": "The paper receipt."
+      },
+      {
+        "question": "Was the silver coin within the velvet pouch?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Spatial containment"
+  },
+  {
+    "sentences": [
+      "During the storm, the dog hid under the porch steps.",
+      "A wet leash was attached to the dog's collar."
+    ],
+    "queries": [
+      {
+        "question": "Where did the dog hide?",
+        "expected_answer": "Under the porch steps."
+      },
+      {
+        "question": "What was attached to the dog's collar?",
+        "expected_answer": "A wet leash."
+      },
+      {
+        "question": "Was the leash attached to the porch steps?",
+        "expected_answer": "No; it was attached to the dog's collar."
+      }
+    ],
+    "phenomenon": "Spatial support and contact"
+  },
+  {
+    "sentences": [
+      "In the workshop, a copper pipe rests on two metal brackets.",
+      "The pipe is touching the back wall but is not attached to it."
+    ],
+    "queries": [
+      {
+        "question": "What is the copper pipe on?",
+        "expected_answer": "Two metal brackets."
+      },
+      {
+        "question": "What is the copper pipe touching?",
+        "expected_answer": "The back wall."
+      },
+      {
+        "question": "Is the copper pipe attached to the back wall?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Spatial support and contact"
+  },
+  {
+    "sentences": [
+      "A small lantern hangs under the bridge arch.",
+      "Its hook is attached to an iron ring in the stone."
+    ],
+    "queries": [
+      {
+        "question": "Where does the small lantern hang?",
+        "expected_answer": "Under the bridge arch."
+      },
+      {
+        "question": "What is the lantern's hook attached to?",
+        "expected_answer": "An iron ring in the stone."
+      },
+      {
+        "question": "Is the lantern on the bridge arch?",
+        "expected_answer": "No; it hangs under the bridge arch."
+      }
+    ],
+    "phenomenon": "Spatial support and contact"
+  },
+  {
+    "sentences": [
+      "The bakery is near the fountain in the plaza.",
+      "The florist is across the street from the bakery."
+    ],
+    "queries": [
+      {
+        "question": "What is near the fountain?",
+        "expected_answer": "The bakery is near the fountain."
+      },
+      {
+        "question": "Where is the bakery?",
+        "expected_answer": "Near the fountain in the plaza."
+      },
+      {
+        "question": "What is across the street from the bakery?",
+        "expected_answer": "The florist is across the street from the bakery."
+      }
+    ],
+    "phenomenon": "Spatial proximity and distance"
+  },
+  {
+    "sentences": [
+      "Maya pitched her tent far from the campfire.",
+      "Her backpack lay next to the tent."
+    ],
+    "queries": [
+      {
+        "question": "What was far from the campfire?",
+        "expected_answer": "Maya's tent was far from the campfire."
+      },
+      {
+        "question": "Where did the backpack lie?",
+        "expected_answer": "Next to the tent."
+      },
+      {
+        "question": "Was the tent next to the backpack?",
+        "expected_answer": "Yes, the backpack lay next to the tent."
+      }
+    ],
+    "phenomenon": "Spatial proximity and distance"
+  },
+  {
+    "sentences": [
+      "At the conference, the registration desk stood beside the main entrance.",
+      "The coffee table was a long way from the auditorium."
+    ],
+    "queries": [
+      {
+        "question": "What stood beside the main entrance?",
+        "expected_answer": "The registration desk stood beside the main entrance."
+      },
+      {
+        "question": "What was a long way from the auditorium?",
+        "expected_answer": "The coffee table was a long way from the auditorium."
+      },
+      {
+        "question": "Where was the registration desk?",
+        "expected_answer": "Beside the main entrance."
+      }
+    ],
+    "phenomenon": "Spatial proximity and distance"
+  },
+  {
+    "sentences": [
+      "In the bakery window, the raspberry tart is to the left of the lemon cake, and the price card is below the tart."
+    ],
+    "queries": [
+      {
+        "question": "What is to the left of the lemon cake?",
+        "expected_answer": "The raspberry tart."
+      },
+      {
+        "question": "Where is the price card?",
+        "expected_answer": "Below the tart."
+      },
+      {
+        "question": "Is the lemon cake to the right of the raspberry tart?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Spatial orientation and direction"
+  },
+  {
+    "sentences": [
+      "At the campsite, a blue tent stands in front of the pine tree, and the lantern hangs above the tent."
+    ],
+    "queries": [
+      {
+        "question": "What stands in front of the pine tree?",
+        "expected_answer": "A blue tent."
+      },
+      {
+        "question": "Where does the lantern hang?",
+        "expected_answer": "Above the tent."
+      },
+      {
+        "question": "Is the pine tree behind the blue tent?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Spatial orientation and direction"
+  },
+  {
+    "sentences": [
+      "On the office desk, the stapler sits to the right of the notebook. The monitor faces the doorway."
+    ],
+    "queries": [
+      {
+        "question": "What sits to the right of the notebook?",
+        "expected_answer": "The stapler."
+      },
+      {
+        "question": "Which object is to the left of the stapler?",
+        "expected_answer": "The notebook."
+      },
+      {
+        "question": "What does the monitor face?",
+        "expected_answer": "The doorway."
+      }
+    ],
+    "phenomenon": "Spatial orientation and direction"
+  },
+  {
+    "sentences": [
+      "The heron glided from the marsh over the fence to the pond."
+    ],
+    "queries": [
+      {
+        "question": "Where did the heron glide from?",
+        "expected_answer": "the marsh"
+      },
+      {
+        "question": "Where did the heron glide to?",
+        "expected_answer": "the pond"
+      },
+      {
+        "question": "What did the heron glide over?",
+        "expected_answer": "the fence"
+      }
+    ],
+    "phenomenon": "Motion events"
+  },
+  {
+    "sentences": [
+      "Mina hurried through the station tunnel and onto the northbound train."
+    ],
+    "queries": [
+      {
+        "question": "How did Mina move through the station tunnel?",
+        "expected_answer": "She hurried."
+      },
+      {
+        "question": "What did Mina hurry through?",
+        "expected_answer": "the station tunnel"
+      },
+      {
+        "question": "Where did Mina hurry onto?",
+        "expected_answer": "the northbound train"
+      }
+    ],
+    "phenomenon": "Motion events"
+  },
+  {
+    "sentences": [
+      "After practice, the soccer ball bounced off the post, across the grass, and into the equipment shed."
+    ],
+    "queries": [
+      {
+        "question": "What bounced off the post?",
+        "expected_answer": "the soccer ball"
+      },
+      {
+        "question": "What did the soccer ball bounce across?",
+        "expected_answer": "the grass"
+      },
+      {
+        "question": "Where did the soccer ball bounce into?",
+        "expected_answer": "the equipment shed"
+      }
+    ],
+    "phenomenon": "Motion events"
+  },
+  {
+    "sentences": [
+      "The design review begins at 10:30 a.m. and ends at noon.",
+      "Elena will present the prototype during the review."
+    ],
+    "queries": [
+      {
+        "question": "When does the design review begin?",
+        "expected_answer": "At 10:30 a.m."
+      },
+      {
+        "question": "When does the design review end?",
+        "expected_answer": "At noon."
+      },
+      {
+        "question": "Who will present the prototype during the review?",
+        "expected_answer": "Elena."
+      }
+    ],
+    "phenomenon": "Temporal location"
+  },
+  {
+    "sentences": [
+      "The blue ferry reached Harbor Island on Friday.",
+      "It left the mainland before sunrise."
+    ],
+    "queries": [
+      {
+        "question": "When did the blue ferry reach Harbor Island?",
+        "expected_answer": "On Friday."
+      },
+      {
+        "question": "What left the mainland before sunrise?",
+        "expected_answer": "The blue ferry."
+      }
+    ],
+    "phenomenon": "Temporal location"
+  },
+  {
+    "sentences": [
+      "A cooking class runs from March 3 to March 7 at the community center.",
+      "The instructor covers bread making on the final day."
+    ],
+    "queries": [
+      {
+        "question": "When does the cooking class run?",
+        "expected_answer": "From March 3 to March 7."
+      },
+      {
+        "question": "Where does the cooking class run?",
+        "expected_answer": "At the community center."
+      },
+      {
+        "question": "When does the instructor cover bread making?",
+        "expected_answer": "On the final day."
+      }
+    ],
+    "phenomenon": "Temporal location"
+  },
+  {
+    "sentences": [
+      "Maya locked the bakery door before she counted the cash drawer."
+    ],
+    "queries": [
+      {
+        "question": "What did Maya do before she counted the cash drawer?",
+        "expected_answer": "She locked the bakery door."
+      },
+      {
+        "question": "When did Maya count the cash drawer?",
+        "expected_answer": "After she locked the bakery door."
+      }
+    ],
+    "phenomenon": "Temporal ordering"
+  },
+  {
+    "sentences": [
+      "The ferry left the island after the fog lifted."
+    ],
+    "queries": [
+      {
+        "question": "What happened after the fog lifted?",
+        "expected_answer": "The ferry left the island."
+      },
+      {
+        "question": "When did the fog lift?",
+        "expected_answer": "Before the ferry left the island."
+      }
+    ],
+    "phenomenon": "Temporal ordering"
+  },
+  {
+    "sentences": [
+      "During the thunderstorm, the hikers waited inside the ranger station."
+    ],
+    "queries": [
+      {
+        "question": "When did the hikers wait inside the ranger station?",
+        "expected_answer": "During the thunderstorm."
+      },
+      {
+        "question": "Where did the hikers wait during the thunderstorm?",
+        "expected_answer": "Inside the ranger station."
+      }
+    ],
+    "phenomenon": "Temporal ordering"
+  },
+  {
+    "sentences": [
+      "The documentary at the old cinema lasted two hours and fifteen minutes."
+    ],
+    "queries": [
+      {
+        "question": "How long did the documentary last?",
+        "expected_answer": "Two hours and fifteen minutes."
+      },
+      {
+        "question": "Where did the documentary play?",
+        "expected_answer": "At the old cinema."
+      },
+      {
+        "question": "Did the documentary last two hours and fifteen minutes?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Duration and time span"
+  },
+  {
+    "sentences": [
+      "Marisol lived in Lisbon for eighteen months before moving to Porto."
+    ],
+    "queries": [
+      {
+        "question": "How long did Marisol live in Lisbon?",
+        "expected_answer": "Eighteen months."
+      },
+      {
+        "question": "Where did Marisol live for eighteen months?",
+        "expected_answer": "Lisbon."
+      },
+      {
+        "question": "Where did Marisol move after living in Lisbon?",
+        "expected_answer": "Porto."
+      }
+    ],
+    "phenomenon": "Duration and time span"
+  },
+  {
+    "sentences": [
+      "The bakery kept the sourdough dough in the refrigerator from Tuesday evening until Thursday morning."
+    ],
+    "queries": [
+      {
+        "question": "When did the bakery start keeping the sourdough dough in the refrigerator?",
+        "expected_answer": "Tuesday evening."
+      },
+      {
+        "question": "Until when did the bakery keep the sourdough dough in the refrigerator?",
+        "expected_answer": "Thursday morning."
+      },
+      {
+        "question": "Where did the bakery keep the sourdough dough?",
+        "expected_answer": "In the refrigerator."
+      }
+    ],
+    "phenomenon": "Duration and time span"
+  },
+  {
+    "sentences": [
+      "Lena files the permit today.",
+      "Lena filed the invoice yesterday.",
+      "Lena will file the report tomorrow."
+    ],
+    "queries": [
+      {
+        "question": "What does Lena file today?",
+        "expected_answer": "the permit"
+      },
+      {
+        "question": "What did Lena file yesterday?",
+        "expected_answer": "the invoice"
+      },
+      {
+        "question": "What will Lena file tomorrow?",
+        "expected_answer": "the report"
+      }
+    ],
+    "phenomenon": "Tense"
+  },
+  {
+    "sentences": [
+      "The ferry crossed the bay at dawn.",
+      "The ferry crosses the river every noon.",
+      "The ferry will cross the canal tonight."
+    ],
+    "queries": [
+      {
+        "question": "When did the ferry cross the bay?",
+        "expected_answer": "at dawn"
+      },
+      {
+        "question": "What does the ferry cross every noon?",
+        "expected_answer": "the river"
+      },
+      {
+        "question": "What will the ferry cross tonight?",
+        "expected_answer": "the canal"
+      }
+    ],
+    "phenomenon": "Tense"
+  },
+  {
+    "sentences": [
+      "Marco baked rye bread last night.",
+      "Marco bakes muffins on Fridays.",
+      "Marco will bake a peach pie next week."
+    ],
+    "queries": [
+      {
+        "question": "What did Marco bake last night?",
+        "expected_answer": "rye bread"
+      },
+      {
+        "question": "When does Marco bake muffins?",
+        "expected_answer": "on Fridays"
+      },
+      {
+        "question": "What will Marco bake next week?",
+        "expected_answer": "a peach pie"
+      }
+    ],
+    "phenomenon": "Tense"
+  },
+  {
+    "sentences": [
+      "Maya is stirring the soup while the onions brown.",
+      "She has chopped the carrots already.",
+      "Last winter, she used to cook stew every Sunday."
+    ],
+    "queries": [
+      {
+        "question": "What is Maya doing now?",
+        "expected_answer": "She is stirring the soup."
+      },
+      {
+        "question": "What has Maya chopped already?",
+        "expected_answer": "The carrots."
+      },
+      {
+        "question": "When did Maya use to cook stew every Sunday?",
+        "expected_answer": "Last winter."
+      }
+    ],
+    "phenomenon": "Aspect"
+  },
+  {
+    "sentences": [
+      "The repair crew is replacing the broken tiles on the station roof.",
+      "By noon, the crew had sealed the main leak.",
+      "Before the renovation, rain dripped into the lobby after every storm."
+    ],
+    "queries": [
+      {
+        "question": "What is the repair crew replacing?",
+        "expected_answer": "The broken tiles on the station roof."
+      },
+      {
+        "question": "What had the crew sealed by noon?",
+        "expected_answer": "The main leak."
+      },
+      {
+        "question": "When did rain drip into the lobby?",
+        "expected_answer": "After every storm before the renovation."
+      }
+    ],
+    "phenomenon": "Aspect"
+  },
+  {
+    "sentences": [
+      "Jonas ran three laps around the track before breakfast.",
+      "His sister is jogging along the river path now.",
+      "In college, Jonas used to swim before sunrise."
+    ],
+    "queries": [
+      {
+        "question": "How many laps did Jonas run before breakfast?",
+        "expected_answer": "Three laps."
+      },
+      {
+        "question": "Where is his sister jogging now?",
+        "expected_answer": "Along the river path."
+      },
+      {
+        "question": "What did Jonas use to do before sunrise in college?",
+        "expected_answer": "Swim."
+      }
+    ],
+    "phenomenon": "Aspect"
+  },
+  {
+    "sentences": [
+      "Marta waters the balcony herbs every evening after dinner."
+    ],
+    "queries": [
+      {
+        "question": "Who waters the balcony herbs every evening?",
+        "expected_answer": "Marta."
+      },
+      {
+        "question": "When does Marta water the balcony herbs?",
+        "expected_answer": "Every evening after dinner."
+      },
+      {
+        "question": "What does Marta water every evening after dinner?",
+        "expected_answer": "The balcony herbs."
+      }
+    ],
+    "phenomenon": "Frequency and habituality"
+  },
+  {
+    "sentences": [
+      "The airport shuttle usually leaves the hotel at 6:15 a.m., but it left at 6:40 a.m. yesterday."
+    ],
+    "queries": [
+      {
+        "question": "What usually leaves the hotel at 6:15 a.m.?",
+        "expected_answer": "The airport shuttle."
+      },
+      {
+        "question": "When does the airport shuttle usually leave the hotel?",
+        "expected_answer": "At 6:15 a.m."
+      },
+      {
+        "question": "When did the airport shuttle leave yesterday?",
+        "expected_answer": "At 6:40 a.m."
+      }
+    ],
+    "phenomenon": "Frequency and habituality"
+  },
+  {
+    "sentences": [
+      "During the summer, the community choir rehearses twice a week in the old library."
+    ],
+    "queries": [
+      {
+        "question": "How often does the community choir rehearse during the summer?",
+        "expected_answer": "Twice a week."
+      },
+      {
+        "question": "Where does the community choir rehearse during the summer?",
+        "expected_answer": "In the old library."
+      },
+      {
+        "question": "Which group rehearses twice a week in the old library?",
+        "expected_answer": "The community choir."
+      }
+    ],
+    "phenomenon": "Frequency and habituality"
+  },
+  {
+    "sentences": [
+      "A cyclist stopped beside the fountain and tightened a loose helmet strap."
+    ],
+    "queries": [
+      {
+        "question": "Who stopped beside the fountain?",
+        "expected_answer": "A cyclist."
+      },
+      {
+        "question": "What did the cyclist tighten?",
+        "expected_answer": "A loose helmet strap."
+      }
+    ],
+    "phenomenon": "Existential quantification"
+  },
+  {
+    "sentences": [
+      "Someone left a handwritten note under the blue vase."
+    ],
+    "queries": [
+      {
+        "question": "Who left a handwritten note?",
+        "expected_answer": "Someone."
+      },
+      {
+        "question": "Where was the handwritten note left?",
+        "expected_answer": "Under the blue vase."
+      }
+    ],
+    "phenomenon": "Existential quantification"
+  },
+  {
+    "sentences": [
+      "There is a cracked mug on the second shelf of the pantry."
+    ],
+    "queries": [
+      {
+        "question": "What is on the second shelf of the pantry?",
+        "expected_answer": "A cracked mug."
+      },
+      {
+        "question": "Where is there a cracked mug?",
+        "expected_answer": "On the second shelf of the pantry."
+      },
+      {
+        "question": "Is there a cracked mug on the second shelf of the pantry?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Existential quantification"
+  },
+  {
+    "sentences": [
+      "Each baker in the morning class decorated a chocolate cake.",
+      "The instructor photographed every finished cake."
+    ],
+    "queries": [
+      {
+        "question": "Who decorated a chocolate cake?",
+        "expected_answer": "Each baker in the morning class."
+      },
+      {
+        "question": "What did each baker in the morning class decorate?",
+        "expected_answer": "A chocolate cake."
+      },
+      {
+        "question": "Did the instructor photograph every finished cake?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Universal quantification"
+  },
+  {
+    "sentences": [
+      "All passengers on the blue ferry wore orange wristbands.",
+      "A deckhand checked each wristband at the gate."
+    ],
+    "queries": [
+      {
+        "question": "Who wore orange wristbands?",
+        "expected_answer": "All passengers on the blue ferry."
+      },
+      {
+        "question": "What did all passengers on the blue ferry wear?",
+        "expected_answer": "Orange wristbands."
+      },
+      {
+        "question": "What did a deckhand check at the gate?",
+        "expected_answer": "Each wristband."
+      }
+    ],
+    "phenomenon": "Universal quantification"
+  },
+  {
+    "sentences": [
+      "Every seedling in the greenhouse received water during the heat wave.",
+      "The smallest seedling also got a shade label."
+    ],
+    "queries": [
+      {
+        "question": "What received water during the heat wave?",
+        "expected_answer": "Every seedling in the greenhouse."
+      },
+      {
+        "question": "Did all seedlings in the greenhouse receive water during the heat wave?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Which seedling got a shade label?",
+        "expected_answer": "The smallest seedling."
+      }
+    ],
+    "phenomenon": "Universal quantification"
+  },
+  {
+    "sentences": [
+      "Three lanterns hung above the garden gate during the evening party."
+    ],
+    "queries": [
+      {
+        "question": "How many lanterns hung above the garden gate?",
+        "expected_answer": "Three lanterns."
+      },
+      {
+        "question": "Where did three lanterns hang?",
+        "expected_answer": "Above the garden gate."
+      },
+      {
+        "question": "Did exactly three lanterns hang above the garden gate?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Cardinality and numerals"
+  },
+  {
+    "sentences": [
+      "Mira baked two loaves of rye bread before noon, and she packed them in a blue basket."
+    ],
+    "queries": [
+      {
+        "question": "How many loaves of rye bread did Mira bake?",
+        "expected_answer": "Two loaves."
+      },
+      {
+        "question": "When did Mira bake two loaves of rye bread?",
+        "expected_answer": "Before noon."
+      },
+      {
+        "question": "Did Mira bake more than one loaf of rye bread?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Cardinality and numerals"
+  },
+  {
+    "sentences": [
+      "About twenty hikers gathered near the waterfall after the fog lifted."
+    ],
+    "queries": [
+      {
+        "question": "Approximately how many hikers gathered near the waterfall?",
+        "expected_answer": "About twenty hikers."
+      },
+      {
+        "question": "Where did about twenty hikers gather?",
+        "expected_answer": "Near the waterfall."
+      },
+      {
+        "question": "Did about twenty hikers gather after the fog lifted?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Cardinality and numerals"
+  },
+  {
+    "sentences": [
+      "At least five students submitted their biology projects before noon.",
+      "The teacher placed the submitted projects on the front table."
+    ],
+    "queries": [
+      {
+        "question": "How many students submitted their biology projects before noon at minimum?",
+        "expected_answer": "At least five students."
+      },
+      {
+        "question": "Did at least four students submit their biology projects before noon?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Where did the teacher place the submitted projects?",
+        "expected_answer": "On the front table."
+      }
+    ],
+    "phenomenon": "At-least and at-most quantification"
+  },
+  {
+    "sentences": [
+      "No more than two delivery trucks may park behind the bakery during the morning rush.",
+      "A sign by the alley states the parking rule."
+    ],
+    "queries": [
+      {
+        "question": "How many delivery trucks may park behind the bakery at most during the morning rush?",
+        "expected_answer": "No more than two delivery trucks."
+      },
+      {
+        "question": "May three delivery trucks park behind the bakery during the morning rush?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Where is the sign that states the parking rule?",
+        "expected_answer": "By the alley."
+      }
+    ],
+    "phenomenon": "At-least and at-most quantification"
+  },
+  {
+    "sentences": [
+      "Fewer than ten seats remain open on the afternoon train to Harbor City.",
+      "The ticket clerk checked the seating chart at 3 p.m."
+    ],
+    "queries": [
+      {
+        "question": "How many seats remain open on the afternoon train to Harbor City?",
+        "expected_answer": "Fewer than ten seats."
+      },
+      {
+        "question": "Do ten seats remain open on the afternoon train to Harbor City?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "When did the ticket clerk check the seating chart?",
+        "expected_answer": "At 3 p.m."
+      }
+    ],
+    "phenomenon": "At-least and at-most quantification"
+  },
+  {
+    "sentences": [
+      "Most of the interns chose the morning workshop, but some interns signed up for the afternoon session."
+    ],
+    "queries": [
+      {
+        "question": "Who chose the morning workshop?",
+        "expected_answer": "Most of the interns."
+      },
+      {
+        "question": "Who signed up for the afternoon session?",
+        "expected_answer": "Some interns."
+      },
+      {
+        "question": "Did most of the interns choose the morning workshop?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Proportional and vague quantifiers"
+  },
+  {
+    "sentences": [
+      "At the lakeside picnic, few blankets stayed dry after the sudden rain.",
+      "Several coolers were moved under the pavilion."
+    ],
+    "queries": [
+      {
+        "question": "What stayed dry after the sudden rain?",
+        "expected_answer": "Few blankets."
+      },
+      {
+        "question": "What was moved under the pavilion?",
+        "expected_answer": "Several coolers."
+      },
+      {
+        "question": "Were few blankets dry after the rain?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Proportional and vague quantifiers"
+  },
+  {
+    "sentences": [
+      "Many runners crossed the finish line before noon, while only a few volunteers left the stadium early."
+    ],
+    "queries": [
+      {
+        "question": "Who crossed the finish line before noon?",
+        "expected_answer": "Many runners."
+      },
+      {
+        "question": "Who left the stadium early?",
+        "expected_answer": "Only a few volunteers."
+      },
+      {
+        "question": "When did many runners cross the finish line?",
+        "expected_answer": "Before noon."
+      }
+    ],
+    "phenomenon": "Proportional and vague quantifiers"
+  },
+  {
+    "sentences": [
+      "At the picnic, half of the watermelon was sliced before noon.",
+      "Three slices were saved for the children."
+    ],
+    "queries": [
+      {
+        "question": "What portion of the watermelon was sliced before noon?",
+        "expected_answer": "Half of the watermelon."
+      },
+      {
+        "question": "When was half of the watermelon sliced?",
+        "expected_answer": "Before noon."
+      },
+      {
+        "question": "How many slices were saved for the children?",
+        "expected_answer": "Three slices."
+      }
+    ],
+    "phenomenon": "Partitives and measure expressions"
+  },
+  {
+    "sentences": [
+      "Mira poured two liters of orange juice into the glass dispenser.",
+      "By sunset, the guests had drunk one liter of it."
+    ],
+    "queries": [
+      {
+        "question": "How much orange juice did Mira pour into the glass dispenser?",
+        "expected_answer": "Two liters."
+      },
+      {
+        "question": "What did the guests drink one liter of?",
+        "expected_answer": "Orange juice."
+      },
+      {
+        "question": "When had the guests drunk one liter of the orange juice?",
+        "expected_answer": "By sunset."
+      }
+    ],
+    "phenomenon": "Partitives and measure expressions"
+  },
+  {
+    "sentences": [
+      "For the soup, the chef added a cup of barley and a teaspoon of salt.",
+      "The barley went in before the carrots."
+    ],
+    "queries": [
+      {
+        "question": "How much barley did the chef add?",
+        "expected_answer": "A cup."
+      },
+      {
+        "question": "How much salt did the chef add?",
+        "expected_answer": "A teaspoon."
+      },
+      {
+        "question": "What went in before the carrots?",
+        "expected_answer": "The barley."
+      }
+    ],
+    "phenomenon": "Partitives and measure expressions"
+  },
+  {
+    "sentences": [
+      "The interns each prepared a separate budget report before noon.",
+      "After lunch, the interns met as a group in the glass conference room."
+    ],
+    "queries": [
+      {
+        "question": "What did each intern prepare?",
+        "expected_answer": "A separate budget report."
+      },
+      {
+        "question": "Where did the interns meet as a group?",
+        "expected_answer": "In the glass conference room."
+      },
+      {
+        "question": "Did the interns prepare one shared budget report?",
+        "expected_answer": "No, each intern prepared a separate budget report."
+      }
+    ],
+    "phenomenon": "Distributive and collective readings"
+  },
+  {
+    "sentences": [
+      "The hikers each filled a water bottle at the spring.",
+      "Near sunset, the hikers formed a circle around the campfire."
+    ],
+    "queries": [
+      {
+        "question": "What did each hiker fill?",
+        "expected_answer": "A water bottle."
+      },
+      {
+        "question": "What did the hikers form near sunset?",
+        "expected_answer": "A circle around the campfire."
+      },
+      {
+        "question": "Did the hikers form the circle together?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Distributive and collective readings"
+  },
+  {
+    "sentences": [
+      "The twins each chose a different postcard from the rack.",
+      "Then the twins lifted the heavy suitcase together onto the train."
+    ],
+    "queries": [
+      {
+        "question": "What did each twin choose?",
+        "expected_answer": "A different postcard from the rack."
+      },
+      {
+        "question": "What did the twins lift together?",
+        "expected_answer": "The heavy suitcase."
+      },
+      {
+        "question": "Where did the twins lift the heavy suitcase?",
+        "expected_answer": "Onto the train."
+      }
+    ],
+    "phenomenon": "Distributive and collective readings"
+  },
+  {
+    "sentences": [
+      "Three chefs cooked five dishes for the hotel banquet."
+    ],
+    "queries": [
+      {
+        "question": "How many chefs cooked dishes for the hotel banquet?",
+        "expected_answer": "Three chefs."
+      },
+      {
+        "question": "How many dishes did the chefs cook for the hotel banquet?",
+        "expected_answer": "Five dishes."
+      },
+      {
+        "question": "Did the chefs cook five dishes in total?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Cumulative readings"
+  },
+  {
+    "sentences": [
+      "The four volunteers planted twelve saplings along the river trail."
+    ],
+    "queries": [
+      {
+        "question": "Who planted saplings along the river trail?",
+        "expected_answer": "The four volunteers."
+      },
+      {
+        "question": "How many saplings did the volunteers plant along the river trail?",
+        "expected_answer": "Twelve saplings."
+      },
+      {
+        "question": "Where did the volunteers plant the saplings?",
+        "expected_answer": "Along the river trail."
+      }
+    ],
+    "phenomenon": "Cumulative readings"
+  },
+  {
+    "sentences": [
+      "Two editors reviewed nine articles before the magazine went to print."
+    ],
+    "queries": [
+      {
+        "question": "How many editors reviewed articles?",
+        "expected_answer": "Two editors."
+      },
+      {
+        "question": "What did the editors review?",
+        "expected_answer": "Nine articles."
+      },
+      {
+        "question": "When did the editors review the articles?",
+        "expected_answer": "Before the magazine went to print."
+      }
+    ],
+    "phenomenon": "Cumulative readings"
+  },
+  {
+    "sentences": [
+      "Owls hunt at night.",
+      "An owl uses sharp talons to catch prey."
+    ],
+    "queries": [
+      {
+        "question": "When do owls hunt?",
+        "expected_answer": "At night."
+      },
+      {
+        "question": "What does an owl use to catch prey?",
+        "expected_answer": "Sharp talons."
+      }
+    ],
+    "phenomenon": "Generic statements"
+  },
+  {
+    "sentences": [
+      "A librarian organizes books for readers.",
+      "Librarians often answer questions at the desk."
+    ],
+    "queries": [
+      {
+        "question": "What does a librarian organize?",
+        "expected_answer": "Books."
+      },
+      {
+        "question": "Where do librarians often answer questions?",
+        "expected_answer": "At the desk."
+      }
+    ],
+    "phenomenon": "Generic statements"
+  },
+  {
+    "sentences": [
+      "Desert plants store water in thick stems.",
+      "A cactus survives long dry seasons."
+    ],
+    "queries": [
+      {
+        "question": "Where do desert plants store water?",
+        "expected_answer": "In thick stems."
+      },
+      {
+        "question": "What does a cactus survive?",
+        "expected_answer": "Long dry seasons."
+      }
+    ],
+    "phenomenon": "Generic statements"
+  },
+  {
+    "sentences": [
+      "At the observatory, the telescope beside the east window was covered with a blue cloth.",
+      "Mira adjusted this telescope before the evening tour began."
+    ],
+    "queries": [
+      {
+        "question": "Which telescope was covered with a blue cloth?",
+        "expected_answer": "The telescope beside the east window."
+      },
+      {
+        "question": "What did Mira adjust before the evening tour began?",
+        "expected_answer": "This telescope."
+      },
+      {
+        "question": "Where was the telescope located?",
+        "expected_answer": "Beside the east window."
+      }
+    ],
+    "phenomenon": "Definiteness and uniqueness"
+  },
+  {
+    "sentences": [
+      "A stray cat wandered into the bakery during the rain.",
+      "The cat curled up under the front counter."
+    ],
+    "queries": [
+      {
+        "question": "What wandered into the bakery during the rain?",
+        "expected_answer": "A stray cat."
+      },
+      {
+        "question": "Where did the cat curl up?",
+        "expected_answer": "Under the front counter."
+      },
+      {
+        "question": "Which cat curled up under the front counter?",
+        "expected_answer": "The stray cat that wandered into the bakery."
+      }
+    ],
+    "phenomenon": "Definiteness and uniqueness"
+  },
+  {
+    "sentences": [
+      "In the mayor's office, the red folder contained the final budget report.",
+      "This folder was locked in the cabinet after the meeting."
+    ],
+    "queries": [
+      {
+        "question": "What contained the final budget report?",
+        "expected_answer": "The red folder."
+      },
+      {
+        "question": "Where was this folder locked after the meeting?",
+        "expected_answer": "In the cabinet."
+      },
+      {
+        "question": "Which folder was locked in the cabinet?",
+        "expected_answer": "The red folder."
+      }
+    ],
+    "phenomenon": "Definiteness and uniqueness"
+  },
+  {
+    "sentences": [
+      "Mara is searching the library catalog for a blue cookbook she saw last week, but she cannot remember its title."
+    ],
+    "queries": [
+      {
+        "question": "What is Mara searching for?",
+        "expected_answer": "a blue cookbook she saw last week"
+      },
+      {
+        "question": "Did Mara see the cookbook last week?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Does Mara remember the cookbook's title?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Indefiniteness and specificity"
+  },
+  {
+    "sentences": [
+      "During the workshop, the instructor said, \"Please borrow a marker from the supply table before the next activity.\""
+    ],
+    "queries": [
+      {
+        "question": "What did the instructor ask participants to borrow?",
+        "expected_answer": "a marker from the supply table"
+      },
+      {
+        "question": "Where should the marker be borrowed from?",
+        "expected_answer": "the supply table"
+      },
+      {
+        "question": "Did the instructor identify a particular marker?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Indefiniteness and specificity"
+  },
+  {
+    "sentences": [
+      "A violinist from the city orchestra left a black umbrella in the rehearsal hall after practice."
+    ],
+    "queries": [
+      {
+        "question": "Who left a black umbrella in the rehearsal hall?",
+        "expected_answer": "a violinist from the city orchestra"
+      },
+      {
+        "question": "What did the violinist leave in the rehearsal hall?",
+        "expected_answer": "a black umbrella"
+      },
+      {
+        "question": "Where was the umbrella left?",
+        "expected_answer": "in the rehearsal hall"
+      }
+    ],
+    "phenomenon": "Indefiniteness and specificity"
+  },
+  {
+    "sentences": [
+      "Mira unpacked the blue vase and placed it on the mantel.",
+      "Her brother admired it after dinner."
+    ],
+    "queries": [
+      {
+        "question": "What did Mira place on the mantel?",
+        "expected_answer": "the blue vase"
+      },
+      {
+        "question": "Who admired the blue vase after dinner?",
+        "expected_answer": "Mira's brother"
+      },
+      {
+        "question": "Where did Mira place the blue vase?",
+        "expected_answer": "on the mantel"
+      }
+    ],
+    "phenomenon": "Anaphora and pronoun reference"
+  },
+  {
+    "sentences": [
+      "Jonas emailed Priya because she had requested the sales figures.",
+      "He attached them before lunch."
+    ],
+    "queries": [
+      {
+        "question": "Who had requested the sales figures?",
+        "expected_answer": "Priya"
+      },
+      {
+        "question": "Who attached the sales figures before lunch?",
+        "expected_answer": "Jonas"
+      },
+      {
+        "question": "What did Jonas attach before lunch?",
+        "expected_answer": "the sales figures"
+      }
+    ],
+    "phenomenon": "Anaphora and pronoun reference"
+  },
+  {
+    "sentences": [
+      "The young fox slipped into the shed when it started raining.",
+      "Its paws left muddy prints near the door."
+    ],
+    "queries": [
+      {
+        "question": "What slipped into the shed?",
+        "expected_answer": "the young fox"
+      },
+      {
+        "question": "When did the young fox slip into the shed?",
+        "expected_answer": "when it started raining"
+      },
+      {
+        "question": "Whose paws left muddy prints near the door?",
+        "expected_answer": "the young fox's paws"
+      }
+    ],
+    "phenomenon": "Anaphora and pronoun reference"
+  },
+  {
+    "sentences": [
+      "After the failed rehearsal, Mina blamed herself for missing the cue.",
+      "Later, the director thanked Mina for staying late."
+    ],
+    "queries": [
+      {
+        "question": "Who did Mina blame?",
+        "expected_answer": "herself"
+      },
+      {
+        "question": "Why did Mina blame herself?",
+        "expected_answer": "for missing the cue"
+      },
+      {
+        "question": "Who thanked Mina?",
+        "expected_answer": "the director"
+      }
+    ],
+    "phenomenon": "Reflexives and reciprocals"
+  },
+  {
+    "sentences": [
+      "During the rescue drill, the two lifeguards tied ropes around each other.",
+      "A trainer watched the drill from the pier."
+    ],
+    "queries": [
+      {
+        "question": "Who tied ropes around each other?",
+        "expected_answer": "the two lifeguards"
+      },
+      {
+        "question": "What did the lifeguards tie around each other?",
+        "expected_answer": "ropes"
+      },
+      {
+        "question": "Where did the trainer watch the drill from?",
+        "expected_answer": "the pier"
+      }
+    ],
+    "phenomenon": "Reflexives and reciprocals"
+  },
+  {
+    "sentences": [
+      "In the hotel lobby, the tall glass panels reflected themselves in the polished floor.",
+      "A blue carpet ran between the panels."
+    ],
+    "queries": [
+      {
+        "question": "What reflected themselves in the polished floor?",
+        "expected_answer": "the tall glass panels"
+      },
+      {
+        "question": "Where did the glass panels reflect themselves?",
+        "expected_answer": "in the polished floor"
+      },
+      {
+        "question": "What ran between the panels?",
+        "expected_answer": "a blue carpet"
+      }
+    ],
+    "phenomenon": "Reflexives and reciprocals"
+  },
+  {
+    "sentences": [
+      "During the radio check at 9:00, Captain Imani said to Omar, \"I am here now, beside the old lighthouse.\""
+    ],
+    "queries": [
+      {
+        "question": "Who said, \"I am here now\"?",
+        "expected_answer": "Captain Imani."
+      },
+      {
+        "question": "Where was Captain Imani when she spoke?",
+        "expected_answer": "Beside the old lighthouse."
+      },
+      {
+        "question": "When did Captain Imani say she was there?",
+        "expected_answer": "At 9:00."
+      }
+    ],
+    "phenomenon": "Deixis"
+  },
+  {
+    "sentences": [
+      "In the classroom, Mr. Vale pointed to a blue folder on the front desk and told Nina, \"Bring that folder to me after the quiz.\""
+    ],
+    "queries": [
+      {
+        "question": "Which folder did Mr. Vale refer to as \"that folder\"?",
+        "expected_answer": "The blue folder on the front desk."
+      },
+      {
+        "question": "Who was told to bring the folder?",
+        "expected_answer": "Nina."
+      },
+      {
+        "question": "To whom was Nina supposed to bring the folder?",
+        "expected_answer": "Mr. Vale."
+      }
+    ],
+    "phenomenon": "Deixis"
+  },
+  {
+    "sentences": [
+      "While standing in the greenhouse on Tuesday, Leila called her brother and said, \"This place feels warmer today.\""
+    ],
+    "queries": [
+      {
+        "question": "What place did Leila call \"this place\"?",
+        "expected_answer": "The greenhouse."
+      },
+      {
+        "question": "When did Leila say the place felt warmer?",
+        "expected_answer": "On Tuesday."
+      },
+      {
+        "question": "Who did Leila call?",
+        "expected_answer": "Her brother."
+      }
+    ],
+    "phenomenon": "Deixis"
+  },
+  {
+    "sentences": [
+      "The lantern in the boathouse is not lit.",
+      "The red flashlight is on."
+    ],
+    "queries": [
+      {
+        "question": "Is the lantern in the boathouse lit?",
+        "expected_answer": "No, the lantern in the boathouse is not lit."
+      },
+      {
+        "question": "What is on?",
+        "expected_answer": "The red flashlight is on."
+      }
+    ],
+    "phenomenon": "Negation"
+  },
+  {
+    "sentences": [
+      "Nobody entered the rehearsal room after noon.",
+      "The violinist waited in the hallway until two o'clock."
+    ],
+    "queries": [
+      {
+        "question": "Who entered the rehearsal room after noon?",
+        "expected_answer": "Nobody entered the rehearsal room after noon."
+      },
+      {
+        "question": "Where did the violinist wait?",
+        "expected_answer": "The violinist waited in the hallway."
+      }
+    ],
+    "phenomenon": "Negation"
+  },
+  {
+    "sentences": [
+      "Marisol did not taste the soup before serving it.",
+      "Her assistant sprinkled basil over the bowls."
+    ],
+    "queries": [
+      {
+        "question": "Did Marisol taste the soup before serving it?",
+        "expected_answer": "No, Marisol did not taste the soup before serving it."
+      },
+      {
+        "question": "What did the assistant sprinkle over the bowls?",
+        "expected_answer": "Basil."
+      }
+    ],
+    "phenomenon": "Negation"
+  },
+  {
+    "sentences": [
+      "During the dawn survey, the ranger did not record any wolf tracks near the northern creek."
+    ],
+    "queries": [
+      {
+        "question": "Did the ranger record any wolf tracks near the northern creek?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Where did the ranger not record any wolf tracks?",
+        "expected_answer": "Near the northern creek."
+      }
+    ],
+    "phenomenon": "Negative polarity and minimizers"
+  },
+  {
+    "sentences": [
+      "Marta never lifted a finger to organize the archive after the flood."
+    ],
+    "queries": [
+      {
+        "question": "Who never lifted a finger to organize the archive?",
+        "expected_answer": "Marta."
+      },
+      {
+        "question": "What did Marta never lift a finger to organize?",
+        "expected_answer": "The archive."
+      }
+    ],
+    "phenomenon": "Negative polarity and minimizers"
+  },
+  {
+    "sentences": [
+      "The kitchen staff hardly used any butter in the vegan stew."
+    ],
+    "queries": [
+      {
+        "question": "Did the kitchen staff use much butter in the vegan stew?",
+        "expected_answer": "No, they hardly used any butter."
+      },
+      {
+        "question": "What did the kitchen staff hardly use in the vegan stew?",
+        "expected_answer": "Any butter."
+      },
+      {
+        "question": "Where did the kitchen staff hardly use any butter?",
+        "expected_answer": "In the vegan stew."
+      }
+    ],
+    "phenomenon": "Negative polarity and minimizers"
+  },
+  {
+    "sentences": [
+      "The museum guide said the ancient lock is not impossible to open, but it requires two brass keys."
+    ],
+    "queries": [
+      {
+        "question": "Is the ancient lock impossible to open?",
+        "expected_answer": "No, it is not impossible to open."
+      },
+      {
+        "question": "What does the ancient lock require?",
+        "expected_answer": "It requires two brass keys."
+      }
+    ],
+    "phenomenon": "Double negation and negative concord"
+  },
+  {
+    "sentences": [
+      "In the local dialect described by the linguist, \"Nobody never feeds the goats\" means that nobody ever feeds the goats."
+    ],
+    "queries": [
+      {
+        "question": "In the local dialect, who feeds the goats?",
+        "expected_answer": "Nobody feeds the goats."
+      },
+      {
+        "question": "What does \"Nobody never feeds the goats\" mean in the local dialect?",
+        "expected_answer": "It means that nobody ever feeds the goats."
+      }
+    ],
+    "phenomenon": "Double negation and negative concord"
+  },
+  {
+    "sentences": [
+      "The coach warned that the runner was not unprepared for the steep race; she had trained on hills all winter."
+    ],
+    "queries": [
+      {
+        "question": "Was the runner completely unprepared for the steep race?",
+        "expected_answer": "No, she was not unprepared."
+      },
+      {
+        "question": "Where had the runner trained all winter?",
+        "expected_answer": "She had trained on hills."
+      }
+    ],
+    "phenomenon": "Double negation and negative concord"
+  },
+  {
+    "sentences": [
+      "Maya can swim across the indoor pool, but she cannot dive from the high board."
+    ],
+    "queries": [
+      {
+        "question": "Can Maya swim across the indoor pool?",
+        "expected_answer": "Yes, Maya can swim across the indoor pool."
+      },
+      {
+        "question": "Can Maya dive from the high board?",
+        "expected_answer": "No, Maya cannot dive from the high board."
+      },
+      {
+        "question": "Where can Maya swim?",
+        "expected_answer": "Across the indoor pool."
+      }
+    ],
+    "phenomenon": "Modality of ability"
+  },
+  {
+    "sentences": [
+      "The rear gate is able to unlock with a brass key after sunset."
+    ],
+    "queries": [
+      {
+        "question": "What is able to unlock with a brass key?",
+        "expected_answer": "The rear gate."
+      },
+      {
+        "question": "How is the rear gate able to unlock?",
+        "expected_answer": "With a brass key."
+      },
+      {
+        "question": "When is the rear gate able to unlock with a brass key?",
+        "expected_answer": "After sunset."
+      }
+    ],
+    "phenomenon": "Modality of ability"
+  },
+  {
+    "sentences": [
+      "Because the software was updated, the warehouse robot can sort fragile packages by size."
+    ],
+    "queries": [
+      {
+        "question": "Can the warehouse robot sort fragile packages by size?",
+        "expected_answer": "Yes, the warehouse robot can sort fragile packages by size."
+      },
+      {
+        "question": "What can the warehouse robot sort?",
+        "expected_answer": "Fragile packages."
+      },
+      {
+        "question": "Why can the warehouse robot sort fragile packages by size?",
+        "expected_answer": "Because the software was updated."
+      }
+    ],
+    "phenomenon": "Modality of ability"
+  },
+  {
+    "sentences": [
+      "The sky over Briar Lake is dark, and it may rain tonight.",
+      "If it rains, the outdoor concert will move into the town hall."
+    ],
+    "queries": [
+      {
+        "question": "What may happen tonight?",
+        "expected_answer": "It may rain tonight."
+      },
+      {
+        "question": "Where will the concert move if it rains?",
+        "expected_answer": "Into the town hall."
+      }
+    ],
+    "phenomenon": "Modality of possibility and probability"
+  },
+  {
+    "sentences": [
+      "The courier left the depot before dawn, so the package might arrive early.",
+      "The tracking page still lists the delivery window as noon to four."
+    ],
+    "queries": [
+      {
+        "question": "What might arrive early?",
+        "expected_answer": "The package."
+      },
+      {
+        "question": "When might the package arrive?",
+        "expected_answer": "Early."
+      },
+      {
+        "question": "What delivery window does the tracking page list?",
+        "expected_answer": "Noon to four."
+      }
+    ],
+    "phenomenon": "Modality of possibility and probability"
+  },
+  {
+    "sentences": [
+      "A fallen tree was reported near mile marker 18.",
+      "Because of the report, the forest road is likely closed."
+    ],
+    "queries": [
+      {
+        "question": "Which road is likely closed?",
+        "expected_answer": "The forest road."
+      },
+      {
+        "question": "Why is the forest road likely closed?",
+        "expected_answer": "Because a fallen tree was reported near mile marker 18."
+      }
+    ],
+    "phenomenon": "Modality of possibility and probability"
+  },
+  {
+    "sentences": [
+      "Before entering the construction site, every visitor must wear a hard hat.",
+      "The safety officer checks helmets at the gate."
+    ],
+    "queries": [
+      {
+        "question": "What must every visitor wear before entering the construction site?",
+        "expected_answer": "A hard hat."
+      },
+      {
+        "question": "When must every visitor wear a hard hat?",
+        "expected_answer": "Before entering the construction site."
+      },
+      {
+        "question": "Who checks helmets at the gate?",
+        "expected_answer": "The safety officer."
+      }
+    ],
+    "phenomenon": "Modality of necessity and obligation"
+  },
+  {
+    "sentences": [
+      "The scholarship application has to be submitted by Friday.",
+      "A recommendation letter needs to be attached to the application."
+    ],
+    "queries": [
+      {
+        "question": "What has to be submitted by Friday?",
+        "expected_answer": "The scholarship application."
+      },
+      {
+        "question": "When does the scholarship application have to be submitted?",
+        "expected_answer": "By Friday."
+      },
+      {
+        "question": "What needs to be attached to the application?",
+        "expected_answer": "A recommendation letter."
+      }
+    ],
+    "phenomenon": "Modality of necessity and obligation"
+  },
+  {
+    "sentences": [
+      "Because the ferry leaves at dawn, Mira needs to pack her bag tonight.",
+      "Her brother can load the car in the morning."
+    ],
+    "queries": [
+      {
+        "question": "Who needs to pack her bag tonight?",
+        "expected_answer": "Mira."
+      },
+      {
+        "question": "What does Mira need to do tonight?",
+        "expected_answer": "Pack her bag."
+      },
+      {
+        "question": "Why does Mira need to pack her bag tonight?",
+        "expected_answer": "Because the ferry leaves at dawn."
+      }
+    ],
+    "phenomenon": "Modality of necessity and obligation"
+  },
+  {
+    "sentences": [
+      "Museum guests may take photos in the lobby, but they must not use flash near the paintings."
+    ],
+    "queries": [
+      {
+        "question": "Where may museum guests take photos?",
+        "expected_answer": "In the lobby."
+      },
+      {
+        "question": "What must museum guests not use near the paintings?",
+        "expected_answer": "Flash."
+      },
+      {
+        "question": "May museum guests use flash near the paintings?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Permission and prohibition"
+  },
+  {
+    "sentences": [
+      "During the exam, students can use a printed formula sheet.",
+      "They are not allowed to open any messaging apps."
+    ],
+    "queries": [
+      {
+        "question": "What can students use during the exam?",
+        "expected_answer": "A printed formula sheet."
+      },
+      {
+        "question": "When can students use a printed formula sheet?",
+        "expected_answer": "During the exam."
+      },
+      {
+        "question": "Are students allowed to open messaging apps?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Permission and prohibition"
+  },
+  {
+    "sentences": [
+      "At the community kitchen, volunteers are authorized to unlock the pantry before 7 a.m.",
+      "Only the shift supervisor may approve extra food deliveries."
+    ],
+    "queries": [
+      {
+        "question": "Who is authorized to unlock the pantry before 7 a.m.?",
+        "expected_answer": "Volunteers."
+      },
+      {
+        "question": "What are volunteers authorized to unlock before 7 a.m.?",
+        "expected_answer": "The pantry."
+      },
+      {
+        "question": "Who may approve extra food deliveries?",
+        "expected_answer": "Only the shift supervisor."
+      }
+    ],
+    "phenomenon": "Permission and prohibition"
+  },
+  {
+    "sentences": [
+      "The trail is muddy and the ranger sees fresh boot prints, so the hikers may be near the ridge.",
+      "Visitors may camp near the ridge only with a permit."
+    ],
+    "queries": [
+      {
+        "question": "Where may the hikers be, according to the ranger's inference?",
+        "expected_answer": "Near the ridge."
+      },
+      {
+        "question": "What do visitors need in order to camp near the ridge?",
+        "expected_answer": "A permit."
+      },
+      {
+        "question": "Does the camping sentence use may to state permission?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Epistemic versus deontic modal readings"
+  },
+  {
+    "sentences": [
+      "The conference room door is closed and voices are coming from inside, so the managers could be meeting now.",
+      "Interns could use the conference room after three, according to the office policy."
+    ],
+    "queries": [
+      {
+        "question": "Who could be meeting now?",
+        "expected_answer": "The managers."
+      },
+      {
+        "question": "Why could the managers be meeting now?",
+        "expected_answer": "Because the conference room door is closed and voices are coming from inside."
+      },
+      {
+        "question": "When could interns use the conference room according to the office policy?",
+        "expected_answer": "After three."
+      }
+    ],
+    "phenomenon": "Epistemic versus deontic modal readings"
+  },
+  {
+    "sentences": [
+      "The soup smells smoky, so the onions must have burned.",
+      "In the cooking class, students must wash every knife before putting it away."
+    ],
+    "queries": [
+      {
+        "question": "What must have burned?",
+        "expected_answer": "The onions."
+      },
+      {
+        "question": "Why must the onions have burned?",
+        "expected_answer": "Because the soup smells smoky."
+      },
+      {
+        "question": "What must students wash before putting it away?",
+        "expected_answer": "Every knife."
+      }
+    ],
+    "phenomenon": "Epistemic versus deontic modal readings"
+  },
+  {
+    "sentences": [
+      "Nora's sunflower grew to 142 centimeters, while the marigold grew to 38 centimeters."
+    ],
+    "queries": [
+      {
+        "question": "Which plant grew taller?",
+        "expected_answer": "Nora's sunflower grew taller."
+      },
+      {
+        "question": "How tall did the marigold grow?",
+        "expected_answer": "38 centimeters."
+      },
+      {
+        "question": "Did the sunflower grow more than 100 centimeters tall?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Comparison of inequality"
+  },
+  {
+    "sentences": [
+      "The express train reached the coast in 3 hours, but the regional bus took 5 hours to reach the same place."
+    ],
+    "queries": [
+      {
+        "question": "Which vehicle took less time to reach the coast?",
+        "expected_answer": "The express train."
+      },
+      {
+        "question": "How long did the regional bus take?",
+        "expected_answer": "5 hours."
+      },
+      {
+        "question": "Did the bus take longer than the train?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Comparison of inequality"
+  },
+  {
+    "sentences": [
+      "At the bake sale, the lemon tart cost 7 dollars, and the chocolate loaf cost 11 dollars."
+    ],
+    "queries": [
+      {
+        "question": "Which item was more expensive?",
+        "expected_answer": "The chocolate loaf."
+      },
+      {
+        "question": "How much did the lemon tart cost?",
+        "expected_answer": "7 dollars."
+      },
+      {
+        "question": "Was the lemon tart cheaper than the chocolate loaf?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Comparison of inequality"
+  },
+  {
+    "sentences": [
+      "The blue scarf and the gray scarf are the same length, but the blue scarf is softer."
+    ],
+    "queries": [
+      {
+        "question": "Which scarf is softer?",
+        "expected_answer": "The blue scarf."
+      },
+      {
+        "question": "Are the blue scarf and the gray scarf the same length?",
+        "expected_answer": "Yes, they are the same length."
+      },
+      {
+        "question": "What is the same about the two scarves?",
+        "expected_answer": "Their length."
+      }
+    ],
+    "phenomenon": "Equality and similarity comparison"
+  },
+  {
+    "sentences": [
+      "The scanned receipt is as legible as the paper receipt, though its corners are darker."
+    ],
+    "queries": [
+      {
+        "question": "What is as legible as the paper receipt?",
+        "expected_answer": "The scanned receipt."
+      },
+      {
+        "question": "Is the scanned receipt as legible as the paper receipt?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "What is darker on the scanned receipt?",
+        "expected_answer": "Its corners."
+      }
+    ],
+    "phenomenon": "Equality and similarity comparison"
+  },
+  {
+    "sentences": [
+      "At the rehearsal, Margo's violin tone sounded like Elena's, while Theo's tone sounded harsher."
+    ],
+    "queries": [
+      {
+        "question": "Whose violin tone did Margo's tone sound like?",
+        "expected_answer": "Elena's."
+      },
+      {
+        "question": "Whose tone sounded harsher?",
+        "expected_answer": "Theo's tone."
+      },
+      {
+        "question": "Did Margo's violin tone resemble Elena's?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Equality and similarity comparison"
+  },
+  {
+    "sentences": [
+      "Among the three interns, Priya submitted the earliest report.",
+      "Jon submitted his report after Priya but before Mateo."
+    ],
+    "queries": [
+      {
+        "question": "Who submitted the earliest report among the three interns?",
+        "expected_answer": "Priya."
+      },
+      {
+        "question": "Did Mateo submit his report earliest?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Superlatives and extremes"
+  },
+  {
+    "sentences": [
+      "At the fruit stand, the mango basket is the heaviest crate.",
+      "The apple crate is lighter than the mango basket, and the pear crate is lighter than the apple crate."
+    ],
+    "queries": [
+      {
+        "question": "Which crate is the heaviest at the fruit stand?",
+        "expected_answer": "The mango basket."
+      },
+      {
+        "question": "What is lighter than the apple crate?",
+        "expected_answer": "The pear crate."
+      },
+      {
+        "question": "Is the apple crate the heaviest crate?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Superlatives and extremes"
+  },
+  {
+    "sentences": [
+      "The red canoe is the fastest boat in the harbor race.",
+      "The blue dinghy finished behind the yellow skiff."
+    ],
+    "queries": [
+      {
+        "question": "Which boat is the fastest in the harbor race?",
+        "expected_answer": "The red canoe."
+      },
+      {
+        "question": "Was the blue dinghy the fastest boat?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Superlatives and extremes"
+  },
+  {
+    "sentences": [
+      "In the city marathon, Noor crossed the finish line first, Pablo finished second, and Mei finished third."
+    ],
+    "queries": [
+      {
+        "question": "Who finished first in the city marathon?",
+        "expected_answer": "Noor"
+      },
+      {
+        "question": "Which position did Pablo finish in?",
+        "expected_answer": "second"
+      },
+      {
+        "question": "Who finished third in the city marathon?",
+        "expected_answer": "Mei"
+      }
+    ],
+    "phenomenon": "Ordinals and ranking"
+  },
+  {
+    "sentences": [
+      "The hiking guide listed the waterfall as the first stop, the old mill as the second stop, and the ridge lookout as the third stop."
+    ],
+    "queries": [
+      {
+        "question": "What was the first stop in the hiking guide?",
+        "expected_answer": "the waterfall"
+      },
+      {
+        "question": "Which stop was the old mill?",
+        "expected_answer": "the second stop"
+      },
+      {
+        "question": "What was the third stop in the hiking guide?",
+        "expected_answer": "the ridge lookout"
+      }
+    ],
+    "phenomenon": "Ordinals and ranking"
+  },
+  {
+    "sentences": [
+      "During the spelling contest, the first round used animal words.",
+      "The second round used plant words, and the third round used weather words."
+    ],
+    "queries": [
+      {
+        "question": "Which round used plant words?",
+        "expected_answer": "the second round"
+      },
+      {
+        "question": "What kind of words did the first round use?",
+        "expected_answer": "animal words"
+      },
+      {
+        "question": "Which round used weather words?",
+        "expected_answer": "the third round"
+      }
+    ],
+    "phenomenon": "Ordinals and ranking"
+  },
+  {
+    "sentences": [
+      "The soup in the blue pot is very hot, but the stew in the clay bowl is only mildly warm."
+    ],
+    "queries": [
+      {
+        "question": "What is very hot?",
+        "expected_answer": "The soup in the blue pot."
+      },
+      {
+        "question": "How warm is the stew in the clay bowl?",
+        "expected_answer": "Only mildly warm."
+      },
+      {
+        "question": "Is the soup in the blue pot very hot?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Degree modification"
+  },
+  {
+    "sentences": [
+      "For the intern, the database cleanup became extremely tedious after lunch."
+    ],
+    "queries": [
+      {
+        "question": "What became extremely tedious?",
+        "expected_answer": "The database cleanup."
+      },
+      {
+        "question": "How tedious did the database cleanup become?",
+        "expected_answer": "Extremely tedious."
+      },
+      {
+        "question": "When did the database cleanup become extremely tedious?",
+        "expected_answer": "After lunch."
+      }
+    ],
+    "phenomenon": "Degree modification"
+  },
+  {
+    "sentences": [
+      "The mountain trail looked rather narrow near the ridge, though the campsite path stayed fairly wide."
+    ],
+    "queries": [
+      {
+        "question": "Where did the mountain trail look rather narrow?",
+        "expected_answer": "Near the ridge."
+      },
+      {
+        "question": "How narrow did the mountain trail look near the ridge?",
+        "expected_answer": "Rather narrow."
+      },
+      {
+        "question": "How wide did the campsite path stay?",
+        "expected_answer": "Fairly wide."
+      }
+    ],
+    "phenomenon": "Degree modification"
+  },
+  {
+    "sentences": [
+      "The shipping clerk recorded the crate's weight as exactly 18 kilograms."
+    ],
+    "queries": [
+      {
+        "question": "What was the crate's weight?",
+        "expected_answer": "Exactly 18 kilograms."
+      },
+      {
+        "question": "Was the crate's weight recorded exactly?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "How many kilograms did the crate weigh?",
+        "expected_answer": "18 kilograms."
+      }
+    ],
+    "phenomenon": "Approximation and precision"
+  },
+  {
+    "sentences": [
+      "About 75 guests came to the rooftop reception before sunset."
+    ],
+    "queries": [
+      {
+        "question": "How many guests came to the rooftop reception?",
+        "expected_answer": "About 75 guests."
+      },
+      {
+        "question": "Was the number of guests exact?",
+        "expected_answer": "No, it was approximate."
+      },
+      {
+        "question": "Which event had about 75 guests?",
+        "expected_answer": "The rooftop reception."
+      }
+    ],
+    "phenomenon": "Approximation and precision"
+  },
+  {
+    "sentences": [
+      "The hikers needed roughly four hours to reach the lakeside cabin."
+    ],
+    "queries": [
+      {
+        "question": "How long did the hikers need to reach the lakeside cabin?",
+        "expected_answer": "Roughly four hours."
+      },
+      {
+        "question": "Where did the hikers reach?",
+        "expected_answer": "The lakeside cabin."
+      },
+      {
+        "question": "Was the hiking time given as an approximation?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Approximation and precision"
+  },
+  {
+    "sentences": [
+      "Mira and Tomas checked in at the mountain lodge before sunset."
+    ],
+    "queries": [
+      {
+        "question": "Who checked in at the mountain lodge?",
+        "expected_answer": "Mira and Tomas."
+      },
+      {
+        "question": "Where did Mira and Tomas check in?",
+        "expected_answer": "At the mountain lodge."
+      },
+      {
+        "question": "When did Mira and Tomas check in?",
+        "expected_answer": "Before sunset."
+      }
+    ],
+    "phenomenon": "Conjunction"
+  },
+  {
+    "sentences": [
+      "The bakery window displayed lemon tarts, rye loaves, and almond cookies."
+    ],
+    "queries": [
+      {
+        "question": "What did the bakery window display?",
+        "expected_answer": "Lemon tarts, rye loaves, and almond cookies."
+      },
+      {
+        "question": "Which window displayed almond cookies?",
+        "expected_answer": "The bakery window."
+      }
+    ],
+    "phenomenon": "Conjunction"
+  },
+  {
+    "sentences": [
+      "After practice, the goalkeeper stretched carefully and drank a bottle of water."
+    ],
+    "queries": [
+      {
+        "question": "What did the goalkeeper do after practice?",
+        "expected_answer": "The goalkeeper stretched carefully and drank a bottle of water."
+      },
+      {
+        "question": "How did the goalkeeper stretch?",
+        "expected_answer": "Carefully."
+      },
+      {
+        "question": "What did the goalkeeper drink?",
+        "expected_answer": "A bottle of water."
+      }
+    ],
+    "phenomenon": "Conjunction"
+  },
+  {
+    "sentences": [
+      "At the reception desk, guests may choose tea or coffee with breakfast."
+    ],
+    "queries": [
+      {
+        "question": "What may guests choose with breakfast?",
+        "expected_answer": "Tea or coffee."
+      },
+      {
+        "question": "May guests choose tea with breakfast?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "May guests choose coffee with breakfast?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Disjunction"
+  },
+  {
+    "sentences": [
+      "Either Nora or Felix will present the budget update at Monday's meeting."
+    ],
+    "queries": [
+      {
+        "question": "Who will present the budget update at Monday's meeting?",
+        "expected_answer": "Either Nora or Felix."
+      },
+      {
+        "question": "What will either Nora or Felix present?",
+        "expected_answer": "The budget update."
+      },
+      {
+        "question": "When will either Nora or Felix present the budget update?",
+        "expected_answer": "At Monday's meeting."
+      }
+    ],
+    "phenomenon": "Disjunction"
+  },
+  {
+    "sentences": [
+      "Before the storm arrives, the crew must secure the tents or move the equipment indoors."
+    ],
+    "queries": [
+      {
+        "question": "What must the crew do before the storm arrives?",
+        "expected_answer": "Secure the tents or move the equipment indoors."
+      },
+      {
+        "question": "What may the crew move indoors?",
+        "expected_answer": "The equipment."
+      },
+      {
+        "question": "When must the crew secure the tents or move the equipment indoors?",
+        "expected_answer": "Before the storm arrives."
+      }
+    ],
+    "phenomenon": "Disjunction"
+  },
+  {
+    "sentences": [
+      "For the escape-room puzzle, choose either the bronze lever or the silver lever; pulling both levers cancels the attempt."
+    ],
+    "queries": [
+      {
+        "question": "Which lever may be chosen for the puzzle?",
+        "expected_answer": "Either the bronze lever or the silver lever."
+      },
+      {
+        "question": "Can both levers be pulled without canceling the attempt?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Exclusive and inclusive alternatives"
+  },
+  {
+    "sentences": [
+      "The clinic registration form may be signed by a parent or guardian.",
+      "The receptionist explained that one signature is enough, but signatures from both are accepted."
+    ],
+    "queries": [
+      {
+        "question": "Who may sign the clinic registration form?",
+        "expected_answer": "A parent or guardian."
+      },
+      {
+        "question": "Is one signature enough?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Are signatures from both a parent and guardian accepted?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Exclusive and inclusive alternatives"
+  },
+  {
+    "sentences": [
+      "During the relay tryout, each runner must wear either a numbered bib or a timing chip, but not both."
+    ],
+    "queries": [
+      {
+        "question": "What must each runner wear during the relay tryout?",
+        "expected_answer": "Either a numbered bib or a timing chip."
+      },
+      {
+        "question": "Can a runner wear both a numbered bib and a timing chip?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Exclusive and inclusive alternatives"
+  },
+  {
+    "sentences": [
+      "Nora peeled and sliced the mango for the fruit salad."
+    ],
+    "queries": [
+      {
+        "question": "What did Nora peel?",
+        "expected_answer": "The mango."
+      },
+      {
+        "question": "What did Nora slice?",
+        "expected_answer": "The mango."
+      },
+      {
+        "question": "Why did Nora peel and slice the mango?",
+        "expected_answer": "For the fruit salad."
+      }
+    ],
+    "phenomenon": "Coordination scope"
+  },
+  {
+    "sentences": [
+      "Ravi borrowed a tent, and Elena a compass, from the equipment desk."
+    ],
+    "queries": [
+      {
+        "question": "What did Ravi borrow?",
+        "expected_answer": "A tent."
+      },
+      {
+        "question": "What did Elena borrow?",
+        "expected_answer": "A compass."
+      },
+      {
+        "question": "Where did they borrow the items from?",
+        "expected_answer": "The equipment desk."
+      }
+    ],
+    "phenomenon": "Coordination scope"
+  },
+  {
+    "sentences": [
+      "Mei can print and laminate the badges in the office."
+    ],
+    "queries": [
+      {
+        "question": "Can Mei print the badges?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Can Mei laminate the badges?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "Where can Mei print and laminate the badges?",
+        "expected_answer": "In the office."
+      }
+    ],
+    "phenomenon": "Coordination scope"
+  },
+  {
+    "sentences": [
+      "Guests may use the rooftop pool if they wear a blue wristband.",
+      "The concierge checks wristbands at the elevator."
+    ],
+    "queries": [
+      {
+        "question": "Can guests use the rooftop pool if they wear a blue wristband?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "What must guests wear to use the rooftop pool?",
+        "expected_answer": "A blue wristband."
+      },
+      {
+        "question": "Where does the concierge check wristbands?",
+        "expected_answer": "At the elevator."
+      }
+    ],
+    "phenomenon": "Conditionals"
+  },
+  {
+    "sentences": [
+      "If the oven timer beeps, Marco should remove the almond cake.",
+      "The cake is on the middle rack."
+    ],
+    "queries": [
+      {
+        "question": "What should Marco do if the oven timer beeps?",
+        "expected_answer": "He should remove the almond cake."
+      },
+      {
+        "question": "When should Marco remove the almond cake?",
+        "expected_answer": "If the oven timer beeps."
+      },
+      {
+        "question": "Where is the cake?",
+        "expected_answer": "On the middle rack."
+      }
+    ],
+    "phenomenon": "Conditionals"
+  },
+  {
+    "sentences": [
+      "The museum guide will begin the lantern tour at eight if at least five visitors sign up.",
+      "Otherwise, the lantern tour will be canceled."
+    ],
+    "queries": [
+      {
+        "question": "What will happen if at least five visitors sign up?",
+        "expected_answer": "The museum guide will begin the lantern tour at eight."
+      },
+      {
+        "question": "When will the museum guide begin the lantern tour?",
+        "expected_answer": "At eight, if at least five visitors sign up."
+      },
+      {
+        "question": "What will happen otherwise?",
+        "expected_answer": "The lantern tour will be canceled."
+      }
+    ],
+    "phenomenon": "Conditionals"
+  },
+  {
+    "sentences": [
+      "If Mira had packed a raincoat, she would have stayed dry during the hike.",
+      "Mira did not pack a raincoat, and she got soaked on the trail."
+    ],
+    "queries": [
+      {
+        "question": "What would have happened if Mira had packed a raincoat?",
+        "expected_answer": "She would have stayed dry during the hike."
+      },
+      {
+        "question": "Did Mira pack a raincoat?",
+        "expected_answer": "No, she did not pack a raincoat."
+      },
+      {
+        "question": "Where did Mira get soaked?",
+        "expected_answer": "On the trail."
+      }
+    ],
+    "phenomenon": "Counterfactual conditionals"
+  },
+  {
+    "sentences": [
+      "If the bakery had opened before sunrise, the commuters would have bought fresh rolls there.",
+      "The bakery opened at nine, so the commuters bought muffins from a kiosk instead."
+    ],
+    "queries": [
+      {
+        "question": "What would the commuters have bought if the bakery had opened before sunrise?",
+        "expected_answer": "Fresh rolls."
+      },
+      {
+        "question": "When did the bakery open?",
+        "expected_answer": "At nine."
+      },
+      {
+        "question": "Where did the commuters buy muffins?",
+        "expected_answer": "From a kiosk."
+      }
+    ],
+    "phenomenon": "Counterfactual conditionals"
+  },
+  {
+    "sentences": [
+      "If the old bridge were wider, two tractors could cross it side by side.",
+      "The bridge is narrow, and only one tractor can cross at a time."
+    ],
+    "queries": [
+      {
+        "question": "What could cross the bridge side by side if it were wider?",
+        "expected_answer": "Two tractors."
+      },
+      {
+        "question": "Is the old bridge wide?",
+        "expected_answer": "No, it is narrow."
+      },
+      {
+        "question": "How many tractors can cross the bridge at a time?",
+        "expected_answer": "Only one tractor."
+      }
+    ],
+    "phenomenon": "Counterfactual conditionals"
+  },
+  {
+    "sentences": [
+      "Every violinist in the youth orchestra tuned before rehearsal except Leo.",
+      "Leo waited in the hallway with his case closed."
+    ],
+    "queries": [
+      {
+        "question": "Who did not tune before rehearsal?",
+        "expected_answer": "Leo did not tune before rehearsal."
+      },
+      {
+        "question": "Did every violinist except Leo tune before rehearsal?",
+        "expected_answer": "Yes, every violinist except Leo tuned before rehearsal."
+      },
+      {
+        "question": "Where did Leo wait?",
+        "expected_answer": "Leo waited in the hallway."
+      }
+    ],
+    "phenomenon": "Unless and exceptive conditions"
+  },
+  {
+    "sentences": [
+      "The bakery will sell almond croissants tomorrow unless the oven breaks overnight.",
+      "The oven broke overnight, so the baker canceled the almond croissants."
+    ],
+    "queries": [
+      {
+        "question": "Will the bakery sell almond croissants tomorrow?",
+        "expected_answer": "No, the bakery will not sell almond croissants tomorrow."
+      },
+      {
+        "question": "Why did the baker cancel the almond croissants?",
+        "expected_answer": "Because the oven broke overnight."
+      },
+      {
+        "question": "What exceptional condition affected the bakery's plan?",
+        "expected_answer": "The oven broke overnight."
+      }
+    ],
+    "phenomenon": "Unless and exceptive conditions"
+  },
+  {
+    "sentences": [
+      "All cabins by the lake allow dogs except the cedar cabin.",
+      "The cedar cabin allows cats but not dogs."
+    ],
+    "queries": [
+      {
+        "question": "Which cabin by the lake does not allow dogs?",
+        "expected_answer": "The cedar cabin does not allow dogs."
+      },
+      {
+        "question": "Do all cabins by the lake except the cedar cabin allow dogs?",
+        "expected_answer": "Yes, all cabins by the lake except the cedar cabin allow dogs."
+      },
+      {
+        "question": "What does the cedar cabin allow?",
+        "expected_answer": "The cedar cabin allows cats."
+      }
+    ],
+    "phenomenon": "Unless and exceptive conditions"
+  },
+  {
+    "sentences": [
+      "Mia believes that the train is late, but the station clerk knows that the train left on time."
+    ],
+    "queries": [
+      {
+        "question": "What does Mia believe?",
+        "expected_answer": "That the train is late."
+      },
+      {
+        "question": "Who knows that the train left on time?",
+        "expected_answer": "The station clerk."
+      },
+      {
+        "question": "Does Mia believe that the train is late?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Propositional attitudes of belief and knowledge"
+  },
+  {
+    "sentences": [
+      "During the audit, Priya discovered that the receipt was missing.",
+      "Her manager suspects that the assistant misplaced it."
+    ],
+    "queries": [
+      {
+        "question": "What did Priya discover?",
+        "expected_answer": "That the receipt was missing."
+      },
+      {
+        "question": "What does her manager suspect?",
+        "expected_answer": "That the assistant misplaced it."
+      },
+      {
+        "question": "Who suspects that the assistant misplaced the receipt?",
+        "expected_answer": "Her manager."
+      }
+    ],
+    "phenomenon": "Propositional attitudes of belief and knowledge"
+  },
+  {
+    "sentences": [
+      "The hikers know that the river is shallow near the bend.",
+      "Lena thinks that the safer crossing is upstream."
+    ],
+    "queries": [
+      {
+        "question": "What do the hikers know?",
+        "expected_answer": "That the river is shallow near the bend."
+      },
+      {
+        "question": "What does Lena think?",
+        "expected_answer": "That the safer crossing is upstream."
+      },
+      {
+        "question": "Who thinks that the safer crossing is upstream?",
+        "expected_answer": "Lena."
+      }
+    ],
+    "phenomenon": "Propositional attitudes of belief and knowledge"
+  },
+  {
+    "sentences": [
+      "Ava wants a puppy, but her brother Milo wants a kitten."
+    ],
+    "queries": [
+      {
+        "question": "What does Ava want?",
+        "expected_answer": "A puppy."
+      },
+      {
+        "question": "Who wants a kitten?",
+        "expected_answer": "Milo."
+      }
+    ],
+    "phenomenon": "Desires, wants, and preferences"
+  },
+  {
+    "sentences": [
+      "At breakfast, Nora prefers tea to coffee.",
+      "Her roommate prefers coffee to orange juice."
+    ],
+    "queries": [
+      {
+        "question": "What does Nora prefer to coffee?",
+        "expected_answer": "Tea."
+      },
+      {
+        "question": "What does Nora prefer tea to?",
+        "expected_answer": "Coffee."
+      },
+      {
+        "question": "Who prefers coffee to orange juice?",
+        "expected_answer": "Her roommate."
+      }
+    ],
+    "phenomenon": "Desires, wants, and preferences"
+  },
+  {
+    "sentences": [
+      "The hikers wanted a shady campsite near the river.",
+      "Their guide preferred the open meadow because it was easier to find after dark."
+    ],
+    "queries": [
+      {
+        "question": "What kind of campsite did the hikers want?",
+        "expected_answer": "A shady campsite near the river."
+      },
+      {
+        "question": "Which place did the guide prefer?",
+        "expected_answer": "The open meadow."
+      },
+      {
+        "question": "Why did the guide prefer the open meadow?",
+        "expected_answer": "Because it was easier to find after dark."
+      }
+    ],
+    "phenomenon": "Desires, wants, and preferences"
+  },
+  {
+    "sentences": [
+      "Nora intends to apply for the marine biology program in September.",
+      "She decided to volunteer at the aquarium before submitting her application."
+    ],
+    "queries": [
+      {
+        "question": "What does Nora intend to apply for?",
+        "expected_answer": "The marine biology program."
+      },
+      {
+        "question": "When does Nora intend to apply?",
+        "expected_answer": "In September."
+      },
+      {
+        "question": "What did Nora decide to do before submitting her application?",
+        "expected_answer": "Volunteer at the aquarium."
+      }
+    ],
+    "phenomenon": "Intentions, plans, and decisions"
+  },
+  {
+    "sentences": [
+      "The bakery plans to introduce a cinnamon pear tart next month.",
+      "After the tasting, the owner decided to keep the tart on the autumn menu."
+    ],
+    "queries": [
+      {
+        "question": "What does the bakery plan to introduce?",
+        "expected_answer": "A cinnamon pear tart."
+      },
+      {
+        "question": "When does the bakery plan to introduce the tart?",
+        "expected_answer": "Next month."
+      },
+      {
+        "question": "What did the owner decide to keep on the autumn menu?",
+        "expected_answer": "The tart."
+      }
+    ],
+    "phenomenon": "Intentions, plans, and decisions"
+  },
+  {
+    "sentences": [
+      "Malik has decided to cycle across the valley on Saturday.",
+      "His cousin plans to meet him at the old bridge after lunch."
+    ],
+    "queries": [
+      {
+        "question": "What has Malik decided to do?",
+        "expected_answer": "Cycle across the valley."
+      },
+      {
+        "question": "When has Malik decided to cycle across the valley?",
+        "expected_answer": "On Saturday."
+      },
+      {
+        "question": "Where does his cousin plan to meet him?",
+        "expected_answer": "At the old bridge."
+      }
+    ],
+    "phenomenon": "Intentions, plans, and decisions"
+  },
+  {
+    "sentences": [
+      "Mira told the hikers that the north trail was closed after the storm.",
+      "She asked whether anyone had a printed map."
+    ],
+    "queries": [
+      {
+        "question": "What did Mira tell the hikers?",
+        "expected_answer": "That the north trail was closed after the storm."
+      },
+      {
+        "question": "Who did Mira tell about the closed trail?",
+        "expected_answer": "The hikers."
+      },
+      {
+        "question": "What did Mira ask?",
+        "expected_answer": "Whether anyone had a printed map."
+      }
+    ],
+    "phenomenon": "Speech and reporting events"
+  },
+  {
+    "sentences": [
+      "At the staff meeting, Omar claimed that the new printer wasted less ink.",
+      "His assistant replied that the invoice had not arrived yet."
+    ],
+    "queries": [
+      {
+        "question": "What did Omar claim?",
+        "expected_answer": "That the new printer wasted less ink."
+      },
+      {
+        "question": "Who replied that the invoice had not arrived yet?",
+        "expected_answer": "His assistant."
+      },
+      {
+        "question": "What did Omar's assistant say had not arrived yet?",
+        "expected_answer": "The invoice."
+      }
+    ],
+    "phenomenon": "Speech and reporting events"
+  },
+  {
+    "sentences": [
+      "The coach shouted that practice would start at six.",
+      "Nell promised the team that she would bring extra water bottles."
+    ],
+    "queries": [
+      {
+        "question": "What did the coach shout?",
+        "expected_answer": "That practice would start at six."
+      },
+      {
+        "question": "Who promised to bring extra water bottles?",
+        "expected_answer": "Nell."
+      },
+      {
+        "question": "What did Nell promise the team?",
+        "expected_answer": "That she would bring extra water bottles."
+      }
+    ],
+    "phenomenon": "Speech and reporting events"
+  },
+  {
+    "sentences": [
+      "Maya discovered that the museum had closed early.",
+      "Jonas suspected that the museum had closed early."
+    ],
+    "queries": [
+      {
+        "question": "Did the museum close early?",
+        "expected_answer": "Yes, the museum had closed early."
+      },
+      {
+        "question": "Who discovered that the museum had closed early?",
+        "expected_answer": "Maya."
+      },
+      {
+        "question": "Who suspected that the museum had closed early?",
+        "expected_answer": "Jonas."
+      }
+    ],
+    "phenomenon": "Factivity and presupposition in attitudes"
+  },
+  {
+    "sentences": [
+      "The chef regretted that the soup was too salty.",
+      "Her assistant thought that the soup was too salty."
+    ],
+    "queries": [
+      {
+        "question": "Was the soup too salty?",
+        "expected_answer": "Yes, the soup was too salty."
+      },
+      {
+        "question": "Who regretted that the soup was too salty?",
+        "expected_answer": "The chef."
+      },
+      {
+        "question": "Who thought that the soup was too salty?",
+        "expected_answer": "Her assistant."
+      }
+    ],
+    "phenomenon": "Factivity and presupposition in attitudes"
+  },
+  {
+    "sentences": [
+      "Lena forgot that the train left at six.",
+      "Omar imagined that the train left at six."
+    ],
+    "queries": [
+      {
+        "question": "When did the train leave?",
+        "expected_answer": "At six."
+      },
+      {
+        "question": "Who forgot that the train left at six?",
+        "expected_answer": "Lena."
+      },
+      {
+        "question": "Who imagined that the train left at six?",
+        "expected_answer": "Omar."
+      }
+    ],
+    "phenomenon": "Factivity and presupposition in attitudes"
+  },
+  {
+    "sentences": [
+      "The blue door to the storage room is open.",
+      "A red toolbox is inside the storage room."
+    ],
+    "queries": [
+      {
+        "question": "Is the blue door open?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "What is inside the storage room?",
+        "expected_answer": "A red toolbox."
+      },
+      {
+        "question": "Which door is open?",
+        "expected_answer": "The blue door to the storage room."
+      }
+    ],
+    "phenomenon": "Questions"
+  },
+  {
+    "sentences": [
+      "Marta ate the last slice of lemon cake after lunch.",
+      "Jonah drank the remaining tea."
+    ],
+    "queries": [
+      {
+        "question": "Who ate the last slice of lemon cake?",
+        "expected_answer": "Marta."
+      },
+      {
+        "question": "What did Jonah drink?",
+        "expected_answer": "The remaining tea."
+      },
+      {
+        "question": "When did Marta eat the last slice of lemon cake?",
+        "expected_answer": "After lunch."
+      }
+    ],
+    "phenomenon": "Questions"
+  },
+  {
+    "sentences": [
+      "At the small station, the coastal train leaves at 7:10.",
+      "The mountain train leaves at 7:35."
+    ],
+    "queries": [
+      {
+        "question": "Which train leaves first?",
+        "expected_answer": "The coastal train."
+      },
+      {
+        "question": "When does the mountain train leave?",
+        "expected_answer": "At 7:35."
+      },
+      {
+        "question": "Does the coastal train leave before the mountain train?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Questions"
+  },
+  {
+    "sentences": [
+      "At the bakery counter, the manager told the trainee, \"Please label the sourdough loaves before noon.\""
+    ],
+    "queries": [
+      {
+        "question": "Who was asked to label the sourdough loaves?",
+        "expected_answer": "the trainee"
+      },
+      {
+        "question": "What was the trainee asked to label?",
+        "expected_answer": "the sourdough loaves"
+      },
+      {
+        "question": "When should the trainee label the sourdough loaves?",
+        "expected_answer": "before noon"
+      }
+    ],
+    "phenomenon": "Imperatives and requests"
+  },
+  {
+    "sentences": [
+      "During the camping trip, Nora said to Felix, \"Hand me the flashlight when you find it.\""
+    ],
+    "queries": [
+      {
+        "question": "Who was told to hand over the flashlight?",
+        "expected_answer": "Felix"
+      },
+      {
+        "question": "What did Nora ask Felix to hand her?",
+        "expected_answer": "the flashlight"
+      },
+      {
+        "question": "When should Felix hand Nora the flashlight?",
+        "expected_answer": "when he finds it"
+      }
+    ],
+    "phenomenon": "Imperatives and requests"
+  },
+  {
+    "sentences": [
+      "The swim coach instructed the children, \"Line up beside the pool gate and wait for the whistle.\""
+    ],
+    "queries": [
+      {
+        "question": "Who was instructed to line up beside the pool gate?",
+        "expected_answer": "the children"
+      },
+      {
+        "question": "Where were the children instructed to line up?",
+        "expected_answer": "beside the pool gate"
+      },
+      {
+        "question": "What were the children told to wait for?",
+        "expected_answer": "the whistle"
+      }
+    ],
+    "phenomenon": "Imperatives and requests"
+  },
+  {
+    "sentences": [
+      "During the morning rehearsal, the violinist tuned her instrument patiently before the first song."
+    ],
+    "queries": [
+      {
+        "question": "Who tuned her instrument patiently?",
+        "expected_answer": "the violinist"
+      },
+      {
+        "question": "How did the violinist tune her instrument?",
+        "expected_answer": "patiently"
+      },
+      {
+        "question": "When did the violinist tune her instrument?",
+        "expected_answer": "during the morning rehearsal"
+      }
+    ],
+    "phenomenon": "Adverbs of manner"
+  },
+  {
+    "sentences": [
+      "At the campsite, the scout folded the map neatly and placed it beside the lantern."
+    ],
+    "queries": [
+      {
+        "question": "What did the scout fold neatly?",
+        "expected_answer": "the map"
+      },
+      {
+        "question": "How did the scout fold the map?",
+        "expected_answer": "neatly"
+      },
+      {
+        "question": "Where did the scout place the map?",
+        "expected_answer": "beside the lantern"
+      }
+    ],
+    "phenomenon": "Adverbs of manner"
+  },
+  {
+    "sentences": [
+      "The delivery robot rolled silently through the hospital corridor after midnight."
+    ],
+    "queries": [
+      {
+        "question": "What rolled silently through the hospital corridor?",
+        "expected_answer": "the delivery robot"
+      },
+      {
+        "question": "How did the delivery robot roll?",
+        "expected_answer": "silently"
+      },
+      {
+        "question": "Where did the delivery robot roll?",
+        "expected_answer": "through the hospital corridor"
+      }
+    ],
+    "phenomenon": "Adverbs of manner"
+  },
+  {
+    "sentences": [
+      "During the rehearsal, Felix almost dropped the glass trophy near the curtain."
+    ],
+    "queries": [
+      {
+        "question": "What did Felix almost do?",
+        "expected_answer": "He almost dropped the glass trophy."
+      },
+      {
+        "question": "Where did Felix almost drop the glass trophy?",
+        "expected_answer": "Near the curtain."
+      },
+      {
+        "question": "When did Felix almost drop the glass trophy?",
+        "expected_answer": "During the rehearsal."
+      }
+    ],
+    "phenomenon": "Adverbs of degree, time, and place"
+  },
+  {
+    "sentences": [
+      "The hiking group reached the ridge yesterday and rested there before sunset."
+    ],
+    "queries": [
+      {
+        "question": "When did the hiking group reach the ridge?",
+        "expected_answer": "Yesterday."
+      },
+      {
+        "question": "Where did the hiking group rest?",
+        "expected_answer": "There, at the ridge."
+      },
+      {
+        "question": "What did the hiking group do before sunset?",
+        "expected_answer": "They rested there."
+      }
+    ],
+    "phenomenon": "Adverbs of degree, time, and place"
+  },
+  {
+    "sentences": [
+      "In the crowded kitchen, the sauce boiled too quickly after Mina turned up the burner."
+    ],
+    "queries": [
+      {
+        "question": "How quickly did the sauce boil?",
+        "expected_answer": "Too quickly."
+      },
+      {
+        "question": "Where did the sauce boil too quickly?",
+        "expected_answer": "In the crowded kitchen."
+      },
+      {
+        "question": "When did the sauce boil too quickly?",
+        "expected_answer": "After Mina turned up the burner."
+      }
+    ],
+    "phenomenon": "Adverbs of degree, time, and place"
+  },
+  {
+    "sentences": [
+      "Only Priya signed the safety waiver before the climbing lesson. Omar and Lin watched the briefing but did not sign it."
+    ],
+    "queries": [
+      {
+        "question": "Who signed the safety waiver before the climbing lesson?",
+        "expected_answer": "Only Priya."
+      },
+      {
+        "question": "Did Omar sign the safety waiver?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "What did Lin do during the briefing?",
+        "expected_answer": "Lin watched the briefing."
+      }
+    ],
+    "phenomenon": "Focus-sensitive expressions"
+  },
+  {
+    "sentences": [
+      "At the charity dinner, the mayor praised the volunteers. Even the usually quiet treasurer gave a speech."
+    ],
+    "queries": [
+      {
+        "question": "Who gave a speech at the charity dinner?",
+        "expected_answer": "The usually quiet treasurer."
+      },
+      {
+        "question": "Did the mayor praise the volunteers?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Focus-sensitive expressions"
+  },
+  {
+    "sentences": [
+      "Marta packed sandwiches for the hike. She also packed a thermos of soup."
+    ],
+    "queries": [
+      {
+        "question": "What did Marta pack besides sandwiches?",
+        "expected_answer": "A thermos of soup."
+      },
+      {
+        "question": "Who packed sandwiches for the hike?",
+        "expected_answer": "Marta."
+      },
+      {
+        "question": "Did Marta pack a thermos of soup?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Focus-sensitive expressions"
+  },
+  {
+    "sentences": [
+      "Marta's uncle, who repairs violins, opened a small shop near the theater.",
+      "The cousin who paints murals helped decorate the sign."
+    ],
+    "queries": [
+      {
+        "question": "Who opened a small shop near the theater?",
+        "expected_answer": "Marta's uncle."
+      },
+      {
+        "question": "What does Marta's uncle repair?",
+        "expected_answer": "Violins."
+      },
+      {
+        "question": "Which cousin helped decorate the sign?",
+        "expected_answer": "The cousin who paints murals."
+      }
+    ],
+    "phenomenon": "Restrictive and nonrestrictive modification"
+  },
+  {
+    "sentences": [
+      "The blue folder contains the signed contracts.",
+      "The folder with the torn label contains old receipts.",
+      "A plain folder lies empty on the desk."
+    ],
+    "queries": [
+      {
+        "question": "Which folder contains the signed contracts?",
+        "expected_answer": "The blue folder."
+      },
+      {
+        "question": "What does the folder with the torn label contain?",
+        "expected_answer": "Old receipts."
+      },
+      {
+        "question": "Which folder lies empty on the desk?",
+        "expected_answer": "A plain folder."
+      }
+    ],
+    "phenomenon": "Restrictive and nonrestrictive modification"
+  },
+  {
+    "sentences": [
+      "The chef who prepared the vegan soup won the morning contest.",
+      "The chef, who wore a striped apron, thanked the judges afterward.",
+      "The chef who baked the walnut bread received a silver ribbon."
+    ],
+    "queries": [
+      {
+        "question": "Which chef won the morning contest?",
+        "expected_answer": "The chef who prepared the vegan soup."
+      },
+      {
+        "question": "Who thanked the judges afterward?",
+        "expected_answer": "The chef who wore a striped apron."
+      },
+      {
+        "question": "Which chef received a silver ribbon?",
+        "expected_answer": "The chef who baked the walnut bread."
+      }
+    ],
+    "phenomenon": "Restrictive and nonrestrictive modification"
+  },
+  {
+    "sentences": [
+      "The baker who opened the shop before sunrise sold every rye loaf by noon.",
+      "The assistant who arrived at ten restocked the pastry case."
+    ],
+    "queries": [
+      {
+        "question": "Who opened the shop before sunrise?",
+        "expected_answer": "The baker."
+      },
+      {
+        "question": "What did the baker who opened the shop before sunrise sell by noon?",
+        "expected_answer": "Every rye loaf."
+      },
+      {
+        "question": "Who restocked the pastry case?",
+        "expected_answer": "The assistant who arrived at ten."
+      }
+    ],
+    "phenomenon": "Relative clauses"
+  },
+  {
+    "sentences": [
+      "Marta packed the jacket that her brother left on the porch.",
+      "She mailed the scarf that her cousin knitted last winter."
+    ],
+    "queries": [
+      {
+        "question": "Which jacket did Marta pack?",
+        "expected_answer": "The jacket that her brother left on the porch."
+      },
+      {
+        "question": "Where did her brother leave the jacket?",
+        "expected_answer": "On the porch."
+      },
+      {
+        "question": "What did her cousin knit last winter?",
+        "expected_answer": "The scarf."
+      }
+    ],
+    "phenomenon": "Relative clauses"
+  },
+  {
+    "sentences": [
+      "The trail where the hikers stopped for lunch winds beside a cold stream.",
+      "A ranger marked the bridge that crosses the stream with yellow paint."
+    ],
+    "queries": [
+      {
+        "question": "Where did the hikers stop for lunch?",
+        "expected_answer": "On the trail."
+      },
+      {
+        "question": "What winds beside a cold stream?",
+        "expected_answer": "The trail where the hikers stopped for lunch."
+      },
+      {
+        "question": "Which bridge did the ranger mark with yellow paint?",
+        "expected_answer": "The bridge that crosses the stream."
+      }
+    ],
+    "phenomenon": "Relative clauses"
+  },
+  {
+    "sentences": [
+      "My neighbor Priya planted basil on the balcony."
+    ],
+    "queries": [
+      {
+        "question": "Who planted basil on the balcony?",
+        "expected_answer": "My neighbor Priya."
+      },
+      {
+        "question": "What is Priya described as?",
+        "expected_answer": "My neighbor."
+      }
+    ],
+    "phenomenon": "Apposition"
+  },
+  {
+    "sentences": [
+      "The river Arno curves through the old city before reaching the sea."
+    ],
+    "queries": [
+      {
+        "question": "Which river curves through the old city?",
+        "expected_answer": "The river Arno."
+      },
+      {
+        "question": "What is Arno identified as?",
+        "expected_answer": "A river."
+      }
+    ],
+    "phenomenon": "Apposition"
+  },
+  {
+    "sentences": [
+      "Marta, the night supervisor, locked the warehouse after the final delivery."
+    ],
+    "queries": [
+      {
+        "question": "Who locked the warehouse after the final delivery?",
+        "expected_answer": "Marta."
+      },
+      {
+        "question": "What role does Marta have?",
+        "expected_answer": "The night supervisor."
+      },
+      {
+        "question": "When did Marta lock the warehouse?",
+        "expected_answer": "After the final delivery."
+      }
+    ],
+    "phenomenon": "Apposition"
+  },
+  {
+    "sentences": [
+      "At the cafe, Jordan ordered mushroom soup, and Priya the lentil stew."
+    ],
+    "queries": [
+      {
+        "question": "What did Jordan order?",
+        "expected_answer": "Mushroom soup."
+      },
+      {
+        "question": "Who ordered the lentil stew?",
+        "expected_answer": "Priya."
+      },
+      {
+        "question": "Did Priya order the mushroom soup?",
+        "expected_answer": "No, Priya ordered the lentil stew."
+      }
+    ],
+    "phenomenon": "Ellipsis and omitted material"
+  },
+  {
+    "sentences": [
+      "The north ferry leaves at six, and the south ferry at eight."
+    ],
+    "queries": [
+      {
+        "question": "When does the north ferry leave?",
+        "expected_answer": "At six."
+      },
+      {
+        "question": "Which ferry leaves at eight?",
+        "expected_answer": "The south ferry."
+      },
+      {
+        "question": "Does the south ferry leave at six?",
+        "expected_answer": "No, it leaves at eight."
+      }
+    ],
+    "phenomenon": "Ellipsis and omitted material"
+  },
+  {
+    "sentences": [
+      "Nora can repair the fence, and Elias can too."
+    ],
+    "queries": [
+      {
+        "question": "Who can repair the fence?",
+        "expected_answer": "Nora and Elias."
+      },
+      {
+        "question": "Can Elias repair the fence?",
+        "expected_answer": "Yes."
+      },
+      {
+        "question": "What can Nora repair?",
+        "expected_answer": "The fence."
+      }
+    ],
+    "phenomenon": "Ellipsis and omitted material"
+  },
+  {
+    "sentences": [
+      "Rina ordered the mushroom risotto, and Pavel the lemon tart.",
+      "The waiter praised both choices."
+    ],
+    "queries": [
+      {
+        "question": "What did Rina order?",
+        "expected_answer": "the mushroom risotto"
+      },
+      {
+        "question": "Who ordered the lemon tart?",
+        "expected_answer": "Pavel"
+      },
+      {
+        "question": "What did the waiter praise?",
+        "expected_answer": "both choices"
+      }
+    ],
+    "phenomenon": "Gapping and sluicing"
+  },
+  {
+    "sentences": [
+      "The courier delivered a package to the gallery, and the intern to the studio.",
+      "Both deliveries happened before noon."
+    ],
+    "queries": [
+      {
+        "question": "Where did the courier deliver a package?",
+        "expected_answer": "to the gallery"
+      },
+      {
+        "question": "Who delivered a package to the studio?",
+        "expected_answer": "the intern"
+      },
+      {
+        "question": "When did both deliveries happen?",
+        "expected_answer": "before noon"
+      }
+    ],
+    "phenomenon": "Gapping and sluicing"
+  },
+  {
+    "sentences": [
+      "Someone moved the blue kayak, but Nora does not know who.",
+      "The red canoe stayed beside the dock."
+    ],
+    "queries": [
+      {
+        "question": "What did someone move?",
+        "expected_answer": "the blue kayak"
+      },
+      {
+        "question": "Does Nora know who moved the blue kayak?",
+        "expected_answer": "No"
+      },
+      {
+        "question": "Where did the red canoe stay?",
+        "expected_answer": "beside the dock"
+      }
+    ],
+    "phenomenon": "Gapping and sluicing"
+  },
+  {
+    "sentences": [
+      "Nora promised the stage manager to rehearse after lunch."
+    ],
+    "queries": [
+      {
+        "question": "Who promised to rehearse after lunch?",
+        "expected_answer": "Nora."
+      },
+      {
+        "question": "When did Nora promise to rehearse?",
+        "expected_answer": "After lunch."
+      },
+      {
+        "question": "Who did Nora make the promise to?",
+        "expected_answer": "The stage manager."
+      }
+    ],
+    "phenomenon": "Control constructions"
+  },
+  {
+    "sentences": [
+      "During the storm, Priya tried to secure the greenhouse door."
+    ],
+    "queries": [
+      {
+        "question": "Who tried to secure the greenhouse door?",
+        "expected_answer": "Priya."
+      },
+      {
+        "question": "What did Priya try to secure?",
+        "expected_answer": "The greenhouse door."
+      },
+      {
+        "question": "When did Priya try to secure the greenhouse door?",
+        "expected_answer": "During the storm."
+      }
+    ],
+    "phenomenon": "Control constructions"
+  },
+  {
+    "sentences": [
+      "Owen asked the courier to leave the package at the bakery."
+    ],
+    "queries": [
+      {
+        "question": "Who was asked to leave the package at the bakery?",
+        "expected_answer": "The courier."
+      },
+      {
+        "question": "What did Owen ask the courier to leave?",
+        "expected_answer": "The package."
+      },
+      {
+        "question": "Where was the courier asked to leave the package?",
+        "expected_answer": "At the bakery."
+      }
+    ],
+    "phenomenon": "Control constructions"
+  },
+  {
+    "sentences": [
+      "The old bridge seems to sway in strong winds."
+    ],
+    "queries": [
+      {
+        "question": "What seems to sway in strong winds?",
+        "expected_answer": "The old bridge."
+      },
+      {
+        "question": "When does the old bridge seem to sway?",
+        "expected_answer": "In strong winds."
+      }
+    ],
+    "phenomenon": "Raising constructions"
+  },
+  {
+    "sentences": [
+      "Mara believes the new intern to be reliable."
+    ],
+    "queries": [
+      {
+        "question": "Who believes the new intern to be reliable?",
+        "expected_answer": "Mara."
+      },
+      {
+        "question": "Who does Mara believe to be reliable?",
+        "expected_answer": "The new intern."
+      },
+      {
+        "question": "What does Mara believe about the new intern?",
+        "expected_answer": "That the new intern is reliable."
+      }
+    ],
+    "phenomenon": "Raising constructions"
+  },
+  {
+    "sentences": [
+      "The soup appears to need more salt."
+    ],
+    "queries": [
+      {
+        "question": "What appears to need more salt?",
+        "expected_answer": "The soup."
+      },
+      {
+        "question": "What does the soup appear to need?",
+        "expected_answer": "More salt."
+      }
+    ],
+    "phenomenon": "Raising constructions"
+  },
+  {
+    "sentences": [
+      "The evacuation of the coastal village began at dawn.",
+      "Amina coordinated the evacuation from the school gym."
+    ],
+    "queries": [
+      {
+        "question": "What began at dawn?",
+        "expected_answer": "The evacuation of the coastal village."
+      },
+      {
+        "question": "Who coordinated the evacuation?",
+        "expected_answer": "Amina."
+      },
+      {
+        "question": "Where did Amina coordinate the evacuation from?",
+        "expected_answer": "The school gym."
+      }
+    ],
+    "phenomenon": "Event nominalization"
+  },
+  {
+    "sentences": [
+      "Jonah's refusal to answer the inspector's question delayed the hearing.",
+      "The refusal happened after lunch."
+    ],
+    "queries": [
+      {
+        "question": "What delayed the hearing?",
+        "expected_answer": "Jonah's refusal to answer the inspector's question."
+      },
+      {
+        "question": "Who refused to answer the inspector's question?",
+        "expected_answer": "Jonah."
+      },
+      {
+        "question": "When did the refusal happen?",
+        "expected_answer": "After lunch."
+      }
+    ],
+    "phenomenon": "Event nominalization"
+  },
+  {
+    "sentences": [
+      "The chef's careful preparation of the sauce took forty minutes.",
+      "The preparation impressed the restaurant owner."
+    ],
+    "queries": [
+      {
+        "question": "What took forty minutes?",
+        "expected_answer": "The chef's careful preparation of the sauce."
+      },
+      {
+        "question": "What did the chef prepare?",
+        "expected_answer": "The sauce."
+      },
+      {
+        "question": "Who was impressed by the preparation?",
+        "expected_answer": "The restaurant owner."
+      }
+    ],
+    "phenomenon": "Event nominalization"
+  },
+  {
+    "sentences": [
+      "The ranger watched the bear with the torn ear from the wooden lookout."
+    ],
+    "queries": [
+      {
+        "question": "Which bear did the ranger watch?",
+        "expected_answer": "the bear with the torn ear"
+      },
+      {
+        "question": "Where did the ranger watch the bear from?",
+        "expected_answer": "the wooden lookout"
+      },
+      {
+        "question": "Who had the torn ear?",
+        "expected_answer": "the bear"
+      }
+    ],
+    "phenomenon": "Prepositional attachment ambiguity"
+  },
+  {
+    "sentences": [
+      "Mika placed the vase on the shelf near the kitchen window."
+    ],
+    "queries": [
+      {
+        "question": "Where did Mika place the vase?",
+        "expected_answer": "on the shelf"
+      },
+      {
+        "question": "Which shelf did Mika place the vase on?",
+        "expected_answer": "the shelf near the kitchen window"
+      },
+      {
+        "question": "What was near the kitchen window?",
+        "expected_answer": "the shelf"
+      }
+    ],
+    "phenomenon": "Prepositional attachment ambiguity"
+  },
+  {
+    "sentences": [
+      "A violinist entertained the guests at the banquet with a lively tune."
+    ],
+    "queries": [
+      {
+        "question": "Who did the violinist entertain?",
+        "expected_answer": "the guests at the banquet"
+      },
+      {
+        "question": "Where were the guests?",
+        "expected_answer": "at the banquet"
+      },
+      {
+        "question": "What did the violinist use to entertain the guests?",
+        "expected_answer": "a lively tune"
+      }
+    ],
+    "phenomenon": "Prepositional attachment ambiguity"
+  },
+  {
+    "sentences": [
+      "The credit union's bank closed at noon for a software update.",
+      "After lunch, Priya photographed a heron on the muddy bank of the river."
+    ],
+    "queries": [
+      {
+        "question": "What closed at noon?",
+        "expected_answer": "The credit union's bank."
+      },
+      {
+        "question": "Where did Priya photograph a heron?",
+        "expected_answer": "On the muddy bank of the river."
+      },
+      {
+        "question": "Why did the credit union's bank close at noon?",
+        "expected_answer": "For a software update."
+      }
+    ],
+    "phenomenon": "Lexical ambiguity and polysemy"
+  },
+  {
+    "sentences": [
+      "Leo clicked the mouse twice to open the design file.",
+      "A gray mouse darted behind the flour bin in the bakery."
+    ],
+    "queries": [
+      {
+        "question": "What did Leo click twice?",
+        "expected_answer": "The mouse."
+      },
+      {
+        "question": "Where did the gray mouse dart?",
+        "expected_answer": "Behind the flour bin in the bakery."
+      },
+      {
+        "question": "What did Leo open?",
+        "expected_answer": "The design file."
+      }
+    ],
+    "phenomenon": "Lexical ambiguity and polysemy"
+  },
+  {
+    "sentences": [
+      "The school play had a long scene in a fake castle courtyard.",
+      "During the picnic, a raccoon made a scene by knocking over the lemonade jug."
+    ],
+    "queries": [
+      {
+        "question": "What had a long scene in a fake castle courtyard?",
+        "expected_answer": "The school play."
+      },
+      {
+        "question": "Who made a scene during the picnic?",
+        "expected_answer": "A raccoon."
+      },
+      {
+        "question": "What did the raccoon knock over?",
+        "expected_answer": "The lemonade jug."
+      }
+    ],
+    "phenomenon": "Lexical ambiguity and polysemy"
+  },
+  {
+    "sentences": [
+      "Maya looked up the ferry schedule on her phone before leaving the hotel."
+    ],
+    "queries": [
+      {
+        "question": "What did Maya look up?",
+        "expected_answer": "the ferry schedule"
+      },
+      {
+        "question": "Where did Maya look up the ferry schedule?",
+        "expected_answer": "on her phone"
+      },
+      {
+        "question": "When did Maya look up the ferry schedule?",
+        "expected_answer": "before leaving the hotel"
+      }
+    ],
+    "phenomenon": "Phrasal verbs and multiword predicates"
+  },
+  {
+    "sentences": [
+      "After three failed attempts, the young chess player gave up the puzzle and closed the book."
+    ],
+    "queries": [
+      {
+        "question": "Who gave up the puzzle?",
+        "expected_answer": "the young chess player"
+      },
+      {
+        "question": "What did the young chess player give up?",
+        "expected_answer": "the puzzle"
+      },
+      {
+        "question": "When did the young chess player give up the puzzle?",
+        "expected_answer": "after three failed attempts"
+      }
+    ],
+    "phenomenon": "Phrasal verbs and multiword predicates"
+  },
+  {
+    "sentences": [
+      "The cargo plane took off from the desert runway at sunrise."
+    ],
+    "queries": [
+      {
+        "question": "What took off?",
+        "expected_answer": "the cargo plane"
+      },
+      {
+        "question": "Where did the cargo plane take off from?",
+        "expected_answer": "the desert runway"
+      },
+      {
+        "question": "When did the cargo plane take off?",
+        "expected_answer": "at sunrise"
+      }
+    ],
+    "phenomenon": "Phrasal verbs and multiword predicates"
+  },
+  {
+    "sentences": [
+      "The museum's renovation schedule is still up in the air because the grant committee has not made a decision."
+    ],
+    "queries": [
+      {
+        "question": "What is up in the air?",
+        "expected_answer": "The museum's renovation schedule."
+      },
+      {
+        "question": "Why is the renovation schedule up in the air?",
+        "expected_answer": "Because the grant committee has not made a decision."
+      },
+      {
+        "question": "Is the museum's renovation schedule settled?",
+        "expected_answer": "No, it is still undecided."
+      }
+    ],
+    "phenomenon": "Idioms and figurative fixed expressions"
+  },
+  {
+    "sentences": [
+      "During the final debate, the mayor dodged the reporter's question, so the host asked her to stop beating around the bush."
+    ],
+    "queries": [
+      {
+        "question": "Who was asked to stop beating around the bush?",
+        "expected_answer": "The mayor."
+      },
+      {
+        "question": "What did the mayor dodge?",
+        "expected_answer": "The reporter's question."
+      },
+      {
+        "question": "Who asked the mayor to stop avoiding the issue?",
+        "expected_answer": "The host."
+      }
+    ],
+    "phenomenon": "Idioms and figurative fixed expressions"
+  },
+  {
+    "sentences": [
+      "The hikers planned to leave at dawn, but the route is still up in the air because the bridge washed out.",
+      "Their guide will choose the final path after checking the river level tonight."
+    ],
+    "queries": [
+      {
+        "question": "What is still undecided?",
+        "expected_answer": "The route."
+      },
+      {
+        "question": "Why is the route still up in the air?",
+        "expected_answer": "Because the bridge washed out."
+      },
+      {
+        "question": "When will the guide choose the final path?",
+        "expected_answer": "After checking the river level tonight."
+      }
+    ],
+    "phenomenon": "Idioms and figurative fixed expressions"
+  },
+  {
+    "sentences": [
+      "After the storm, City Hall announced that the parade would be postponed until Saturday.",
+      "The announcement came from the mayor's office, not from the building itself."
+    ],
+    "queries": [
+      {
+        "question": "Who announced that the parade would be postponed?",
+        "expected_answer": "City Hall, meaning the mayor's office."
+      },
+      {
+        "question": "When would the parade be postponed until?",
+        "expected_answer": "Saturday."
+      },
+      {
+        "question": "Did the announcement come from the building itself?",
+        "expected_answer": "No, it came from the mayor's office."
+      }
+    ],
+    "phenomenon": "Metaphor and metonymy"
+  },
+  {
+    "sentences": [
+      "By noon, the newsroom had swallowed three rumors and printed only one confirmed report.",
+      "The editor rejected the other two rumors before the evening edition."
+    ],
+    "queries": [
+      {
+        "question": "What had swallowed three rumors by noon?",
+        "expected_answer": "The newsroom."
+      },
+      {
+        "question": "How many confirmed reports did the newsroom print?",
+        "expected_answer": "One confirmed report."
+      },
+      {
+        "question": "Who rejected the other two rumors?",
+        "expected_answer": "The editor."
+      }
+    ],
+    "phenomenon": "Metaphor and metonymy"
+  },
+  {
+    "sentences": [
+      "The harbor woke before sunrise as fishing boats coughed to life along the pier.",
+      "Captain Amara's blue boat left first, followed by two smaller skiffs."
+    ],
+    "queries": [
+      {
+        "question": "What woke before sunrise?",
+        "expected_answer": "The harbor."
+      },
+      {
+        "question": "Which boat left first?",
+        "expected_answer": "Captain Amara's blue boat."
+      },
+      {
+        "question": "How many smaller skiffs followed?",
+        "expected_answer": "Two smaller skiffs."
+      }
+    ],
+    "phenomenon": "Metaphor and metonymy"
+  },
+  {
+    "sentences": [
+      "At the market, Priya bought three oranges and some flour for the cake."
+    ],
+    "queries": [
+      {
+        "question": "How many oranges did Priya buy?",
+        "expected_answer": "Three oranges."
+      },
+      {
+        "question": "What substance did Priya buy for the cake?",
+        "expected_answer": "Some flour."
+      }
+    ],
+    "phenomenon": "Count and mass nouns"
+  },
+  {
+    "sentences": [
+      "After the storm, two branches lay across the driveway, and mud covered the porch steps."
+    ],
+    "queries": [
+      {
+        "question": "How many branches lay across the driveway?",
+        "expected_answer": "Two branches."
+      },
+      {
+        "question": "What covered the porch steps?",
+        "expected_answer": "Mud."
+      }
+    ],
+    "phenomenon": "Count and mass nouns"
+  },
+  {
+    "sentences": [
+      "The waiter placed four glasses on the table and poured water into the blue pitcher."
+    ],
+    "queries": [
+      {
+        "question": "How many glasses did the waiter place on the table?",
+        "expected_answer": "Four glasses."
+      },
+      {
+        "question": "What did the waiter pour into the blue pitcher?",
+        "expected_answer": "Water."
+      },
+      {
+        "question": "Where did the waiter place four glasses?",
+        "expected_answer": "On the table."
+      }
+    ],
+    "phenomenon": "Count and mass nouns"
+  },
+  {
+    "sentences": [
+      "The blue rope in the supply closet is five meters long."
+    ],
+    "queries": [
+      {
+        "question": "How long is the blue rope?",
+        "expected_answer": "Five meters."
+      },
+      {
+        "question": "Which rope is five meters long?",
+        "expected_answer": "The blue rope in the supply closet."
+      },
+      {
+        "question": "Is the blue rope five meters long?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Units, dimensions, and measurements"
+  },
+  {
+    "sentences": [
+      "At the market stall, a basket of peaches costs eight dollars."
+    ],
+    "queries": [
+      {
+        "question": "How much does a basket of peaches cost?",
+        "expected_answer": "Eight dollars."
+      },
+      {
+        "question": "What costs eight dollars?",
+        "expected_answer": "A basket of peaches."
+      },
+      {
+        "question": "Where does a basket of peaches cost eight dollars?",
+        "expected_answer": "At the market stall."
+      }
+    ],
+    "phenomenon": "Units, dimensions, and measurements"
+  },
+  {
+    "sentences": [
+      "During the morning hike, Omar's backpack weighed twelve kilograms."
+    ],
+    "queries": [
+      {
+        "question": "How much did Omar's backpack weigh?",
+        "expected_answer": "Twelve kilograms."
+      },
+      {
+        "question": "Whose backpack weighed twelve kilograms?",
+        "expected_answer": "Omar's backpack."
+      },
+      {
+        "question": "When did Omar's backpack weigh twelve kilograms?",
+        "expected_answer": "During the morning hike."
+      }
+    ],
+    "phenomenon": "Units, dimensions, and measurements"
+  },
+  {
+    "sentences": [
+      "The gallery opening is scheduled for April fifth, and the artist talk begins the same evening."
+    ],
+    "queries": [
+      {
+        "question": "When is the gallery opening scheduled?",
+        "expected_answer": "April fifth."
+      },
+      {
+        "question": "What begins the same evening as the gallery opening?",
+        "expected_answer": "The artist talk."
+      }
+    ],
+    "phenomenon": "Calendrical and named temporal expressions"
+  },
+  {
+    "sentences": [
+      "Maya and her cousins exchanged photos last Christmas at their grandmother's house."
+    ],
+    "queries": [
+      {
+        "question": "When did Maya and her cousins exchange photos?",
+        "expected_answer": "Last Christmas."
+      },
+      {
+        "question": "Where did Maya and her cousins exchange photos?",
+        "expected_answer": "At their grandmother's house."
+      }
+    ],
+    "phenomenon": "Calendrical and named temporal expressions"
+  },
+  {
+    "sentences": [
+      "The grant application must be submitted by next Friday, but the budget worksheet is due on Wednesday."
+    ],
+    "queries": [
+      {
+        "question": "When must the grant application be submitted?",
+        "expected_answer": "By next Friday."
+      },
+      {
+        "question": "What is due on Wednesday?",
+        "expected_answer": "The budget worksheet."
+      },
+      {
+        "question": "Is the grant application due by next Friday?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Calendrical and named temporal expressions"
+  },
+  {
+    "sentences": [
+      "The robotics team earned 18 points in the morning round and 24 points in the afternoon round. Altogether, the team earned 42 points."
+    ],
+    "queries": [
+      {
+        "question": "How many points did the robotics team earn altogether?",
+        "expected_answer": "42 points."
+      },
+      {
+        "question": "How many points did the robotics team earn in the afternoon round?",
+        "expected_answer": "24 points."
+      },
+      {
+        "question": "Did the robotics team earn more than 40 points altogether?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Aggregation and collective quantities"
+  },
+  {
+    "sentences": [
+      "At the bakery, three trays held 12 rolls, 15 rolls, and 9 rolls. The trays held 36 rolls in total."
+    ],
+    "queries": [
+      {
+        "question": "How many rolls did the trays hold in total?",
+        "expected_answer": "36 rolls."
+      },
+      {
+        "question": "How many rolls were on the tray with the fewest rolls?",
+        "expected_answer": "9 rolls."
+      },
+      {
+        "question": "Did the trays hold fewer than 40 rolls in total?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Aggregation and collective quantities"
+  },
+  {
+    "sentences": [
+      "Four hikers carried packs weighing 7 kilos, 8 kilos, 10 kilos, and 11 kilos. Together, the packs weighed 36 kilos."
+    ],
+    "queries": [
+      {
+        "question": "How much did the packs weigh together?",
+        "expected_answer": "36 kilos."
+      },
+      {
+        "question": "How much did the heaviest pack weigh?",
+        "expected_answer": "11 kilos."
+      },
+      {
+        "question": "Did the packs weigh exactly 36 kilos together?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Aggregation and collective quantities"
+  },
+  {
+    "sentences": [
+      "Everyone on the hiking team reached the summit except Priya."
+    ],
+    "queries": [
+      {
+        "question": "Who did not reach the summit?",
+        "expected_answer": "Priya."
+      },
+      {
+        "question": "Did everyone on the hiking team reach the summit?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "Who reached the summit apart from Priya?",
+        "expected_answer": "Everyone else on the hiking team."
+      }
+    ],
+    "phenomenon": "Exceptions and exclusions"
+  },
+  {
+    "sentences": [
+      "All of the cupcakes but three were decorated with blue icing."
+    ],
+    "queries": [
+      {
+        "question": "How many cupcakes were not decorated with blue icing?",
+        "expected_answer": "Three."
+      },
+      {
+        "question": "Were all of the cupcakes decorated with blue icing?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "What was on all but three of the cupcakes?",
+        "expected_answer": "Blue icing."
+      }
+    ],
+    "phenomenon": "Exceptions and exclusions"
+  },
+  {
+    "sentences": [
+      "Apart from the storage closet, every room in the clinic was painted white."
+    ],
+    "queries": [
+      {
+        "question": "Which room was excluded from being painted white?",
+        "expected_answer": "The storage closet."
+      },
+      {
+        "question": "What color was every room except the storage closet painted?",
+        "expected_answer": "White."
+      },
+      {
+        "question": "Was the storage closet included in the rooms painted white?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Exceptions and exclusions"
+  },
+  {
+    "sentences": [
+      "At least four volunteers signed the cleanup sheet before noon.",
+      "Only two volunteers arrived with gloves."
+    ],
+    "queries": [
+      {
+        "question": "How many volunteers signed the cleanup sheet before noon at minimum?",
+        "expected_answer": "Four volunteers."
+      },
+      {
+        "question": "How many volunteers arrived with gloves?",
+        "expected_answer": "Two volunteers."
+      },
+      {
+        "question": "Did at least four volunteers sign the cleanup sheet before noon?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Scalar particles and threshold expressions"
+  },
+  {
+    "sentences": [
+      "Mira packed just one sweater for the mountain trip.",
+      "Even her guide brought three extra layers."
+    ],
+    "queries": [
+      {
+        "question": "How many sweaters did Mira pack for the mountain trip?",
+        "expected_answer": "One sweater."
+      },
+      {
+        "question": "Who brought three extra layers?",
+        "expected_answer": "Her guide."
+      },
+      {
+        "question": "Did Mira pack only one sweater for the mountain trip?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Scalar particles and threshold expressions"
+  },
+  {
+    "sentences": [
+      "The bakery sold no more than twelve rye loaves on Tuesday.",
+      "At least seven of those loaves were sliced before pickup."
+    ],
+    "queries": [
+      {
+        "question": "What was the maximum number of rye loaves the bakery sold on Tuesday?",
+        "expected_answer": "Twelve rye loaves."
+      },
+      {
+        "question": "How many rye loaves were sliced before pickup at minimum?",
+        "expected_answer": "Seven rye loaves."
+      },
+      {
+        "question": "Did the bakery sell more than twelve rye loaves on Tuesday?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Scalar particles and threshold expressions"
+  },
+  {
+    "sentences": [
+      "The blue bicycle and the red scooter both have silver bells, but they are different colors."
+    ],
+    "queries": [
+      {
+        "question": "What do the bicycle and the scooter both have?",
+        "expected_answer": "Silver bells."
+      },
+      {
+        "question": "Are the bicycle and the scooter the same color?",
+        "expected_answer": "No, they are different colors."
+      },
+      {
+        "question": "Which vehicle is blue?",
+        "expected_answer": "The bicycle."
+      }
+    ],
+    "phenomenon": "Similarity, difference, and contrast"
+  },
+  {
+    "sentences": [
+      "Mira and her younger sister sound alike on the phone.",
+      "Unlike Mira, her sister speaks very slowly during meetings."
+    ],
+    "queries": [
+      {
+        "question": "Who sounds alike on the phone?",
+        "expected_answer": "Mira and her younger sister."
+      },
+      {
+        "question": "Who speaks very slowly during meetings?",
+        "expected_answer": "Mira's younger sister."
+      },
+      {
+        "question": "Does Mira speak very slowly during meetings?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Similarity, difference, and contrast"
+  },
+  {
+    "sentences": [
+      "The two soups look similar because both are pale green.",
+      "The cucumber soup tastes cool, while the pepper soup tastes spicy."
+    ],
+    "queries": [
+      {
+        "question": "Why do the two soups look similar?",
+        "expected_answer": "Because both are pale green."
+      },
+      {
+        "question": "Which soup tastes spicy?",
+        "expected_answer": "The pepper soup."
+      },
+      {
+        "question": "How does the cucumber soup taste?",
+        "expected_answer": "Cool."
+      }
+    ],
+    "phenomenon": "Similarity, difference, and contrast"
+  },
+  {
+    "sentences": [
+      "Maya told the conductor that she had left the violin in the green room.",
+      "The conductor thanked Maya after he found it."
+    ],
+    "queries": [
+      {
+        "question": "Who had left the violin in the green room?",
+        "expected_answer": "Maya."
+      },
+      {
+        "question": "What did the conductor find?",
+        "expected_answer": "The violin."
+      },
+      {
+        "question": "Who thanked Maya?",
+        "expected_answer": "The conductor."
+      }
+    ],
+    "phenomenon": "Coreference across clauses"
+  },
+  {
+    "sentences": [
+      "The baker called Nora because the baker needed her recipe for pear tarts.",
+      "Nora sent it before the shop opened."
+    ],
+    "queries": [
+      {
+        "question": "Who needed Nora's recipe for pear tarts?",
+        "expected_answer": "The baker."
+      },
+      {
+        "question": "What did Nora send?",
+        "expected_answer": "Her recipe for pear tarts."
+      },
+      {
+        "question": "When did Nora send the recipe?",
+        "expected_answer": "Before the shop opened."
+      }
+    ],
+    "phenomenon": "Coreference across clauses"
+  },
+  {
+    "sentences": [
+      "After the ranger spotted a young fox near the trail, she photographed the animal from behind a pine tree.",
+      "The fox then slipped into its den."
+    ],
+    "queries": [
+      {
+        "question": "Who photographed the young fox?",
+        "expected_answer": "The ranger."
+      },
+      {
+        "question": "Where did the ranger photograph the animal from?",
+        "expected_answer": "Behind a pine tree."
+      },
+      {
+        "question": "What slipped into its den?",
+        "expected_answer": "The fox."
+      }
+    ],
+    "phenomenon": "Coreference across clauses"
+  },
+  {
+    "sentences": [
+      "The ferry stopped running after sunset. Therefore, the hikers slept at the harbor."
+    ],
+    "queries": [
+      {
+        "question": "Why did the hikers sleep at the harbor?",
+        "expected_answer": "Because the ferry stopped running after sunset."
+      },
+      {
+        "question": "Where did the hikers sleep?",
+        "expected_answer": "At the harbor."
+      },
+      {
+        "question": "What stopped running after sunset?",
+        "expected_answer": "The ferry."
+      }
+    ],
+    "phenomenon": "Discourse relations"
+  },
+  {
+    "sentences": [
+      "The museum opened a new ocean exhibit. For example, visitors can watch a live coral tank and touch a model shark tooth."
+    ],
+    "queries": [
+      {
+        "question": "What did the museum open?",
+        "expected_answer": "A new ocean exhibit."
+      },
+      {
+        "question": "What can visitors watch?",
+        "expected_answer": "A live coral tank."
+      },
+      {
+        "question": "What can visitors touch?",
+        "expected_answer": "A model shark tooth."
+      }
+    ],
+    "phenomenon": "Discourse relations"
+  },
+  {
+    "sentences": [
+      "Omar chopped the onions first. Next, he stirred them into the lentil soup."
+    ],
+    "queries": [
+      {
+        "question": "What did Omar do first?",
+        "expected_answer": "He chopped the onions."
+      },
+      {
+        "question": "What did Omar do next?",
+        "expected_answer": "He stirred the onions into the lentil soup."
+      },
+      {
+        "question": "What did Omar stir into the lentil soup?",
+        "expected_answer": "The onions."
+      }
+    ],
+    "phenomenon": "Discourse relations"
+  },
+  {
+    "sentences": [
+      "The hiking group met at the trailhead at dawn.",
+      "Everyone was carrying a water bottle, but only three hikers had maps."
+    ],
+    "queries": [
+      {
+        "question": "Who was carrying a water bottle?",
+        "expected_answer": "Everyone in the hiking group."
+      },
+      {
+        "question": "How many hikers had maps?",
+        "expected_answer": "Three hikers."
+      },
+      {
+        "question": "Where did the hiking group meet?",
+        "expected_answer": "At the trailhead."
+      }
+    ],
+    "phenomenon": "Context-dependent domain restriction"
+  },
+  {
+    "sentences": [
+      "In the bakery display case, all the croissants were almond-filled.",
+      "The muffins on the counter were blueberry, and no tarts were left."
+    ],
+    "queries": [
+      {
+        "question": "Which croissants were almond-filled?",
+        "expected_answer": "All the croissants in the bakery display case."
+      },
+      {
+        "question": "What kind of muffins were on the counter?",
+        "expected_answer": "Blueberry muffins."
+      },
+      {
+        "question": "Were any tarts left?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Context-dependent domain restriction"
+  },
+  {
+    "sentences": [
+      "The conference room had twelve chairs before the workshop began.",
+      "No seats were available after the last volunteer arrived."
+    ],
+    "queries": [
+      {
+        "question": "How many chairs did the conference room have before the workshop began?",
+        "expected_answer": "Twelve chairs."
+      },
+      {
+        "question": "Were any seats available after the last volunteer arrived?",
+        "expected_answer": "No."
+      },
+      {
+        "question": "When were no seats available?",
+        "expected_answer": "After the last volunteer arrived."
+      }
+    ],
+    "phenomenon": "Context-dependent domain restriction"
+  },
+  {
+    "sentences": [
+      "The ranger checked the north gate at dawn.",
+      "Yes, the north gate is open."
+    ],
+    "queries": [
+      {
+        "question": "Is the north gate open?",
+        "expected_answer": "Yes, the north gate is open."
+      },
+      {
+        "question": "Which gate is open?",
+        "expected_answer": "The north gate."
+      }
+    ],
+    "phenomenon": "Polarity and truth-value operators beyond negation"
+  },
+  {
+    "sentences": [
+      "Mira reported that the courier left before noon.",
+      "It is true that the courier left before noon."
+    ],
+    "queries": [
+      {
+        "question": "Did the courier leave before noon?",
+        "expected_answer": "Yes, the courier left before noon."
+      },
+      {
+        "question": "When did the courier leave?",
+        "expected_answer": "Before noon."
+      },
+      {
+        "question": "Whose report was confirmed as true?",
+        "expected_answer": "Mira's report."
+      }
+    ],
+    "phenomenon": "Polarity and truth-value operators beyond negation"
+  },
+  {
+    "sentences": [
+      "A rumor in the kitchen said that the soup contained peanuts.",
+      "That claim is false."
+    ],
+    "queries": [
+      {
+        "question": "Did the soup contain peanuts?",
+        "expected_answer": "No, the soup did not contain peanuts."
+      },
+      {
+        "question": "What claim was false?",
+        "expected_answer": "The claim that the soup contained peanuts."
+      }
+    ],
+    "phenomenon": "Polarity and truth-value operators beyond negation"
+  },
+  {
+    "sentences": [
+      "I think the spare key is in the blue bowl by the door. The brass key is definitely in the kitchen drawer."
+    ],
+    "queries": [
+      {
+        "question": "Where does the speaker think the spare key is?",
+        "expected_answer": "In the blue bowl by the door."
+      },
+      {
+        "question": "Which key is definitely in the kitchen drawer?",
+        "expected_answer": "The brass key."
+      }
+    ],
+    "phenomenon": "Uncertainty and hedging"
+  },
+  {
+    "sentences": [
+      "The afternoon ferry will probably leave from Pier 4. The ticket clerk said the morning ferry left from Pier 2."
+    ],
+    "queries": [
+      {
+        "question": "Where will the afternoon ferry probably leave from?",
+        "expected_answer": "Pier 4."
+      },
+      {
+        "question": "Which ferry left from Pier 2?",
+        "expected_answer": "The morning ferry."
+      }
+    ],
+    "phenomenon": "Uncertainty and hedging"
+  },
+  {
+    "sentences": [
+      "It seems that the rescued owl is weak after the storm. The young fox is alert and eating normally."
+    ],
+    "queries": [
+      {
+        "question": "How does the rescued owl seem after the storm?",
+        "expected_answer": "Weak."
+      },
+      {
+        "question": "Which animal is alert and eating normally?",
+        "expected_answer": "The young fox."
+      }
+    ],
+    "phenomenon": "Uncertainty and hedging"
+  },
+  {
+    "sentences": [
+      "The oak table is two inches wider than the kitchen doorway."
+    ],
+    "queries": [
+      {
+        "question": "What is wider than the kitchen doorway?",
+        "expected_answer": "The oak table."
+      },
+      {
+        "question": "How much wider is the oak table than the kitchen doorway?",
+        "expected_answer": "Two inches."
+      },
+      {
+        "question": "Is the oak table wider than the kitchen doorway?",
+        "expected_answer": "Yes."
+      }
+    ],
+    "phenomenon": "Comparative subdeletion and differential comparison"
+  },
+  {
+    "sentences": [
+      "More hikers reached the ridge than tents were set up at the campsite."
+    ],
+    "queries": [
+      {
+        "question": "What were there more of than tents set up at the campsite?",
+        "expected_answer": "Hikers who reached the ridge."
+      },
+      {
+        "question": "Were fewer hikers at the ridge than tents at the campsite?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Comparative subdeletion and differential comparison"
+  },
+  {
+    "sentences": [
+      "The rehearsal lasted twenty minutes longer than the choir director had planned."
+    ],
+    "queries": [
+      {
+        "question": "What lasted longer than the choir director had planned?",
+        "expected_answer": "The rehearsal."
+      },
+      {
+        "question": "How much longer did the rehearsal last than planned?",
+        "expected_answer": "Twenty minutes."
+      },
+      {
+        "question": "Did the rehearsal last exactly as long as the choir director had planned?",
+        "expected_answer": "No."
+      }
+    ],
+    "phenomenon": "Comparative subdeletion and differential comparison"
+  },
+  {
+    "sentences": [
+      "The harbor ferry departs every forty minutes from Pier 6. The first departure is at 6:20 a.m."
+    ],
+    "queries": [
+      {
+        "question": "How often does the harbor ferry depart from Pier 6?",
+        "expected_answer": "Every forty minutes."
+      },
+      {
+        "question": "Where does the harbor ferry depart from?",
+        "expected_answer": "Pier 6."
+      },
+      {
+        "question": "When is the first departure?",
+        "expected_answer": "At 6:20 a.m."
+      }
+    ],
+    "phenomenon": "Temporal recurrence and schedules"
+  },
+  {
+    "sentences": [
+      "The community garden collects compost on the second Tuesday of each month. Volunteers leave the bins beside the tool shed."
+    ],
+    "queries": [
+      {
+        "question": "When does the community garden collect compost?",
+        "expected_answer": "On the second Tuesday of each month."
+      },
+      {
+        "question": "What does the community garden collect?",
+        "expected_answer": "Compost."
+      },
+      {
+        "question": "Where do volunteers leave the bins?",
+        "expected_answer": "Beside the tool shed."
+      }
+    ],
+    "phenomenon": "Temporal recurrence and schedules"
+  },
+  {
+    "sentences": [
+      "During the summer session, the pottery studio holds beginner classes every Saturday morning. The classes take place in the blue workshop."
+    ],
+    "queries": [
+      {
+        "question": "How often does the pottery studio hold beginner classes during the summer session?",
+        "expected_answer": "Every Saturday morning."
+      },
+      {
+        "question": "Which classes does the pottery studio hold every Saturday morning?",
+        "expected_answer": "Beginner classes."
+      },
+      {
+        "question": "Where do the classes take place?",
+        "expected_answer": "In the blue workshop."
+      }
+    ],
+    "phenomenon": "Temporal recurrence and schedules"
+  },
+  {
+    "sentences": [
+      "By sunset, the clear river had turned muddy after the storm."
+    ],
+    "queries": [
+      {
+        "question": "What did the river turn into?",
+        "expected_answer": "muddy"
+      },
+      {
+        "question": "When had the river turned muddy?",
+        "expected_answer": "by sunset"
+      },
+      {
+        "question": "What was the river like before it turned muddy?",
+        "expected_answer": "clear"
+      }
+    ],
+    "phenomenon": "Change of state"
+  },
+  {
+    "sentences": [
+      "During the long meeting, Priya grew impatient while waiting for the budget report."
+    ],
+    "queries": [
+      {
+        "question": "Who grew impatient?",
+        "expected_answer": "Priya"
+      },
+      {
+        "question": "What condition did Priya grow into?",
+        "expected_answer": "impatient"
+      },
+      {
+        "question": "When did Priya grow impatient?",
+        "expected_answer": "during the long meeting"
+      }
+    ],
+    "phenomenon": "Change of state"
+  },
+  {
+    "sentences": [
+      "The old theater reopened last spring after being closed for eight years."
+    ],
+    "queries": [
+      {
+        "question": "What reopened last spring?",
+        "expected_answer": "the old theater"
+      },
+      {
+        "question": "When did the old theater reopen?",
+        "expected_answer": "last spring"
+      },
+      {
+        "question": "How long had the old theater been closed?",
+        "expected_answer": "eight years"
+      }
+    ],
+    "phenomenon": "Change of state"
+  },
+  {
+    "sentences": [
+      "In the quiet studio, Mara sculpted a clay fox and later smashed the empty mold."
+    ],
+    "queries": [
+      {
+        "question": "What did Mara create?",
+        "expected_answer": "a clay fox"
+      },
+      {
+        "question": "What did Mara destroy?",
+        "expected_answer": "the empty mold"
+      }
+    ],
+    "phenomenon": "Creation and destruction events"
+  },
+  {
+    "sentences": [
+      "The volunteer crew assembled a wooden footbridge over the creek.",
+      "A spring flood washed away the old stepping stones nearby."
+    ],
+    "queries": [
+      {
+        "question": "What did the volunteer crew bring into existence?",
+        "expected_answer": "a wooden footbridge"
+      },
+      {
+        "question": "What eliminated the old stepping stones?",
+        "expected_answer": "a spring flood"
+      },
+      {
+        "question": "What did the spring flood wash away?",
+        "expected_answer": "the old stepping stones"
+      }
+    ],
+    "phenomenon": "Creation and destruction events"
+  },
+  {
+    "sentences": [
+      "For the festival, Chef Rina baked three honey cakes before noon.",
+      "After the judging, the guests ate the remaining slices."
+    ],
+    "queries": [
+      {
+        "question": "What did Chef Rina make?",
+        "expected_answer": "three honey cakes"
+      },
+      {
+        "question": "Who consumed the remaining slices?",
+        "expected_answer": "the guests"
+      },
+      {
+        "question": "When did Chef Rina bake the honey cakes?",
+        "expected_answer": "before noon"
+      }
+    ],
+    "phenomenon": "Creation and destruction events"
+  },
+  {
+    "sentences": [
+      "As for the renovation plan, the council postponed it until June.",
+      "The safety report, the engineers approved immediately."
+    ],
+    "queries": [
+      {
+        "question": "What did the council postpone until June?",
+        "expected_answer": "The renovation plan."
+      },
+      {
+        "question": "Who approved the safety report immediately?",
+        "expected_answer": "The engineers."
+      },
+      {
+        "question": "When did the council postpone the renovation plan until?",
+        "expected_answer": "June."
+      }
+    ],
+    "phenomenon": "Information structure and topic-comment organization"
+  },
+  {
+    "sentences": [
+      "It was Lena who baked the almond cake for the fundraiser.",
+      "The chocolate tarts, Omar delivered after lunch."
+    ],
+    "queries": [
+      {
+        "question": "Who baked the almond cake for the fundraiser?",
+        "expected_answer": "Lena."
+      },
+      {
+        "question": "What did Omar deliver after lunch?",
+        "expected_answer": "The chocolate tarts."
+      },
+      {
+        "question": "Why did Lena bake the almond cake?",
+        "expected_answer": "For the fundraiser."
+      }
+    ],
+    "phenomenon": "Information structure and topic-comment organization"
+  },
+  {
+    "sentences": [
+      "About the hiking trail, the rangers closed it because of fallen trees.",
+      "The picnic shelter, visitors can still use on weekends."
+    ],
+    "queries": [
+      {
+        "question": "What did the rangers close?",
+        "expected_answer": "The hiking trail."
+      },
+      {
+        "question": "Why did the rangers close the hiking trail?",
+        "expected_answer": "Because of fallen trees."
+      },
+      {
+        "question": "When can visitors still use the picnic shelter?",
+        "expected_answer": "On weekends."
+      }
+    ],
+    "phenomenon": "Information structure and topic-comment organization"
+  }
+]
