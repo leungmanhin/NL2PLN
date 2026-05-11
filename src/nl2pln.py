@@ -157,6 +157,15 @@ class ProofEvaluatorSignature(dspy.Signature):
 
     You are evaluating PLN (Probabilistic Logic Networks) proofs generated from natural language.
     Assess whether the proof correctly answers the question and provide constructive feedback.
+
+    If `constraints` is non-empty, the proof must additionally satisfy each
+    listed constraint (e.g. "STV strength in [0.3, 0.7]").  Constraints are
+    short, self-contained, machine-checkable claims about the proof's content;
+    verify each against the actual proof string.  A proof that answers the
+    question but violates the constraints should receive a reduced score
+    (roughly proportional to how many constraints are unsatisfied and how
+    central they are to the question's intent).  If `constraints` is empty,
+    score on expected_answer match alone.
     """
     # Inputs
     sentences: List[str] = dspy.InputField(desc="Original natural language sentences")
@@ -166,6 +175,11 @@ class ProofEvaluatorSignature(dspy.Signature):
     statements: List[str] = dspy.InputField(desc="PLN statements generated from sentences")
     query: List[str] = dspy.InputField(desc="PLN query generated for the question")
     proof: str = dspy.InputField(desc="The proof result from running the query")
+    constraints: List[str] = dspy.InputField(
+        desc='Optional list of additional constraints the proof should satisfy '
+             '(e.g. "STV strength in [0.3, 0.7]").  Empty list means no '
+             'additional constraints — score on expected_answer match alone.'
+    )
 
     # Outputs
     score: float = dspy.OutputField(desc="Score from 0.0 to 1.0 indicating how well the proof answers the question")
@@ -178,7 +192,7 @@ class ProofEvaluator(dspy.Module):
     def __init__(self):
         self.evaluate = dspy.ChainOfThought(ProofEvaluatorSignature)
 
-    def forward(self, sentences, question, expected_answer, pln_spec, statements, query, proof):
+    def forward(self, sentences, question, expected_answer, pln_spec, statements, query, proof, constraints):
         return self.evaluate(
             sentences=sentences,
             question=question,
@@ -186,7 +200,8 @@ class ProofEvaluator(dspy.Module):
             pln_spec=pln_spec,
             statements=statements,
             query=query,
-            proof=proof
+            proof=proof,
+            constraints=constraints,
         )
 
 def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pred_name=None, pred_trace=None):
@@ -242,6 +257,7 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
                 f"Query: {qry}\nProof: {p}"
                 for qry, p in zip(query_pln, proof_list)
             )
+            constraints = q.get('constraints') or []
             evaluation = evaluator(
                 sentences=gold.sentences,
                 question=q['question'],
@@ -249,7 +265,8 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
                 pln_spec=pln_spec,
                 statements=pred.statements,
                 query=query_pln,
-                proof=formatted_proof
+                proof=formatted_proof,
+                constraints=constraints,
             )
 
             eval_score = 0.0 if evaluation.score is None else float(evaluation.score)
@@ -258,6 +275,7 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
             feedback_details.append(dedent(f"""
                 Question: '{q['question']}'
                 Expected: {q['expected_answer']}
+                Constraints: {constraints}
                 Proofs:
 {formatted_proof}
                 Score: {eval_score}

@@ -1,0 +1,704 @@
+1. Entity classification  
+   Recap: English states that an individual belongs to a category, kind, or class.  
+   Chainer features to exercise: Plain predicates; Class entity idiom; `STV`; `Implication`, `Premises`, `Conclusions` for class-inclusion readings.  
+   Constraint templates:  
+   - If the English sentence is a general class inclusion such as “robins are birds,” the proof should use an `Implication` whose premise is the narrower class predicate with a variable and whose conclusion is the broader class predicate with the same variable.  
+   - If the English sentence classifies a named individual, the proof may be a ground class-membership predicate with an `STV` truth value.
+
+2. Entity identification and naming  
+   Recap: Proper names, titles, and labels identify particular entities.  
+   Chainer features to exercise: Entity identity and representation; stable unique constants; optional plain `Name` predicates.  
+   Constraint templates:  
+   - Repeated references to the same named entity should use the same entity constant unless the example explicitly involves ambiguity or distinct entities with the same name.  
+   - Surface names should not be relied on as built-in semantics; if names are represented, they should appear in ordinary predicates such as `Name`.
+
+3. Properties and attributes  
+   Recap: English assigns qualities, colors, sizes, ages, and other attributes to entities.  
+   Chainer features to exercise: Plain predicates; `STV`; distribution constructors such as `PointMass` and `ParticleFromNormal` for scalar attributes.  
+   Constraint templates:  
+   - Scalar measurement uncertainty should be represented with distribution-valued predicate arguments, not solely by lowering the `STV` of the proposition.
+
+4. Relational properties  
+   Recap: Some properties relate one entity to another rather than describing one entity alone.  
+   Chainer features to exercise: Plain predicates; `GreaterThan` / `>` for scalar comparisons; distribution constructors for measured relational values.  
+   Constraint templates:  
+   - Comparative scalar relations with numeric uncertainty should bind distribution-valued measurements and use `GreaterThan $distA $distB` or `> $distA $distB`.
+
+5. Possession and ownership  
+   Recap: English expresses ownership, custody, association, and belonging.  
+   Chainer features to exercise: Plain predicates for relations such as ownership, possession, custody, or association.  
+   Constraint templates: (none)
+
+6. Part-whole relations  
+   Recap: English describes components, members, and physical or abstract parts of wholes.  
+   Chainer features to exercise: Plain predicates; `FoldAll` or `FoldAllValue` for counted parts; `GreaterThan` for part-count thresholds.  
+   Constraint templates:  
+   - If the example requires proving a numerical part count, the proof should use `FoldAll` or `FoldAllValue` over part-whole facts rather than a single monolithic count predicate.
+
+7. Identity and equivalence  
+   Recap: English can state that two descriptions refer to the same entity or value.  
+   Chainer features to exercise: Entity identity and representation; stable constants; `Equal`; `NotEqual`; optional plain predicates such as `SameAs`.  
+   Constraint templates:  
+   - Exact equality of computed or measured values should use `Equal` or a shared value representation rather than unrelated constants.
+
+8. Existence and nonexistence  
+   Recap: English asserts that something exists, occurs, or is absent.  
+   Chainer features to exercise: Explicit witness constants; query variables; `STV`; `Not` / `NotFormula` with the negation pitfall noted.  
+   Constraint templates:  
+   - Existential assertions should use an explicit witness constant or a query variable; the proof should not use a non-existent user-facing `Exists` operator.  
+   - Nonexistence should not be represented by absence of a fact alone; if a truth value is required for the positive proposition, its `STV` strength should be in `[0.0, 0.2]`.  
+   - `Not` should only be used when the negated expression is matchable; it must not be treated as negation-as-failure.
+
+9. States and stative predication  
+   Recap: English describes conditions or states that hold rather than events that unfold.  
+   Chainer features to exercise: Plain predicates; `STV`.  
+   Constraint templates: (none)
+
+10. Actions and events  
+   Recap: English describes happenings with participants such as agents and patients.  
+   Chainer features to exercise: Plain predicates; event constants; role predicates.  
+   Constraint templates: (none)
+
+11. Thematic roles  
+   Recap: Event descriptions assign roles such as agent, patient, theme, recipient, source, goal, instrument, and beneficiary.  
+   Chainer features to exercise: Plain predicates; event constants shared across role predicates; `And` for compound event descriptions.  
+   Constraint templates:  
+   - Multiple role facts belonging to one event should share the same event constant or event variable.
+
+12. Transitive and intransitive events  
+   Recap: Some verbs take direct objects, while others describe events without one.  
+   Chainer features to exercise: Plain predicates; event constants; role predicates.  
+   Constraint templates: (none)
+
+13. Ditransitive and transfer events  
+   Recap: English expresses transfer of objects, information, or possession among participants.  
+   Chainer features to exercise: Plain predicates; event constants; role predicates for giver, recipient, and theme.  
+   Constraint templates: (none)
+
+14. Instrumental relations  
+   Recap: English marks tools or means used to perform actions.  
+   Chainer features to exercise: Plain predicates; event constants; role predicates for instruments or means.  
+   Constraint templates: (none)
+
+15. Beneficiaries and maleficiaries  
+   Recap: English identifies who benefits from or is harmed by an event.  
+   Chainer features to exercise: Plain predicates; event constants; beneficiary/maleficiary role predicates.  
+   Constraint templates: (none)
+
+16. Experiencer and stimulus roles  
+   Recap: Perception, emotion, and cognition often involve an experiencer and a stimulus.  
+   Chainer features to exercise: Plain predicates; event or state constants; role predicates.  
+   Constraint templates: (none)
+
+17. Agentless and natural events  
+   Recap: Some events occur without an explicit intentional agent.  
+   Chainer features to exercise: Plain predicates; event constants; optional omission of agent role predicates.  
+   Constraint templates:  
+   - Agentless events should not invent an arbitrary `Agent` fact unless the English explicitly supplies an agent or cause.
+
+18. Passive voice  
+   Recap: English can foreground the affected participant and background or omit the agent.  
+   Chainer features to exercise: Plain predicates; event constants; role predicates.  
+   Constraint templates:  
+   - Passive clauses with a by-phrase should produce the same agent/patient role structure as the corresponding active clause.  
+   - Agentless passives should not create a spurious concrete agent constant.
+
+19. Causative alternation  
+   Recap: English alternates between an entity changing state and another entity causing that change.  
+   Chainer features to exercise: Plain predicates; event/state predicates; `Implication` for rules connecting causative events to resulting states.  
+   Constraint templates:  
+   - If the example requires deriving the result state from a causative event, the proof should use an `Implication` from the causative event predicate to the resulting state predicate.
+
+20. Causation  
+   Recap: English expresses that one event or state brings about another.  
+   Chainer features to exercise: `Implication`, `Premises`, `Conclusions`; multiple premises; `STV` for uncertain causal claims.  
+   Constraint templates:  
+   - General causal claims should use an `Implication` rather than only a monolithic causal predicate.  
+   - Hedged causal claims such as “probably caused” should have an `STV` strength in `[0.5, 0.9]` and should not default to `(STV 1.0 1.0)`.
+
+21. Purpose and intention  
+   Recap: English expresses goals, intended outcomes, and reasons for actions.  
+   Chainer features to exercise: Plain predicates; event constants; `Implication` for goal-to-action or action-to-intended-result dependencies.  
+   Constraint templates:  
+   - If the sentence states a rule-like purpose relation, the proof should use an `Implication` connecting the action or intention to the intended outcome.
+
+22. Result and consequence  
+   Recap: English describes outcomes produced by actions or events.  
+   Chainer features to exercise: `Implication`, `Premises`, `Conclusions`; multiple conclusions; `STV`.  
+   Constraint templates:  
+   - Consequence markers such as “so,” “therefore,” or “as a result” should trigger an `Implication` when the expected proof derives the consequence from the cause.  
+   - If the consequence is only probable, the rule or derived conclusion should use an `STV` strength below `1.0`.
+
+23. Spatial containment  
+   Recap: English expresses being inside, outside, or within bounded regions.  
+   Chainer features to exercise: Plain predicates for spatial relations; `STV` for uncertain location.  
+   Constraint templates: (none)
+
+24. Spatial support and contact  
+   Recap: English marks relations such as on, under, touching, and attached to.  
+   Chainer features to exercise: Plain predicates for support/contact relations.  
+   Constraint templates: (none)
+
+25. Spatial proximity and distance  
+   Recap: English describes nearness, farness, adjacency, and separation.  
+   Chainer features to exercise: Plain predicates; distribution constructors for uncertain distances; `GreaterThan` for distance thresholds.  
+   Constraint templates:  
+   - Approximate or uncertain distances should use distribution-valued arguments such as `ParticleFromNormal` or `ParticleFromPairs`, not only `STV`.
+
+26. Spatial orientation and direction  
+   Recap: English encodes left, right, above, below, in front of, behind, and facing.  
+   Chainer features to exercise: Plain predicates for orientation/direction relations.  
+   Constraint templates: (none)
+
+27. Motion events  
+   Recap: English describes movement with source, path, goal, and manner.  
+   Chainer features to exercise: Plain predicates; event constants; role predicates for source, path, goal, and manner.  
+   Constraint templates: (none)
+
+28. Temporal location  
+   Recap: English locates events at times, dates, and intervals.  
+   Chainer features to exercise: Plain predicates; event constants; time constants.  
+   Constraint templates: (none)
+
+29. Temporal ordering  
+   Recap: English expresses before, after, during, while, and simultaneity.  
+   Chainer features to exercise: Plain predicates for temporal relations; event constants.  
+   Constraint templates: (none)
+
+30. Duration and time span  
+   Recap: English describes how long states or events last.  
+   Chainer features to exercise: Plain predicates; distribution constructors for uncertain durations; `PointMass` for exact durations.  
+   Constraint templates:  
+   - Exact durations should use exact numeric values or `PointMass` value arguments.  
+   - Approximate durations such as “about an hour” or “roughly two days” should use `ParticleFromNormal` or `ParticleFromPairs`.
+
+31. Tense  
+   Recap: English marks event time relative to speech time or another reference time.  
+   Chainer features to exercise: Plain predicates; event constants; time arguments or temporal relation predicates.  
+   Constraint templates: (none)
+
+32. Aspect  
+   Recap: English distinguishes ongoing, completed, habitual, and bounded event structure.  
+   Chainer features to exercise: Plain predicates for aspectual status; event constants; `STV` for habitual tendencies.  
+   Constraint templates:  
+   - Habitual aspect with frequency adverbs such as “usually” should not default to `(STV 1.0 1.0)`; use an `STV` strength in `[0.6, 0.9]`.
+
+33. Frequency and habituality  
+   Recap: English expresses how often events occur and whether they are customary.  
+   Chainer features to exercise: `STV`; `FoldAll`; `FoldAllValue`; `GreaterThan`; event predicates.  
+   Constraint templates:  
+   - “Usually” or “often” claims should use an `STV` strength in `[0.6, 0.9]`.  
+   - “Rarely” or “seldom” claims should use an `STV` strength in `[0.0, 0.35]`.  
+   - Exact frequency counts should use `FoldAll` or `FoldAllValue` rather than only a lexical frequency predicate.
+
+34. Existential quantification  
+   Recap: English says that at least one entity satisfying a description exists.  
+   Chainer features to exercise: Explicit witness constants; query variables; compiler-generated conclusion-only skolemization only indirectly.  
+   Constraint templates:  
+   - Asserted existential claims should introduce at least one explicit witness constant satisfying the description.  
+   - The proof should not use a user-facing `Exists` or `ForAll` operator, since the chainer has no such external quantifier syntax.
+
+35. Universal quantification  
+   Recap: English makes claims about all members of a relevant set.  
+   Chainer features to exercise: Variables in `Implication` rules; `Premises`; `Conclusions`; domain predicates.  
+   Constraint templates:  
+   - Universal claims with “all,” “every,” or “each” should use an `Implication` with a variable in the domain premise and the same variable in the conclusion.  
+   - The proof should not use a user-facing `ForAll` operator.
+
+36. Cardinality and numerals  
+   Recap: English specifies exact or approximate numbers of entities or events.  
+   Chainer features to exercise: `FoldAll`; `FoldAllValue`; `ParticleAddBernoulliFromSTV`; `GreaterThan`; distribution constructors.  
+   Constraint templates:  
+   - Exact or derived counts should be produced with `FoldAll` or `FoldAllValue` over matching facts.  
+   - Probabilistic counts over uncertain facts should use `FoldAllValue` with `ParticleAddBernoulliFromSTV`.  
+   - Approximate numerals such as “about twenty” should use a distribution-valued count, not a fully certain exact count.
+
+37. At-least and at-most quantification  
+   Recap: English sets lower or upper numerical bounds.  
+   Chainer features to exercise: `FoldAll`; `FoldAllValue`; `GreaterThan` / `>`; `Not` / `NotFormula`; distribution-valued counts.  
+   Constraint templates:  
+   - “At least N” should be checked by deriving a count distribution and applying `GreaterThan $countDist N-1`.  
+   - “More than N” should apply `GreaterThan $countDist N`.  
+   - “At most N” should not rely on absence of a proof; it should either negate or assign low strength to `GreaterThan $countDist N`.
+
+38. Proportional and vague quantifiers  
+   Recap: English uses quantifiers such as most, many, few, several, and some.  
+   Chainer features to exercise: `STV`; `FoldAll`; `FoldAllValue`; `GreaterThan`; distribution-valued counts.  
+   Constraint templates:  
+   - “Most” claims should have an `STV` strength in `[0.6, 0.95]` unless an explicit proportion is computed.  
+   - “Few” claims should have an `STV` strength in `[0.0, 0.35]` unless an explicit proportion is computed.  
+   - “Many” or “several” claims should not default to `(STV 1.0 1.0)` unless exact supporting counts are provided.
+
+39. Partitives and measure expressions  
+   Recap: English quantifies portions, amounts, and units of substances or groups.  
+   Chainer features to exercise: Plain predicates; distribution constructors; `PointMass`; `ParticleFromNormal`; `FoldAll` for aggregated portions.  
+   Constraint templates:  
+   - Exact measures such as “two liters” should use numeric value arguments or `PointMass`.  
+   - Approximate measures should use distribution-valued arguments, not only weakened `STV`.
+
+40. Distributive and collective readings  
+   Recap: Plural descriptions can apply to individuals separately or to a group together.  
+   Chainer features to exercise: Variables in `Implication` rules; group constants; plain predicates; `FoldAll`.  
+   Constraint templates:  
+   - Distributive readings marked by “each” should use a variable ranging over group members in an `Implication` or aggregation pattern.  
+   - Collective readings should use a group-level predicate or group constant rather than forcing separate facts for every member.
+
+41. Cumulative readings  
+   Recap: Plural participants may be related across totals rather than one-to-one pairings.  
+   Chainer features to exercise: `FoldAll`; `FoldAllValue`; aggregation patterns; event predicates.  
+   Constraint templates:  
+   - Cumulative total readings should use aggregation with `FoldAll` or `FoldAllValue` rather than assuming pairwise one-to-one relations.
+
+42. Generic statements  
+   Recap: English makes generalizations about kinds or typical members rather than particular individuals.  
+   Chainer features to exercise: Variables in `Implication` rules; `STV` for default or typical generalizations.  
+   Constraint templates:  
+   - Generic statements should normally use an `Implication` from kind/class membership to the generic property.  
+   - Non-exceptionless generics should use rule `STV` strength in `[0.6, 0.95]`, not necessarily `(STV 1.0 1.0)`.
+
+43. Definiteness and uniqueness  
+   Recap: Articles and demonstratives signal familiarity, uniqueness, or identifiability.  
+   Chainer features to exercise: Entity identity and representation; stable constants; optional uniqueness predicates.  
+   Constraint templates:  
+   - Once a definite referent is resolved, all facts about it should use the same stable entity constant.
+
+44. Indefiniteness and specificity  
+   Recap: Indefinite noun phrases may refer to a particular but unidentified entity or to any suitable entity.  
+   Chainer features to exercise: Explicit witness constants; variables in queries/rules.  
+   Constraint templates:  
+   - Specific asserted indefinites should introduce a witness constant.  
+   - Non-specific indefinites in rules or queries should use variables, not a literal constant such as `someone`.
+
+45. Anaphora and pronoun reference  
+   Recap: Pronouns and other referring expressions depend on earlier or contextual entities.  
+   Chainer features to exercise: Entity identity and representation; stable constants.  
+   Constraint templates:  
+   - Resolved pronouns should be replaced by the same entity constant as their antecedent before adding facts.  
+   - Do not assert facts about literal symbols such as `he`, `she`, `it`, or `they` unless those are deliberately chosen entity IDs.
+
+46. Reflexives and reciprocals  
+   Recap: English marks participants acting on themselves or on each other.  
+   Chainer features to exercise: Plain predicates; shared constants or variables; `And` for reciprocal multi-fact encodings.  
+   Constraint templates:  
+   - Reflexive readings should use the same constant or variable in the relevant role slots.  
+   - Reciprocal readings should include both directional relations or an explicit symmetric reciprocal predicate.
+
+47. Deixis  
+   Recap: Some expressions depend on speaker, addressee, time, or place of utterance.  
+   Chainer features to exercise: Entity identity and representation; stable constants for speaker/addressee/place/time.  
+   Constraint templates:  
+   - Deictic expressions such as “I,” “you,” “here,” and “now” should be resolved to contextual constants before adding facts.  
+   - Do not use literal constants such as `I`, `you`, `here`, or `now` unless the dataset explicitly defines them as entity/time/place IDs.
+
+48. Negation  
+   Recap: English denies propositions, events, properties, existence, or participation.  
+   Chainer features to exercise: `STV`; `Not`; `NotFormula`; `NotEqual`.  
+   Constraint templates:  
+   - Simple denial of a proposition should be represented by the positive proposition with `STV` strength in `[0.0, 0.2]`, or by a rule using `Not` over a matchable expression.  
+   - `Not` must not be used as negation-as-failure; the negated expression must be derivable or matchable.  
+   - Negative existential claims should not be represented solely by omitting all witnesses.
+
+49. Negative polarity and minimizers  
+   Recap: Some expressions are licensed in negative or downward-entailing contexts.  
+   Chainer features to exercise: `Not`; `STV`; plain predicates after polarity resolution.  
+   Constraint templates:  
+   - Negative-polarity items should not introduce independent positive existential witnesses unless the English entails them.  
+   - If the construction denies seeing or doing anything, the relevant positive proposition should have `STV` strength in `[0.0, 0.2]`.
+
+50. Double negation and negative concord  
+   Recap: Multiple negative expressions may cancel or reinforce depending on dialect and construction.  
+   Chainer features to exercise: `STV`; `Not`; `NotFormula`.  
+   Constraint templates:  
+   - Logical double negation readings such as “not impossible” should yield a positive proposition with `STV` strength at least `0.6`.  
+   - Negative-concord readings should be represented as a single semantic denial with the positive proposition’s `STV` strength in `[0.0, 0.2]`.
+
+51. Modality of ability  
+   Recap: English expresses capacity, skill, or opportunity to act.  
+   Chainer features to exercise: Plain predicates for ability/capacity; `Implication` for conditionally enabled abilities.  
+   Constraint templates:  
+   - Conditional ability claims should use an `Implication` from enabling conditions to the ability predicate.
+
+52. Modality of possibility and probability  
+   Recap: English expresses what may, might, could, or is likely to be true.  
+   Chainer features to exercise: `STV`; `Or`; `LikelierThan` for comparing alternative hypotheses.  
+   Constraint templates:  
+   - “May,” “might,” or epistemic “could” claims should use `STV` strength in `[0.2, 0.7]`.  
+   - “Likely” or “probably” claims should use `STV` strength in `[0.6, 0.9]`.  
+   - Modal probability claims should not default to `(STV 1.0 1.0)`.
+
+53. Modality of necessity and obligation  
+   Recap: English expresses what must, has to, or needs to happen.  
+   Chainer features to exercise: Plain predicates for obligation/necessity; `Implication` for conditional obligations.  
+   Constraint templates:  
+   - Deontic obligations should be represented with obligation-like predicates or rules, not merely by assigning high `STV` to the obligated action.  
+   - Conditional obligations such as “if the light is red, cars must stop” should use an `Implication`.
+
+54. Permission and prohibition  
+   Recap: English expresses what is allowed, forbidden, or authorized.  
+   Chainer features to exercise: Plain predicates for permission/prohibition; `Implication`; `Not` for prohibition only with care.  
+   Constraint templates:  
+   - Conditional permissions or prohibitions should use an `Implication` from the licensing condition to the permission/prohibition predicate.  
+   - Prohibition should not be encoded as absence of permission alone.
+
+55. Epistemic versus deontic modal readings  
+   Recap: The same modal can express inference about truth or rules about action.  
+   Chainer features to exercise: `STV` for epistemic readings; plain obligation/permission predicates; `Implication`.  
+   Constraint templates:  
+   - Epistemic modal readings should affect the `STV` of the proposition.  
+   - Deontic modal readings should use obligation/permission/prohibition predicates or `Implication`, not just high or low `STV`.
+
+56. Comparison of inequality  
+   Recap: English compares entities or degrees using greater, lesser, more, less, and related forms.  
+   Chainer features to exercise: `GreaterThan` / `>`; distribution constructors; `PointMass`; `ParticleFromNormal`.  
+   Constraint templates:  
+   - Inequality comparisons over measured values should bind value distributions and use `GreaterThan $distA $distB`.  
+   - Exact scalar values may use `PointMass`; uncertain scalar values should use `ParticleFromNormal` or `ParticleFromPairs`.
+
+57. Equality and similarity comparison  
+   Recap: English expresses equal degree, sameness, or resemblance.  
+   Chainer features to exercise: `Equal`; `NotEqual`; `Compute`; plain similarity predicates.  
+   Constraint templates:  
+   - Exact numeric equality should use `Equal` or shared exact value representations.  
+   - Similarity claims that are vague should not be forced into `Equal`; they may use ordinary similarity predicates with appropriate `STV`.
+
+58. Superlatives and extremes  
+   Recap: English identifies maximal or minimal members along a scale.  
+   Chainer features to exercise: `FoldAll`; `GreaterThan`; `LikelierThan`; distribution constructors.  
+   Constraint templates:  
+   - Superlative proofs over an explicit comparison set should compare the candidate against alternatives using `GreaterThan` or aggregation, rather than only asserting a monolithic superlative predicate.  
+   - If measurements are uncertain, comparisons should operate over distributions.
+
+59. Ordinals and ranking  
+   Recap: English orders entities by position in a sequence or hierarchy.  
+   Chainer features to exercise: Plain predicates for ranks; `FoldAll` for deriving rank from predecessors.  
+   Constraint templates:  
+   - If a rank is derived rather than asserted, the proof should use `FoldAll` or an equivalent aggregation over preceding items.
+
+60. Degree modification  
+   Recap: English modifies intensity, extent, or scalar values.  
+   Chainer features to exercise: Plain predicates; scalar value arguments; distribution constructors; `STV` for vague degree claims.  
+   Constraint templates:  
+   - Degree modifiers such as “very,” “slightly,” or “extremely” should preferably affect scalar degree/value arguments or threshold predicates, not arbitrary entity constants.
+
+61. Approximation and precision  
+   Recap: English expresses exactness, approximation, and uncertainty about values.  
+   Chainer features to exercise: `PointMass`; `ParticleFromNormal`; `ParticleFromPairs`; `STV`.  
+   Constraint templates:  
+   - “Exactly N” should use an exact numeric value or `PointMass N`.  
+   - “About,” “around,” or “roughly N” should use `ParticleFromNormal` or `ParticleFromPairs`.  
+   - Measurement/value uncertainty should not be encoded solely as a lower `STV`.
+
+62. Conjunction  
+   Recap: English combines entities, predicates, events, or clauses with “and” and similar expressions.  
+   Chainer features to exercise: `And`; multiple premises in `Implication`; `AndFormula`.  
+   Constraint templates:  
+   - Proposition-level conjunction should use `And` or multiple `Premises` when a compound proof is expected.  
+   - The resulting conjunction truth value should be compatible with `AndFormula`, i.e. strength and confidence should not exceed the weaker conjunct.
+
+63. Disjunction  
+   Recap: English presents alternatives using “or,” “either,” and related forms.  
+   Chainer features to exercise: `Or`; `OrFormula`; `STV`.  
+   Constraint templates:  
+   - Proposition-level disjunction should use `Or` when the proof preserves the alternatives.  
+   - Do not assume probabilistic union semantics; expected truth values should be compatible with the chainer’s `OrFormula`.
+
+64. Exclusive and inclusive alternatives  
+   Recap: Disjunction may allow one or both options, or exactly one option.  
+   Chainer features to exercise: `Or`; `Not`; `STV`; optional explicit exclusive-choice predicates.  
+   Constraint templates:  
+   - Inclusive alternatives may use `Or`.  
+   - Exclusive alternatives should not be represented by `Or` alone; the proof should also rule out both alternatives being simultaneously true or use an explicit exclusive-choice predicate.
+
+65. Coordination scope  
+   Recap: Coordinated expressions may share modifiers, subjects, objects, or operators in different ways.  
+   Chainer features to exercise: `And`; `Or`; shared variables in predicates or `Implication` premises.  
+   Constraint templates:  
+   - Shared-scope coordination should reuse the same variable or constant across the coordinated predicates.
+
+66. Conditionals  
+   Recap: English expresses dependencies between antecedents and consequents.  
+   Chainer features to exercise: `Implication`, `Premises`, `Conclusions`; multiple premises; `STV`.  
+   Constraint templates:  
+   - If/when conditionals should use `Implication` with the antecedent in `Premises` and the consequent in `Conclusions`.  
+   - Multiple antecedent conditions should appear as multiple premises, not as an opaque single predicate.  
+   - Hedged conditionals should use a rule `STV` strength below `1.0`.
+
+67. Counterfactual conditionals  
+   Recap: English describes hypothetical situations contrary to fact or uncertain reality.  
+   Chainer features to exercise: `Implication`; `STV`; explicit hypothetical/context predicates.  
+   Constraint templates:  
+   - Counterfactual antecedents should not be asserted as ordinary factual premises unless the example explicitly says they hold.  
+   - Counterfactual dependency rules should use `Implication` with `STV` confidence below `1.0`.
+
+68. Unless and exceptive conditions  
+   Recap: English marks negative or exceptional conditions.  
+   Chainer features to exercise: `Implication`; `Not`; `NotEqual`; explicit exception predicates.  
+   Constraint templates:  
+   - “Unless P, Q” should not be implemented as absence of `P`; use `Not` only over a matchable `P` or use an explicit exception condition.  
+   - “Everyone except X” should include a domain restriction and an exception exclusion such as `NotEqual` or an explicit exception predicate.
+
+69. Propositional attitudes of belief and knowledge  
+   Recap: English reports mental relations to propositions.  
+   Chainer features to exercise: Plain predicates; proposition-as-term conventions; `STV` for uncertain attitudes.  
+   Constraint templates:  
+   - Belief, suspicion, and report complements should not automatically be asserted as world facts.  
+   - “Suspect” or weak belief attitudes should use `STV` strength in `[0.3, 0.7]` for the attitude claim when uncertainty is represented.
+
+70. Desires, wants, and preferences  
+   Recap: English expresses goals, wishes, and preferred states of affairs.  
+   Chainer features to exercise: Plain predicates for desires/preferences; event or proposition terms.  
+   Constraint templates:  
+   - Desired propositions should not automatically be asserted as actual world facts.
+
+71. Intentions, plans, and decisions  
+   Recap: English describes commitments or planned future actions.  
+   Chainer features to exercise: Plain predicates for intentions/plans; event constants; time predicates.  
+   Constraint templates:  
+   - Planned or intended future events should not be asserted as already completed events unless the English entails completion.
+
+72. Speech and reporting events  
+   Recap: English attributes utterances, questions, promises, requests, and claims to speakers.  
+   Chainer features to exercise: Plain predicates; event constants; proposition-as-term conventions; `STV` for source reliability.  
+   Constraint templates:  
+   - Reported speech or claims should not automatically make the reported complement true in the world model.  
+   - If the report is hedged or source reliability is uncertain, the report/complement should use `STV` confidence below `1.0`.
+
+73. Factivity and presupposition in attitudes  
+   Recap: Some attitude verbs imply the truth of their complements, while others do not.  
+   Chainer features to exercise: `Implication`; `STV`; plain predicates for attitude types.  
+   Constraint templates:  
+   - Factive attitudes such as “realized” or “regretted” should support a separate derivation of the complement proposition with `STV` strength at least `0.8`.  
+   - Nonfactive attitudes such as “believed” should not by themselves entail the complement proposition.
+
+74. Questions  
+   Recap: English asks for truth values, entities, quantities, times, reasons, or choices.  
+   Chainer features to exercise: Bare query scaffold `(: $prf typePattern $tv)`; query variables.  
+   Constraint templates:  
+   - Generated chainer queries must use a variable proof slot such as `$prf`.  
+   - Wh-questions should place variables in the appropriate argument positions of the type pattern.  
+   - Queries should use a TV variable such as `$tv` to retrieve truth values.
+
+75. Imperatives and requests  
+   Recap: English directs an addressee to perform an action or gives instructions.  
+   Chainer features to exercise: Plain predicates for directives/requests; event constants; addressee constants.  
+   Constraint templates:  
+   - Imperatives should be represented as directive or requested-action facts, not as completed action facts unless completion is stated.
+
+76. Adverbs of manner  
+   Recap: English describes how an action is performed.  
+   Chainer features to exercise: Plain predicates; event constants; manner role/modifier predicates.  
+   Constraint templates: (none)
+
+77. Adverbs of degree, time, and place  
+   Recap: Adverbs modify extent, timing, or location of events and states.  
+   Chainer features to exercise: Plain predicates; event constants; `STV`; distribution constructors for near-threshold degree cases.  
+   Constraint templates:  
+   - “Almost” or “nearly” claims should not be represented as fully true completion; use `STV` strength in `[0.4, 0.8]` for the target proposition or encode a scalar value near the relevant threshold.
+
+78. Focus-sensitive expressions  
+   Recap: Words such as only, even, also, and too depend on alternatives in context.  
+   Chainer features to exercise: `STV`; `Not`; `FoldAll`; explicit alternative-set predicates.  
+   Constraint templates:  
+   - “Only X P” should include positive support for `P(X)` and negative or low-strength support for relevant alternatives `P(Y)`.  
+   - The alternative domain should be explicit when a quantified or exhaustive proof is expected.
+
+79. Restrictive and nonrestrictive modification  
+   Recap: Modifiers may narrow reference or add extra information.  
+   Chainer features to exercise: Multiple premises in `Implication`; `And`; shared variables.  
+   Constraint templates:  
+   - Restrictive modifiers should be represented as additional predicates sharing the same entity variable.  
+   - Nonrestrictive modifiers should add separate facts about the resolved entity rather than restrict the domain variable.
+
+80. Relative clauses  
+   Recap: English uses clauses to modify nouns and identify entities.  
+   Chainer features to exercise: Shared variables; `And`; multiple premises in `Implication`; query variables.  
+   Constraint templates:  
+   - Relative-clause filters should use the same variable for the head noun and the role inside the relative clause.
+
+81. Apposition  
+   Recap: English places two noun phrases side by side to identify or describe the same entity.  
+   Chainer features to exercise: Entity identity and representation; same constant reuse; optional plain predicates such as `Name`, `Title`, or `SameAs`.  
+   Constraint templates:  
+   - Appositive descriptions should refer to the same entity constant unless the example explicitly marks contrast or ambiguity.
+
+82. Ellipsis and omitted material  
+   Recap: English often leaves recoverable words or phrases unspoken.  
+   Chainer features to exercise: (no chainer-specific features beyond default)  
+   Constraint templates: (none)
+
+83. Gapping and sluicing  
+   Recap: Some coordinated or interrogative structures omit verbal or clausal material.  
+   Chainer features to exercise: Query variables for sluicing; otherwise no chainer-specific features beyond resolved predicates.  
+   Constraint templates:  
+   - Sluiced wh-remnants should become ordinary chainer queries with a variable in the missing argument position.
+
+84. Control constructions  
+   Recap: Some verbs imply that an unspoken subject of an embedded action is controlled by another participant.  
+   Chainer features to exercise: Shared entity constants or variables; event constants; role predicates.  
+   Constraint templates:  
+   - Controlled embedded subjects should reuse the controller’s entity constant or variable.
+
+85. Raising constructions  
+   Recap: A participant of an embedded clause appears as the subject or object of the main clause.  
+   Chainer features to exercise: Plain predicates; shared variables; `STV` for seeming/appearing.  
+   Constraint templates:  
+   - Raising predicates such as “seems” or “appears” should not assert the embedded property with full certainty; use `STV` strength in `[0.4, 0.8]` unless the example states the property independently.
+
+86. Event nominalization  
+   Recap: English turns events or states into nouns that still imply participants and timing.  
+   Chainer features to exercise: Event constants; role predicates; plain predicates.  
+   Constraint templates:  
+   - Nominalized events should preserve participant roles using the same event constant when those participants are semantically present.
+
+87. Prepositional attachment ambiguity  
+   Recap: Prepositional phrases can modify different words or phrases.  
+   Chainer features to exercise: `Or`; `LikelierThan`; `STV` for competing analyses.  
+   Constraint templates:  
+   - If PP attachment ambiguity is intentionally preserved, competing attachments should be represented as alternative hypotheses using `Or` or separate facts with non-full `STV`.  
+   - If one attachment is selected, the unselected attachment should not also be asserted with `(STV 1.0 1.0)`.
+
+88. Lexical ambiguity and polysemy  
+   Recap: Single words may have multiple related or unrelated meanings.  
+   Chainer features to exercise: Entity identity and representation; sense-specific predicates/constants; `Or`; `LikelierThan`; `STV`.  
+   Constraint templates:  
+   - Unresolved lexical ambiguity should use alternative sense predicates with non-full `STV` or `Or`.  
+   - Resolved senses should use distinct predicates or constants so unrelated meanings are not conflated.
+
+89. Phrasal verbs and multiword predicates  
+   Recap: English uses verb-particle or fixed multiword expressions with meanings not always predictable from parts.  
+   Chainer features to exercise: Plain predicates with lexicalized predicate names.  
+   Constraint templates: (none)
+
+90. Idioms and figurative fixed expressions  
+   Recap: Some phrases have conventional meanings distinct from their literal words.  
+   Chainer features to exercise: Plain predicates with idiomatic meanings.  
+   Constraint templates:  
+   - Idiomatic readings should not generate literal component facts unless the example explicitly intends the literal reading.
+
+91. Metaphor and metonymy  
+   Recap: English often refers indirectly through associated concepts or figurative mappings.  
+   Chainer features to exercise: Plain predicates; entity representation; optional `Implication` for conventional metonymic mappings.  
+   Constraint templates:  
+   - Metonymic references should resolve to the intended entity constant when context supplies it, rather than conflating the surface expression with the referent.
+
+92. Count and mass nouns  
+   Recap: English distinguishes countable individuals from substances or masses.  
+   Chainer features to exercise: Explicit witness constants for count nouns; measure predicates for mass nouns; distribution constructors for quantities.  
+   Constraint templates:  
+   - Count-noun numerals should introduce countable witness facts or derived counts.  
+   - Mass-noun quantities should use measure/value predicates rather than inventing arbitrary individual units unless units are specified.
+
+93. Units, dimensions, and measurements  
+   Recap: English expresses length, weight, temperature, speed, money, and other measured quantities.  
+   Chainer features to exercise: Distribution-valued predicate arguments; `PointMass`; `ParticleFromNormal`; `ParticleFromPairs`; `MapDist`; `Map2Dist`; `GreaterThan`.  
+   Constraint templates:  
+   - Exact measurements should use numeric values or `PointMass` in predicate arguments.  
+   - Approximate measurements should use `ParticleFromNormal` or `ParticleFromPairs`.  
+   - Measurement uncertainty should not be encoded solely by the statement `STV`.
+
+94. Calendrical and named temporal expressions  
+   Recap: English refers to structured calendar times and named occasions.  
+   Chainer features to exercise: Plain predicates; time/date constants; event constants.  
+   Constraint templates: (none)
+
+95. Aggregation and collective quantities  
+   Recap: English expresses totals, averages, sums, and group-level measures.  
+   Chainer features to exercise: `FoldAll`; `FoldAllValue`; `AverageDist`; `Compute`; `MapDist`; `Map2Dist`; distribution constructors.  
+   Constraint templates:  
+   - Average-value proofs should use `AverageDist` when averaging distribution-valued facts.  
+   - Sum or total proofs should use `FoldAll` or `FoldAllValue`.  
+   - Derived numeric quantities such as areas or products should use `MapDist` or `Map2Dist` when input values are distributions.
+
+96. Exceptions and exclusions  
+   Recap: English specifies members left out of a generalization or set.  
+   Chainer features to exercise: `Implication`; `NotEqual`; `Not`; explicit exception predicates; domain predicates.  
+   Constraint templates:  
+   - Generalizations with exceptions should include an explicit domain premise and an explicit exclusion condition such as `NotEqual` or an exception predicate.  
+   - The excluded individual should not receive the general conclusion through the same rule.
+
+97. Scalar particles and threshold expressions  
+   Recap: English marks minimal, maximal, or surprising points on a scale.  
+   Chainer features to exercise: `GreaterThan`; `FoldAll`; `FoldAllValue`; `STV`; distribution-valued counts.  
+   Constraint templates:  
+   - “At least N” should use `GreaterThan $countDist N-1` over a derived count distribution.  
+   - “Only N” should include both lower-bound and upper-bound/exclusion evidence, not only an at-least proof.  
+   - “Even” may be represented with ordinary truth plus an explicit noteworthiness/surprise predicate; it should not change truth conditions by itself.
+
+98. Similarity, difference, and contrast  
+   Recap: English compares entities by shared or contrasting properties.  
+   Chainer features to exercise: Plain predicates; `Equal`; `NotEqual`; `And` for shared properties.  
+   Constraint templates:  
+   - Difference claims over exact values should use `NotEqual` or distinct value predicates.  
+   - Similarity claims should not be forced into exact `Equal` unless sameness is entailed.
+
+99. Coreference across clauses  
+   Recap: Multiple noun phrases may refer to the same entity across a sentence or discourse.  
+   Chainer features to exercise: Entity identity and representation; stable constants; `Or` or `LikelierThan` for unresolved coreference.  
+   Constraint templates:  
+   - Coreferent mentions should use the same entity constant across clauses.  
+   - If coreference is unresolved, competing resolutions should not all be asserted with `(STV 1.0 1.0)`.
+
+100. Discourse relations  
+   Recap: English connects sentences through explanation, contrast, elaboration, and sequence.  
+   Chainer features to exercise: `Implication` for explanation/consequence; `And` for combined discourse facts; event predicates.  
+   Constraint templates:  
+   - “Therefore,” “because,” or explanatory relations should use `Implication` when the proof derives one proposition from another.  
+   - Contrast relations should not by themselves force logical negation unless the English entails contradiction.
+
+101. Context-dependent domain restriction  
+   Recap: Quantifiers and descriptions often depend on an implicit relevant domain.  
+   Chainer features to exercise: Variables in `Implication` rules; domain predicates; `FoldAll` / `FoldAllValue` patterns.  
+   Constraint templates:  
+   - Quantified rules should include an explicit domain predicate in `Premises`.  
+   - Count or aggregation proofs should include the relevant domain restriction in the `FoldAll` or `FoldAllValue` pattern.  
+   - Do not leave quantified variables unconstrained over the whole KB unless the English explicitly has unrestricted scope.
+
+102. Polarity and truth-value operators beyond negation  
+   Recap: English includes affirmation, denial, contradiction, and confirmation.  
+   Chainer features to exercise: `STV`; `Not`; `NotFormula`; `NotEqual`.  
+   Constraint templates:  
+   - Affirmation or confirmation of `P` should yield `P` with `STV` strength at least `0.8`.  
+   - “False that P” should yield the positive proposition `P` with `STV` strength in `[0.0, 0.2]` or use `Not` over a matchable `P`.  
+   - Contradiction between exact values should use `NotEqual` or incompatible low/high `STV` assignments.
+
+103. Uncertainty and hedging  
+   Recap: English marks weak commitment, approximation, or tentative claims.  
+   Chainer features to exercise: `STV`; distribution constructors for approximate values.  
+   Constraint templates:  
+   - “Probably” should use `STV` strength in `[0.6, 0.9]`.  
+   - “Possibly,” “maybe,” “may,” or “might” should use `STV` strength in `[0.2, 0.7]`.  
+   - “Seems,” “appears,” “I think,” or “I suspect” should use confidence below `1.0`, typically in `[0.3, 0.8]`.  
+   - Hedged claims should not default to `(STV 1.0 1.0)`.
+
+104. Comparative subdeletion and differential comparison  
+   Recap: English compares degrees while mentioning differences or missing measure phrases.  
+   Chainer features to exercise: `Compute`; `MapDist`; `Map2Dist`; `GreaterThan`; distribution constructors; `FoldAllValue` for count comparisons.  
+   Constraint templates:  
+   - Differential comparisons such as “two inches wider” should compute or map a difference value using `Compute`, `MapDist`, or `Map2Dist`.  
+   - “More X than Y” count comparisons should derive count distributions and compare them with `GreaterThan $distX $distY`.
+
+105. Temporal recurrence and schedules  
+   Recap: English describes repeated events tied to schedules or cycles.  
+   Chainer features to exercise: `Implication`; variables in rules; `STV`; temporal predicates.  
+   Constraint templates:  
+   - Recurring schedule claims such as “every hour” or “on Saturdays” should use variables or schedule predicates rather than a single isolated event fact.  
+   - Irregular or usual schedules should use `STV` strength below `1.0`.
+
+106. Change of state  
+   Recap: English describes transitions into or out of properties, locations, or conditions.  
+   Chainer features to exercise: Event predicates; state predicates; `Implication` from change events to resulting states.  
+   Constraint templates:  
+   - If the proof derives a final state from a change event, it should use an `Implication` from the event predicate to the resulting state predicate.
+
+107. Creation and destruction events  
+   Recap: English distinguishes bringing entities into existence and eliminating them.  
+   Chainer features to exercise: Event predicates; explicit witness constants; `STV`; `Implication` for creation/destruction consequences.  
+   Constraint templates:  
+   - Creation events should introduce or reference an explicit witness constant for the created entity.  
+   - Destruction events that imply nonexistence should support a low-strength `Exists`-like ordinary predicate or positive existence predicate with `STV` strength in `[0.0, 0.2]`; do not rely on absence alone.  
+   - If creation/destruction consequences are derived, use `Implication`.
+
+108. Information structure and topic-comment organization  
+   Recap: English signals what the sentence is about and what new information is asserted.  
+   Chainer features to exercise: Plain predicates; entity identity and representation; optional focus/topic predicates.  
+   Constraint templates: (none)

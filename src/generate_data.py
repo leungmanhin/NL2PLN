@@ -1,12 +1,16 @@
 """
 Generate per-phenomenon training data for NL2PLN.
 
-Reads the phenomena list from `bootstrap/linguistic_phenomena.txt` (produced by
-Step 2 of `bootstrap_chainer.py`) and uses an LLM to generate a batch
-of diverse training examples for each phenomenon. Each example contains
-1-3 sentences and 1-3 question/expected_answer pairs, matching the
-schema in `data/all.json` so the output can be passed directly to
-`NL2PLNModule` / SIMBA / GEPA via `--dataset`.
+Reads `bootstrap/phenomenon_feature_mapping.txt` (produced by Step 3 of
+`bootstrap_chainer.py`) — a per-phenomenon mapping that pairs each
+linguistic phenomenon with the chainer-specific features it should
+exercise and constraint templates for the expected proofs.  Uses an LLM
+to generate a batch of diverse training examples per phenomenon-block.
+Each example contains 1-3 sentences and 1-3 question/expected_answer
+pairs, optionally with chainer-feature constraints on each query.  The
+output matches the schema in `data/all.json` plus the new `constraints`
+field, so it flows directly into NL2PLNModule / the optimizers via
+`--dataset`.
 
 Each generated example is optionally verified by a second LLM call
 that checks the answer is derivable from the sentences alone, the
@@ -29,7 +33,7 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger(__name__)
 
 _PROJECT_ROOT = pathlib.Path(__file__).parent.parent
-_DEFAULT_PHENOMENA = _PROJECT_ROOT / "bootstrap" / "linguistic_phenomena.txt"
+_DEFAULT_MAPPING = _PROJECT_ROOT / "bootstrap" / "phenomenon_feature_mapping.txt"
 _DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "generated.json"
 
 
@@ -37,16 +41,34 @@ _DEFAULT_OUTPUT = _PROJECT_ROOT / "data" / "generated.json"
 # Input loading
 # ---------------------------------------------------------------------------
 
-def _parse_phenomena(path: pathlib.Path) -> list[str]:
+def _parse_mapping_entries(path: pathlib.Path) -> list[str]:
     """
-    Parse bootstrap/linguistic_phenomena.txt into a list of phenomenon strings.
-    Each entry in the file looks like:
-        1. Entity classification: <description>. Examples: <sentences>.
-    Returns the per-phenomenon text (without the leading number/dot).
+    Parse bootstrap/phenomenon_feature_mapping.txt into a list of
+    per-phenomenon blocks.  Each entry in the file is a numbered block:
+
+        1. Entity classification
+           Recap: ...
+           Chainer features to exercise: ...
+           Constraint templates: ...
+
+        2. Frequency and habituality
+           ...
+
+    Returns the per-phenomenon block text (without the leading number/dot).
     """
     text = path.read_text(encoding="utf-8")
     entries = re.split(r"(?m)^\d+\.\s+", text)
     return [e.strip() for e in entries if e.strip()]
+
+
+def _short_name(entry: str) -> str:
+    """
+    Extract a short phenomenon name from a mapping entry's first line.
+    Handles both "Entity classification: ..." and "Entity classification\n..."
+    forms.
+    """
+    first_line = entry.split("\n", 1)[0]
+    return first_line.split(":", 1)[0].strip()
 
 
 # ---------------------------------------------------------------------------
@@ -63,6 +85,16 @@ class GeneratedQuery(BaseModel):
         description="Short phrase or sentence answering the question. "
                     "Must be DERIVABLE from the sentences alone, without "
                     "outside world knowledge."
+    )
+    constraints: list[str] | None = Field(
+        default=None,
+        description="Optional list of constraints the expected proof "
+                    "should satisfy, drawn from the input's constraint "
+                    "templates and tailored to this puzzle (e.g. "
+                    "'STV strength in [0.3, 0.7]').  Leave null/empty "
+                    "when the phenomenon-feature block lists no "
+                    "templates, or when this specific puzzle doesn't "
+                    "call for a constraint."
     )
 
 
@@ -86,9 +118,16 @@ class GenerateBatchSignature(dspy.Signature):
     phenomenon but use different entities, relations, topics, and
     sentence structures.
 
+    The input `phenomenon_feature_block` is a per-phenomenon mapping
+    block from bootstrap step 3.  It contains: the phenomenon name
+    and recap, the chainer-specific features that phenomenon should
+    exercise (if any), and constraint templates for the expected
+    proofs (if any).
+
     The output schema is enforced by the response format (see the
     GeneratedExample type). Focus your effort on content quality:
-    phenomenon coverage, answer derivability, and diversity.
+    phenomenon coverage, answer derivability, diversity, and where
+    applicable, chainer-feature exercise via the `constraints` field.
 
     Question style:
       - Prefer simple wh-questions (who/what/where/when/which/how/why)
@@ -130,12 +169,31 @@ class GenerateBatchSignature(dspy.Signature):
         "<Name> is a <profession>", do not make example 2 the same
         template with different names.
 
-    This is NL-only — do NOT emit logic syntax or reference any
-    formalism. Produce natural English only.
+    Chainer-feature constraints (when listed in the input):
+      - The input may include "Chainer features to exercise" and
+        "Constraint templates" sections.  When present, populate each
+        query's `constraints` field with concrete constraint strings
+        drawn from the templates, tailored to the specific puzzle
+        (e.g. fill in concrete numeric ranges, predicate names, etc.).
+      - A constraint is a short, self-contained, machine-checkable
+        claim about what the expected proof should look like (e.g.
+        "STV strength in [0.3, 0.7]" for a hedged claim).  The judge
+        will verify constraints against the actual proof at scoring
+        time.
+      - Leave `constraints` null/empty if the block lists no
+        templates, or if a specific puzzle doesn't call for any
+        constraint.  Not every puzzle needs constraints.
+
+    Sentences and questions must use NATURAL ENGLISH only — no logic
+    syntax, no formalism references.  Constraints are the only field
+    that may reference chainer-specific concepts (truth values,
+    operators, etc.), and only when the input templates supply them.
     """
-    phenomenon: str = dspy.InputField(
-        desc="The target linguistic phenomenon to demonstrate, including "
-             "its description and example English sentences."
+    phenomenon_feature_block: str = dspy.InputField(
+        desc="A phenomenon-feature mapping block from bootstrap step 3, "
+             "containing the linguistic phenomenon description, chainer-"
+             "specific features the phenomenon should exercise, and "
+             "constraint templates for the expected proofs."
     )
     count: int = dspy.InputField(
         desc="How many diverse examples to generate for this phenomenon."
@@ -168,6 +226,10 @@ class VerifyExampleSignature(dspy.Signature):
       5. Questions are natural English wh-questions or yes/no questions;
          not multi-part or compound.
 
+    Each query dict may carry an optional `constraints` field — that's
+    the data generator's hint to the judge and is not part of what you
+    verify here; only check the content correctness above.
+
     Reply with exactly "yes" if all hold, or "no: <brief reason>"
     otherwise.
     """
@@ -175,7 +237,9 @@ class VerifyExampleSignature(dspy.Signature):
         desc="The sentences the parser would receive."
     )
     queries: list[dict] = dspy.InputField(
-        desc='List of {"question", "expected_answer"} pairs to verify.'
+        desc='List of query dicts.  Each has "question" and '
+             '"expected_answer" (and optionally "constraints", which '
+             'you may ignore for verification).'
     )
     verdict: str = dspy.OutputField(
         desc='Exactly "yes" if the example is valid, or "no: <reason>" '
@@ -201,14 +265,14 @@ def _to_example_dict(raw) -> dict | None:
 
 
 def generate_per_phenomenon(
-    phenomena: list[str],
+    entries: list[str],
     per_phenomenon: int,
     verify: bool,
     max_attempts_per_phenomenon: int = 10,
 ) -> list[dict]:
     """
-    For each phenomenon, repeatedly call the generator until exactly
-    ``per_phenomenon`` *verified* examples accumulate, or
+    For each phenomenon-feature block, repeatedly call the generator
+    until exactly ``per_phenomenon`` *verified* examples accumulate, or
     ``max_attempts_per_phenomenon`` LLM batch calls are exhausted —
     whichever comes first.
 
@@ -229,9 +293,9 @@ def generate_per_phenomenon(
     generator = dspy.Predict(GenerateBatchSignature)
     verifier = dspy.Predict(VerifyExampleSignature) if verify else None
 
-    for i, phenomenon in enumerate(phenomena, 1):
-        short_name = phenomenon.split(":", 1)[0]
-        print(f"\n[{i}/{len(phenomena)}] {short_name} ...")
+    for i, entry in enumerate(entries, 1):
+        short_name = _short_name(entry)
+        print(f"\n[{i}/{len(entries)}] {short_name} ...")
 
         kept = 0
         attempts = 0
@@ -243,7 +307,7 @@ def generate_per_phenomenon(
 
             try:
                 result = generator(
-                    phenomenon=phenomenon,
+                    phenomenon_feature_block=entry,
                     count=request_count,
                 )
             except Exception as e:
@@ -308,9 +372,9 @@ def main():
         description="Generate per-phenomenon training data for NL2PLN"
     )
     parser.add_argument(
-        "--phenomena",
-        default=str(_DEFAULT_PHENOMENA),
-        help=f"Path to bootstrap/linguistic_phenomena.txt (default: {_DEFAULT_PHENOMENA})",
+        "--mapping",
+        default=str(_DEFAULT_MAPPING),
+        help=f"Path to bootstrap/phenomenon_feature_mapping.txt (default: {_DEFAULT_MAPPING})",
     )
     parser.add_argument(
         "--output",
@@ -355,8 +419,8 @@ def main():
     logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s %(levelname)s: %(message)s")
 
-    phenomena = _parse_phenomena(pathlib.Path(args.phenomena))
-    print(f"Loaded {len(phenomena)} phenomena from {args.phenomena}")
+    entries = _parse_mapping_entries(pathlib.Path(args.mapping))
+    print(f"Loaded {len(entries)} phenomenon-feature blocks from {args.mapping}")
 
     # temperature=1.0 + cache=False are essential: without them, batches
     # would be deterministic and identical across re-runs.
@@ -368,7 +432,7 @@ def main():
     dspy.configure(lm=lm)
 
     examples = generate_per_phenomenon(
-        phenomena=phenomena,
+        entries=entries,
         per_phenomenon=args.per_phenomenon,
         verify=args.verify,
         max_attempts_per_phenomenon=args.max_attempts_per_phenomenon,

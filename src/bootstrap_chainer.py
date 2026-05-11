@@ -2,7 +2,7 @@
 Bootstrap a chainer for semantic parsing.
 
 Reads the chainer's source code and produces the artifacts the rest of
-the NL-to-PLN pipeline depends on, in two steps:
+the NL-to-PLN pipeline depends on, in three steps:
 
   1. Analyze the chainer (RLM) — reverse-engineer syntax, operators,
      constraints from the source code.  Includes a final cheat-sheet
@@ -11,9 +11,15 @@ the NL-to-PLN pipeline depends on, in two steps:
   2. Enumerate linguistic phenomena (Predict) — comprehensive list of
      phenomena that the semantic parser must handle.
 
+  3. Generate phenomenon-feature mapping (Predict) — pair each
+     phenomenon from step 2 with the chainer-specific features (from
+     step 1) it should exercise, and constraint templates the expected
+     proofs should satisfy.  Consumed by generate_data.py as its
+     primary input.
+
 Step 1 uses RLM (Recursive LM, requires Deno) to explore the chainer
-source code via iterative code execution.  Step 2 uses dspy.Predict
-(single LLM call).
+source code via iterative code execution.  Steps 2 and 3 use
+dspy.Predict (single LLM call each).
 
 Each step saves its output to a file.  Use --from-step N to skip earlier
 steps and load their outputs from disk (useful for iterating on later
@@ -22,6 +28,7 @@ steps without re-running expensive earlier ones).
 Usage:
     python src/bootstrap_chainer.py --chainer ../PeTTaChainer
     python src/bootstrap_chainer.py --from-step 2
+    python src/bootstrap_chainer.py --from-step 3
 """
 import argparse
 import logging
@@ -40,6 +47,7 @@ _PROJECT_ROOT = pathlib.Path(__file__).parent.parent
 _DEFAULTS = {
     "analysis": _PROJECT_ROOT / "bootstrap" / "chainer_analysis.txt",
     "phenomena": _PROJECT_ROOT / "bootstrap" / "linguistic_phenomena.txt",
+    "mapping": _PROJECT_ROOT / "bootstrap" / "phenomenon_feature_mapping.txt",
 }
 
 
@@ -216,12 +224,93 @@ class LinguisticPhenomenaSignature(dspy.Signature):
 
 
 # ---------------------------------------------------------------------------
+# Step 3: Generate phenomenon-feature mapping
+# ---------------------------------------------------------------------------
+
+class PhenomenonFeatureMappingSignature(dspy.Signature):
+    """
+    You are bridging two prior bootstrap outputs into a generation
+    recipe for training data.
+
+    Given:
+    - `chainer_analysis`: a structured breakdown of the chainer's
+      expressive capabilities (truth-value forms, operators, rule
+      templates, quantification, entity representation, etc.).
+    - `linguistic_phenomena`: a list of linguistic phenomena that a
+      semantic parser must handle, written in pure-linguistics terms
+      with no reference to any specific logic formalism.
+
+    Produce a phenomenon-by-phenomenon mapping that tells a downstream
+    data generator (1) which chainer-specific features each phenomenon
+    can or should exercise, and (2) what constraints the expected
+    proofs from those examples should satisfy.
+
+    Output format (mandatory): a numbered list, one entry per
+    phenomenon, in the same order as `linguistic_phenomena`.  Each
+    entry uses the following structure:
+
+        N. <phenomenon name>
+           Recap: <one-line recap of the phenomenon>
+           Chainer features to exercise: <named features from
+             chainer_analysis that this phenomenon naturally calls for,
+             OR the literal string "(no chainer-specific features
+             beyond default)" if none>
+           Constraint templates: <one or more constraint templates the
+             expected proofs should satisfy when generated examples
+             exercise this phenomenon, OR the literal string "(none)"
+             if no templates apply>
+
+    Concentrate constraint generation on phenomena where:
+    - English naturally expresses uncertainty, hedging, frequency,
+      modality, or probability — the proof's truth value should
+      reflect that uncertainty rather than defaulting to the chainer's
+      "fully true" form (e.g. (STV 1.0 1.0)).
+    - English naturally calls for universal, existential, cardinal,
+      or comparative quantification — the proof should use the
+      chainer's appropriate quantifier idioms.
+    - English implies conditional or rule-like relationships — the
+      proof should reach for the chainer's rule templates rather
+      than monolithic predicates.
+
+    Skip constraints on phenomena where adding a constraint would be
+    artificial — not every phenomenon needs a chainer-feature
+    constraint, and over-constraining will reduce data quality.  Mark
+    those explicitly as "(no chainer-specific features beyond default)"
+    and "(none)".
+
+    Constraint templates should be:
+    - Specific enough to be machine-checkable (e.g. "STV strength in
+      [0.3, 0.7] for hedged frequency claims", not just "uncertain TV").
+    - Reference features by NAME from chainer_analysis (e.g. "STV",
+      "Implication rule", "ForAll") so the data generator and judge
+      both know what to look for in the chainer's output.
+    - Self-contained: one constraint per line, readable in isolation.
+
+    Output as clear, well-structured text.  The data generator parses
+    this file directly into per-phenomenon blocks as its primary
+    prompt input.
+    """
+    chainer_analysis: str = dspy.InputField(
+        desc="Structured analysis of the chainer's syntactic forms, "
+             "operators, truth-value forms, etc. (output of Step 1)."
+    )
+    linguistic_phenomena: str = dspy.InputField(
+        desc="Numbered list of linguistic phenomena (output of Step 2)."
+    )
+    phenomenon_feature_mapping: str = dspy.OutputField(
+        desc="Per-phenomenon mapping listing the chainer features each "
+             "phenomenon should exercise and constraint templates for "
+             "the expected proofs."
+    )
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Bootstrap a chainer for semantic parsing (2 steps)"
+        description="Bootstrap a chainer for semantic parsing (3 steps)"
     )
     parser.add_argument(
         "--chainer",
@@ -233,7 +322,7 @@ def main():
         "--from-step",
         type=int,
         default=1,
-        choices=[1, 2],
+        choices=[1, 2, 3],
         help="Start from this step, loading earlier outputs from disk (default: 1)",
     )
     parser.add_argument(
@@ -249,6 +338,7 @@ def main():
     )
     parser.add_argument("--output-analysis", default=str(_DEFAULTS["analysis"]))
     parser.add_argument("--output-phenomena", default=str(_DEFAULTS["phenomena"]))
+    parser.add_argument("--output-mapping", default=str(_DEFAULTS["mapping"]))
     parser.add_argument(
         "--log-level",
         default="info",
@@ -336,9 +426,14 @@ def main():
     paths = {
         "analysis": pathlib.Path(args.output_analysis),
         "phenomena": pathlib.Path(args.output_phenomena),
+        "mapping": pathlib.Path(args.output_mapping),
     }
 
     from_step = args.from_step
+
+    # Pre-declared so step 3 can load these from disk if earlier steps were skipped.
+    chainer_analysis = None
+    phenomena_text = None
 
     # =================================================================
     # Step 1: Analyze chainer (RLM)
@@ -377,6 +472,25 @@ def main():
         print(f"  Enumerated {len(phenomena_list)} phenomena")
 
     # =================================================================
+    # Step 3: Generate phenomenon-feature mapping
+    # =================================================================
+    if from_step <= 3:
+        print("\n" + "=" * 60)
+        print("Step 3: Generating phenomenon-feature mapping ...")
+
+        if chainer_analysis is None:
+            chainer_analysis = _load_text(paths["analysis"], "chainer_analysis")
+        if phenomena_text is None:
+            phenomena_text = _load_text(paths["phenomena"], "linguistic_phenomena")
+
+        mapping_text = dspy.Predict(PhenomenonFeatureMappingSignature)(
+            chainer_analysis=chainer_analysis,
+            linguistic_phenomena=phenomena_text,
+        ).phenomenon_feature_mapping
+        _save_text(paths["mapping"], mapping_text)
+        print(f"  Mapping complete ({len(mapping_text):,} chars)")
+
+    # =================================================================
     # Done
     # =================================================================
     print("\n" + "=" * 60)
@@ -386,7 +500,7 @@ def main():
         print(f"  [{exists}] {path}")
     print("\nNext steps:")
     print("  - bootstrap/chainer_analysis.txt → NL2PLNModule pln_spec (via --pln-spec-file)")
-    print("  - bootstrap/linguistic_phenomena.txt → generate_data.py input")
+    print("  - bootstrap/phenomenon_feature_mapping.txt → generate_data.py input")
 
 
 if __name__ == "__main__":
