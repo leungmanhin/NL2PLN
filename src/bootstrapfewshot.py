@@ -93,6 +93,9 @@ def main():
 
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
     lm_kwargs["max_tokens"] = args.max_tokens
+    lm_kwargs["cache"] = False       # avoid SQLite contention under high concurrency
+    lm_kwargs["num_retries"] = 5     # absorb transient API errors
+    lm_kwargs["timeout"] = 120       # tolerate slower upstream responses
     dspy.configure(lm=dspy.LM(args.model, **lm_kwargs))
 
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
