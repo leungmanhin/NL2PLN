@@ -112,43 +112,56 @@ class ChainerAnalysisSignature(dspy.Signature):
     You are a compiler/language expert analyzing a chainer (logical reasoner)
     from its source code.
 
-    Your goal is to produce a comprehensive, structured analysis that will
-    serve as the FOUNDATION for all downstream work, e.g. a relation template
-    designer or an instruction writer can rely on your analysis to produce
-    correct expressions that this reasoner can evaluate.
+    Your goal is to produce a comprehensive, structured analysis that
+    serves as the AUTHORITATIVE reference for a downstream LLM-driven
+    NL→PLN translator.  Given this analysis (and nothing else about the
+    chainer), that translator should be able to convert natural-language
+    sentences into expressions that this chainer ingests and evaluates
+    out of the box.
+
+    Scope of the analysis: document only what the LLM-driven translator
+    will write — the surface syntax and semantics it needs to produce
+    expressions for this chainer.  Internal helpers, source-file
+    references, compiler/runtime intermediates, and narratives about
+    what the chainer does to expressions after the Python API receives
+    them are out of scope and must not appear in the output.
 
     From the source code, reverse-engineer and document, minimally:
 
     1. EXPRESSION FORMAT — What do valid statements and queries look like
        when passed to the chainer's Python API (add_atom / query)?
        Show the exact syntactic template with placeholders.
-       IMPORTANT: The chainer may have internal runtime commands that wrap
-       these expressions — clearly distinguish between the BARE EXPRESSION
-       FORMAT that external callers pass to the API vs. any internal
-       runtime commands.  Downstream consumers will ONLY use the bare
-       expression format, never the internal commands.
-    2. BUILT-IN OPERATORS — List every built-in operator/connector the
-       chainer supports.  For each, show its syntax and what it does.
+    2. BUILT-IN OPERATORS — List every built-in operator/connector that
+       external callers can write inside the expression strings passed to
+       the Python API.  For each: show its surface syntax with
+       placeholders, and describe its semantic effect — what truth value
+       or behaviour the chainer produces given that expression — in a
+       few sentences of English.
     3. TRUTH VALUES — What truth value forms are supported?  How are
-       uncertain numeric values represented (distributions)?
-    4. RULE TEMPLATES — How are if-then rules written?  Any other rules
-       or logical relations that are supported? Show their structures.
-    5. QUERY PATTERNS — How are queries formed for the chainer's query()
-       API?  What must be a variable vs. a constant?
-    6. NAMING CONVENTIONS — What naming style, if any, does the codebase
-       use for predicates, constants, variables, instances, etc.?
-    7. CONSTRAINTS & PITFALLS — What syntax is NOT supported?  Common
-       mistakes to avoid?
-    8. QUANTIFICATION AND SCOPE — How are quantifiers (universal "all",
-       existential "some", cardinal "exactly N", etc.) represented?
-       Is there a dedicated quantifier operator (e.g. `ForAll`, `Exists`),
-       a fuzzy/probabilistic variant, or are quantifier meanings expressed
-       indirectly (e.g. via `Implication` with variables in premises, or
-       via explicit witness constants)?  How is scope handled when multiple
-       quantifiers or negation interact? Can they be nested? Do truth
-       values play a role in quantification (e.g. quantified formulas
-       carrying their own TVs)?
-    9. ENTITY IDENTITY AND REPRESENTATION — Does the chainer have any
+       uncertain numeric values represented, if at all?
+    4. RULE COMPOSITION PATTERNS — Building on §2's operator inventory,
+       how do operators combine into common rule patterns?  Cover the
+       canonical if-then rule, multi-premise rules, multi-conclusion
+       rules, and any distinctive idioms the codebase uses (e.g. rules
+       over distributions, rules that quantify, rules involving
+       comparison or aggregation).  Use minimal placeholder names in
+       examples so the pattern is clear without committing to any
+       particular naming style.
+    5. QUERY PATTERNS — Beyond the bare query envelope from §1, what
+       query-specific patterns and constraints apply?  Cover which
+       slots must be variable vs. constant, common patterns (ground-fact
+       existence, binding retrieval, compound-expression queries), and
+       any patterns that are syntactically valid but discouraged.  Use
+       minimal placeholder names in examples so the pattern is clear
+       without committing to any particular naming style.
+    6. QUANTIFICATION AND SCOPE — How are quantifiers (universal "for all",
+       existential "there exists", cardinal "exactly N", vague natural-
+       language "most", "many", "few", "a majority of", etc.) represented?
+       Is there a dedicated quantifier operator, a fuzzy/probabilistic
+       variant, or are quantifier meanings expressed indirectly?  How is
+       scope handled when multiple quantifiers or negation interact? Can
+       they be nested? Do truth values play a role in quantification?
+    7. ENTITY IDENTITY AND REPRESENTATION — Does the chainer have any
        built-in notion of entity identity, or are all symbols purely
        syntactic labels that match themselves?  How should named
        entities from natural language (e.g. "Ben", "Paris") be
@@ -159,25 +172,12 @@ class ChainerAnalysisSignature(dspy.Signature):
        is there a convention for representing these, or should they
        be skipped when their referent is unknown?
 
-    10. PRIMITIVES CHEAT SHEET — At the END of the analysis, add a
-        consolidated quick-reference section titled "Primitives cheat
-        sheet" that lists every primitive documented above.  Organize
-        it by category (e.g. expression scaffolding, rule structure,
-        operators/connectives, truth-value and distribution forms,
-        computation/aggregation helpers, formula/reducer helpers).
-        For each primitive give its canonical syntactic form (one
-        line, in backticks) and a one-line semantic note.  This
-        section is the authoritative cheat sheet that downstream
-        pipeline stages and the deployed translator LM consult — do
-        not omit it, and do not introduce primitives here that are
-        not documented above.
-
     Be precise and derive everything from the source code.  If the source
     includes reference documentation (e.g. spec files, README), consult
     those as well.
 
-    Output the prose analysis (with the cheat-sheet section appended) as
-    clear, well-organized text in `chainer_analysis`.
+    Output the prose analysis as clear, well-organized text in
+    `chainer_analysis`.
     """
     chainer_source: str = dspy.InputField(
         desc="Complete source code of the chainer/reasoner"
@@ -210,8 +210,7 @@ class LinguisticPhenomenaSignature(dspy.Signature):
     conditionals (if-then), propositional attitudes (believes, knows,
     wants), adverbs and manner, frequency/habitual aspect.
 
-    This is a PURE LINGUISTICS task — do not reference any specific
-    logic formalism or chainer syntax.  Focus on what English expresses,
+    This is a PURE LINGUISTICS task — focus on what English expresses,
     not how to represent it.
     """
     task: str = dspy.InputField(
@@ -264,7 +263,7 @@ class PhenomenonFeatureMappingSignature(dspy.Signature):
     - English naturally expresses uncertainty, hedging, frequency,
       modality, or probability — the proof's truth value should
       reflect that uncertainty rather than defaulting to the chainer's
-      "fully true" form (e.g. (STV 1.0 1.0)).
+      "fully true" form.
     - English naturally calls for universal, existential, cardinal,
       or comparative quantification — the proof should use the
       chainer's appropriate quantifier idioms.
@@ -279,11 +278,12 @@ class PhenomenonFeatureMappingSignature(dspy.Signature):
     and "(none)".
 
     Constraint templates should be:
-    - Specific enough to be machine-checkable (e.g. "STV strength in
-      [0.3, 0.7] for hedged frequency claims", not just "uncertain TV").
-    - Reference features by NAME from chainer_analysis (e.g. "STV",
-      "Implication rule", "ForAll") so the data generator and judge
-      both know what to look for in the chainer's output.
+    - Specific enough to be machine-checkable — name concrete operators
+      and value ranges from chainer_analysis, not vague phrases like
+      "uncertain TV" or "appropriate TV".
+    - Reference features by NAME from chainer_analysis so the data
+      generator and judge both know what to look for in the chainer's
+      output.
     - Self-contained: one constraint per line, readable in isolation.
 
     Output as clear, well-structured text.  The data generator parses

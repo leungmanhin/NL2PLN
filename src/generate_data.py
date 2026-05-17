@@ -64,11 +64,11 @@ def _parse_mapping_entries(path: pathlib.Path) -> list[str]:
 def _short_name(entry: str) -> str:
     """
     Extract a short phenomenon name from a mapping entry's first line.
-    Handles both "Entity classification: ..." and "Entity classification\n..."
-    forms.
+    Handles inline ("Entity classification — Recap: ..."), colon-separated
+    ("Entity classification: ..."), and bare ("Entity classification\n...") forms.
     """
     first_line = entry.split("\n", 1)[0]
-    return first_line.split(":", 1)[0].strip()
+    return first_line.split(" — ", 1)[0].split(":", 1)[0].strip()
 
 
 # ---------------------------------------------------------------------------
@@ -91,10 +91,11 @@ class GeneratedQuery(BaseModel):
         description="Optional list of constraints the expected proof "
                     "should satisfy, drawn from the input's constraint "
                     "templates and tailored to this puzzle (e.g. "
-                    "'STV strength in [0.3, 0.7]').  Leave null/empty "
-                    "when the phenomenon-feature block lists no "
-                    "templates, or when this specific puzzle doesn't "
-                    "call for a constraint."
+                    "concrete numeric ranges or operator names filled "
+                    "in from the templates).  Leave null/empty when the "
+                    "phenomenon-feature block lists no templates, or "
+                    "when this specific puzzle doesn't call for a "
+                    "constraint."
     )
 
 
@@ -177,9 +178,9 @@ class GenerateBatchSignature(dspy.Signature):
         (e.g. fill in concrete numeric ranges, predicate names, etc.).
       - A constraint is a short, self-contained, machine-checkable
         claim about what the expected proof should look like (e.g.
-        "STV strength in [0.3, 0.7]" for a hedged claim).  The judge
-        will verify constraints against the actual proof at scoring
-        time.
+        a concrete numeric range applied to a named operator or TV
+        form, instantiated from the templates).  The judge will
+        verify constraints against the actual proof at scoring time.
       - Leave `constraints` null/empty if the block lists no
         templates, or if a specific puzzle doesn't call for any
         constraint.  Not every puzzle needs constraints.

@@ -1,937 +1,894 @@
 
-# PeTTaChainer language / API analysis
+# PeTTaChainer PLN surface language for `add_atom()` and `query()`
 
-This analysis is based on the repository source, especially `pettachainer/pettachainer.py`, `pettachainer/pln_validator.py`, `pettachainer/LANGUAGE_SPEC.md`, `pettachainer/LLM_RULE_SPEC.md`, `pettachainer/metta/compile.metta`, `pettachainer/metta/tv_formulas.metta`, `pettachainer/metta/dist_formulas.metta`, `pettachainer/metta/compiled_query_runtime.metta`, and the MeTTa/Python tests.
-
-The most important practical distinction is:
-
-- External Python callers pass bare expressions to `PeTTaChainer.add_atom()` and `PeTTaChainer.query()`.
-- They do not pass internal runtime commands such as `!(compileadd ...)` or `!(query ...)`.
+This reference describes the expression strings to pass to the Python API. Do not include MeTTa command wrappers such as `!(compileadd ...)` or `!(query ...)` in Python API strings; the Python methods add those wrappers internally.
 
 ---
 
 ## 1. Expression format
 
-### Bare statement format for `add_atom(atom: str)`
+### Statement / assertion passed to `add_atom(...)`
 
-Canonical external form:
+All facts and rules passed to `add_atom()` use this envelope:
 
-`(: proof-id statement-type truth-value)`
-
-Examples:
-
-`(: d1 (Dog fido) (STV 1.0 1.0))`
-
-`(: h1 (HeightDist g1 alice (PointMass 160.0)) (STV 1.0 1.0))`
-
-`(: r1 (Implication (Premises (Dog $x)) (Conclusions (Animal $x))) (STV 1.0 1.0))`
-
-The Python method `add_atom()` first evaluates the string with internal `!(eval ...)`, validates the evaluated result with `check_stmt()`, then wraps it internally as:
-
-`!(compileadd <private-kb-id> <evaluated-statement>)`
-
-External callers should not include `!(compileadd ...)`.
-
-Validator constraints for statements:
-
-- The evaluated expression must match `(: $prf $stmt $tv)`.
-- The proof slot must not be a variable.
-- The truth-value slot must not be a variable.
-- The truth-value slot must match one of the supported TV/distribution forms listed below.
-- A statement whose type is a variable is not useful: the compiler returns no compiled addition for variable `$Type`, so avoid `(: p $x (STV ...))`.
-
-### Bare query format for `query(atom: str, steps=100, ...)`
-
-Canonical external form:
-
-`(: $proofVar type-pattern $tvVar)`
+    (: proof-id proposition truth-value)
 
 Examples:
 
-`(: $prf (Dog fido) $tv)`
+    (: f1 (Dog fido) (STV 1.0 1.0))
 
-`(: $prf (Dog $x) $tv)`
+    (: r1
+       (Implication
+          (Premises (Dog $x))
+          (Conclusions (Animal $x)))
+       (STV 1.0 1.0))
 
-`(: $prf (AvgHeightDist g1 $avgDist) $tv)`
+Constraints for statements:
 
-`(: $prf (And (A) (B)) $tv)`
+- `proof-id` must not be a variable. Use an atom such as `f1`, `rule1`, or an expression such as `(no_inverse rule1)`.
+- `proposition` is the fact/rule content. It is usually a predicate-like S-expression such as `(Dog fido)` or an `Implication`.
+- `truth-value` must be one of the supported truth/value forms listed in §3.
+- Variables are written with a leading `$`, e.g. `$x`, `$person`, `$dist`.
+- Constants and predicate symbols are ordinary MeTTa atoms or nested expressions. They match syntactically.
 
-The Python method `query()` first evaluates the string with internal `!(eval ...)`, validates it with `check_query()`, then wraps it internally as:
+### Query passed to `query(...)`
 
-`!(query steps <private-kb-id> <evaluated-query>)`
+All queries passed to `query()` use this envelope:
 
-External callers should not include `!(query ...)`.
-
-Validator constraints for queries:
-
-- The evaluated expression must match `(: $prf $stmt $tv)`.
-- The proof slot must be a variable.
-- The type pattern may contain constants and/or variables.
-- The TV slot is normally a variable such as `$tv`; the validator only enforces that the proof slot is variable, but downstream users should use a TV variable when retrieving truth values.
-
-### Internal storage/runtime forms
-
-The compiler stores/internalizes atoms with a KB/context prefix:
-
-`(: kb proof type tv)`
-
-It also emits internal rule clauses of the form:
-
-`rules (premises |- conclusion)`
-
-and CPU helper goals such as:
-
-`(CPU function args result)`
-
-These are implementation details. Do not use them as the external expression format for the Python API.
-
----
-
-## 2. Built-in operators and connectors
-
-### Statement scaffold
-
-`(: proof-id type tv)`
-
-Stores an asserted fact or rule with a proof identifier and a truth value.
-
-### Rule scaffold
-
-`Implication`, `Premises`, and `Conclusions` are the rule structure keywords:
-
-`(Implication (Premises premise1 premise2 ...) (Conclusions conclusion1 conclusion2 ...))`
-
-Rules are asserted by placing the `Implication` term in the type slot of a statement:
-
-`(: ruleName (Implication (Premises ...) (Conclusions ...)) (STV s c))`
-
-### Plain predicates
-
-Any ordinary S-expression can be a predicate/fact type:
-
-`(Dog fido)`
-
-`(In room1 kid1)`
-
-`(HeightDist g1 alice $heightDist)`
-
-There is no schema declaration mechanism in the inspected chainer source. Predicate names, arities, and argument meanings are conventions established by the facts/rules you add.
-
-### Compound logical connectors: `And`, `Or`, `LikelierThan`
-
-The compiler recognizes compound source types whose head is one of:
-
-`And`, `Or`, `LikelierThan`
-
-Examples:
-
-`(And (A) (B))`
-
-`(Or (A) (B))`
-
-`(LikelierThan (HypothesisA) (HypothesisB))`
-
-The compiler can build adapter/projection rules for compound sources and can query compound expressions, as shown by tests querying `(And (A) (B))`.
-
-Truth functions from `tv_formulas.metta`:
-
-- `AndFormula`: for two STVs, strength = min strengths, confidence = min confidences.
-- `OrFormula`: for two STVs, strength = min strengths, confidence = max confidences. This is not standard probabilistic union.
-- `LikelierThanFormula`: compares two STVs by strength and returns the one with greater strength, with confidence = min confidences.
-- `AndProjection` and `OrProjection`: pass through the STV unchanged when projecting compound children.
-
-Multiple premises in an implication are accumulated with `AndFormula`.
-
-### `Compute`
-
-Premise helper:
-
-`(Compute function (arg1 arg2 ...) -> $out)`
-
-It compiles to a CPU call:
-
-`(CPU function (arg1 arg2 ...) $out)`
-
-The function is evaluated by the MeTTa runtime. Examples in tests use lambdas such as `(|-> ($acc $elem) (+ $acc $elem))` and arithmetic functions such as `+`, `*`.
-
-### `FoldAll`
-
-Premise helper:
-
-`(FoldAll pattern value init fold-function -> $out)`
-
-Semantics: aggregate over all facts matching `pattern`; extract `value` from each match; start from `init`; combine via `fold-function`; bind the final result to `$out`.
-
-Compiler lowering:
-
-`FoldAll` becomes an internal `FoldAllCompiled` CPU call with `unit-stv` result-TV behavior.
-
-Typical example:
-
-`(FoldAll (Score $name $n) $n 0 (|-> ($acc $elem) (+ $acc $elem)) -> $total)`
-
-### `FoldAllValue`
-
-Premise helper:
-
-`(FoldAllValue pattern init fold-function -> $out)`
-
-Semantics: aggregate over all matching facts, but the extracted value is the matched fact TV (`extract-tv`). This is used for distribution/counting patterns where each fact’s truth value contributes probabilistically.
-
-Typical distribution-count example:
-
-`(FoldAllValue (In $room $kid) (ParticleFromPairs ((0 1.0))) ParticleAddBernoulliFromSTV -> $dist)`
-
-### `AverageDist`
-
-Premise helper:
-
-`(AverageDist pattern value -> $outDist)`
-
-Semantics: match all facts satisfying `pattern`, extract distribution value `value`, sum/count them with `DistSumCountAcc`, and return the average distribution.
+    (: $proofVar proposition-pattern $tvVar)
 
 Example:
 
-`(AverageDist (HeightDist $g $person $heightDist) $heightDist -> $avgDist)`
+    (: $prf (Dog fido) $tv)
 
-### `MapDist`
-
-Premise helper:
-
-`(MapDist function fact-pattern inputDist -> $outDist)`
-
-Semantics: match `fact-pattern`, extract/bind `inputDist`, apply a unary distribution map, and bind `$outDist`.
-
-Compiler lowering uses `DistMapFormula`.
-
-Canonical shape:
-
-`(MapDist f (DistFact ... $inDist) $inDist -> $outDist)`
-
-### `Map2Dist`
-
-Premise helper:
-
-`(Map2Dist function fact-pattern-A distA fact-pattern-B distB -> $outDist)`
-
-Semantics: match two distribution-valued facts, apply a binary distribution map, and bind `$outDist`.
-
-Compiler lowering uses `DistMap2Formula`.
-
-Canonical shape:
-
-`(Map2Dist f (DistFactA ... $distA) $distA (DistFactB ... $distB) $distB -> $outDist)`
-
-Example from rectangle area tests:
-
-`(Map2Dist * (LengthDist $rect $lengthDist) $lengthDist (WidthDist $rect $widthDist) $widthDist -> $areaDist)`
-
-### `Not`
-
-Premise helper:
-
-`(Not expr)`
-
-Compiler lowering requires a match for `expr`, obtains its TV, then applies `NotFormula`.
-
-Important pitfall: this is not negation-as-failure. `(Not expr)` does not succeed merely because `expr` is absent. It succeeds when `expr` is found and its STV can be negated.
-
-Truth function:
-
-`NotFormula (STV s c)` returns `(STV (- 1 s) c)`.
-
-### `GreaterThan` and `>`
-
-Premise helper forms:
-
-`(GreaterThan $dist threshold)`
-
-`(> $dist threshold)`
-
-`(GreaterThan $distA $distB)`
-
-`(> $distA $distB)`
-
-Compiler behavior:
-
-- If the second argument is syntactically a variable, it compiles as distribution-vs-distribution comparison using `DistGreaterThanDistFormula`.
-- Otherwise it compiles as distribution-vs-threshold comparison using `DistGreaterThanFormula`.
-
-Usual intended forms:
-
-- Numeric threshold: bind a distribution first, then use `(GreaterThan $dist 1)` or `(> $dist 1)`.
-- Distribution comparison: bind two distributions, then use `(GreaterThan $distA $distB)`.
-
-### Lower-level truth/formula functions
-
-These are defined in `tv_formulas.metta` and may appear internally or be used in MeTTa-level evaluation:
-
-`MpFormula`
-
-`AndFormula`
-
-`OrFormula`
-
-`LikelierThanFormula`
-
-`AndProjection`
-
-`OrProjection`
-
-`DistGreaterThanFormula`
-
-`DistGreaterThanDistFormula`
-
-`NotFormula`
-
-`InversionFormula`
-
-`Equal`
-
-`NotEqual`
-
-`MpFormula` combines an implication TV and premise TV:
-
-`MpFormula (STV abs abc) (STV as ac)` returns `(STV (* abs as) (* 0.9 (min abc ac)))`.
-
-`InversionFormula` is used by compiler-generated inverse implications.
-
-`Equal` returns MeTTa equality `==`; `NotEqual` returns its negation.
-
-### Distribution helper functions
-
-Defined mainly in `dist_formulas.metta`:
-
-- `ParticleFromPairs`
-- `PointMass`
-- `ParticleFromNormal`
-- `ParticlePairs`
-- `ParticleMap`
-- `ParticleMap2`
-- `ParticleAddBernoulliFromSTV`
-- `DistMapFormula`
-- `DistMap2Formula`
-- `DistSumCountAcc`
-- `DistAverageFromSumCount`
-- `ParticleStoreCount`
-- `ParticleStoreClear`
-- `ParticleStorePruneKB`
-- `ParticleSetBudget`
-- `ParticleGetBudget`
-
-Most source-level distribution formula implementations are particle-oriented. `NatDist` and `FloatDist` are accepted/documented exact discrete TV forms, but the main helper formulas in the loaded chainer source are implemented for particle distributions.
+The proof slot must be a variable. The usual TV slot is also a variable, but the validator’s hard requirement is the variable proof slot. The Python method supplies the search budget via its `steps` argument, so do not write `!(query steps kb ...)` in the query string.
 
 ---
 
-## 3. Truth values and uncertain numeric values
+## 2. Built-in operators and writable surface forms
+
+### 2.1 Plain predicate / proposition form
+
+Surface syntax:
+
+    (Predicate arg1 arg2 ...)
+    (Predicate nested-term ...)
+    Symbol
+
+A plain predicate has no built-in meaning beyond syntactic matching and rule chaining. For example, `(Dog fido)`, `(Own alice dog1)`, and `(AtTime (FeatureX 0) 1)` are all user-level propositions.
+
+A unary predicate is the normal idiom for class membership:
+
+    (Dog fido)
+    (Person alice)
+    (City paris_fr)
+
+### 2.2 Statement envelope `:`
+
+Surface syntax:
+
+    (: proof-id proposition truth-value)
+
+This is the required assertion/query envelope. In statements, it asserts that `proposition` has `truth-value` with provenance `proof-id`. In queries, it asks for matching proof/proposition/TV triples.
+
+### 2.3 Rules: `Implication`, `Premises`, `Conclusions`
+
+Surface syntax:
+
+    (: rule-id
+       (Implication
+          (Premises premise1 premise2 ...)
+          (Conclusions conclusion1 conclusion2 ...))
+       (STV s c))
+
+Semantic effect:
+
+- If the premises can be proven, the conclusions can be derived.
+- Premises are combined conjunctively.
+- The rule’s `STV` is used as the implication strength/confidence.
+- A single conclusion is the common case.
+- Multiple conclusions are allowed and are treated as a compound conjunction-like conclusion; the system can also project components of compound conclusions.
+
+Canonical example:
+
+    (: dog_to_animal
+       (Implication
+          (Premises (Dog $x))
+          (Conclusions (Animal $x)))
+       (STV 1.0 1.0))
+
+### 2.4 Compound connectors: `And`, `Or`, `LikelierThan`
+
+These heads are recognized as compound proposition forms.
+
+#### `And`
+
+Surface syntax:
+
+    (And expr1 expr2 ...)
+
+Semantic effect:
+
+- Combines multiple propositions conjunctively.
+- The resulting `STV` uses the minimum strength and minimum confidence of the component TVs.
+- In queries, it can retrieve bindings satisfying all conjuncts.
+- In rules, it can be used explicitly as a premise or conclusion term, although multiple entries in `Premises` are usually clearer.
+
+Example query:
+
+    (: $prf (And (Own alice $x) (Pet $x)) $tv)
+
+#### `Or`
+
+Surface syntax:
+
+    (Or expr1 expr2 ...)
+
+Semantic effect:
+
+- Recognized as a compound proposition connector.
+- The built-in TV formula combines two TVs using minimum strength and maximum confidence.
+- It is less commonly used in the tests/specs than `And`; prefer explicit rules unless disjunction is really intended.
+
+#### `LikelierThan`
+
+Surface syntax:
+
+    (LikelierThan expr1 expr2)
+
+Semantic effect:
+
+- Recognized as a compound proposition connector.
+- The built-in TV formula compares component strengths and returns the TV with the larger strength, with confidence equal to the minimum of the two confidences.
+- This is specialized and should only be generated when the intended proposition is a likelihood comparison between two already-TV-bearing propositions.
+
+### 2.5 `Compute`
+
+Surface syntax in rule premises, preferred:
+
+    (Compute function (arg1 arg2 ...) -> output)
+
+Also accepted in some contexts:
+
+    (Compute function (arg1 arg2 ...) output)
+
+Semantic effect:
+
+- Runs a MeTTa function/operator on the arguments and binds or checks the output.
+- Arithmetic functions such as `+`, `-`, `*`, and `/` are used in tests.
+- A successful compute premise contributes a unit truth value unless it is one of the special formula computations handled by the runtime.
+- In ordinary rule premises, prefer the arrow form.
+- In direct compound queries containing `And`, the non-arrow form is used in tests and is the safest form for compute-inside-query patterns.
+
+Examples:
+
+    (Compute + ($n 1) -> $n1)
+
+    (: $prf
+       (And (P $x) (Compute + ($x 1) $y) (P $y))
+       $tv)
+
+### 2.6 `Not`
+
+Surface syntax:
+
+    (Not expr)
+
+Semantic effect:
+
+- Negates the truth value of a proven `expr`.
+- If `expr` has `(STV s c)`, then `(Not expr)` has `(STV (- 1 s) c)`.
+- This is truth-value negation over a matched/proven expression, not classical negation-as-failure. Do not use it to mean “there is no known proof of expr” unless that modeling choice is intentional.
+
+### 2.7 Distribution comparison: `GreaterThan` and `>`
+
+Surface syntax:
+
+    (GreaterThan dist threshold)
+    (> dist threshold)
+    (GreaterThan distA distB)
+    (> distA distB)
+
+Semantic effect:
+
+- Used as a premise/query helper over distribution-valued terms.
+- Distribution vs numeric threshold returns an `STV` whose strength is the probability that the distribution’s value is greater than the threshold.
+- Distribution vs distribution returns an `STV` whose strength is the probability that a sample from `distA` is greater than a sample from `distB`.
+- Confidence for particle distributions is derived from effective sample size; distribution-vs-distribution confidence is the minimum confidence of the two distributions.
+
+Recommended patterns:
+
+    (HeightDist countryA $distA)
+    (HeightDist countryB $distB)
+    (GreaterThan $distA $distB)
+
+    (CountDist room1 $countDist)
+    (GreaterThan $countDist 1)
+
+### 2.8 Aggregation: `FoldAll`
+
+Surface syntax:
+
+    (FoldAll pattern value init fold-fn -> out)
+
+Semantic effect:
+
+- Finds all matches of `pattern`.
+- For each match, extracts `value`.
+- Folds the extracted values starting from `init` using `fold-fn`.
+- Binds the aggregate result to `out`.
+- The aggregate premise itself has unit truth when successfully computed.
+
+Example:
+
+    (FoldAll (Score $name $n)
+             $n
+             0
+             (|-> ($acc $elem) (+ $acc $elem))
+             ->
+             $total)
+
+This can derive a total score/count-like value.
+
+### 2.9 Aggregation over truth values: `FoldAllValue`
+
+Surface syntax:
+
+    (FoldAllValue pattern init fold-fn -> out)
+
+Semantic effect:
+
+- Finds all matches of `pattern`.
+- Folds over the truth values of the matching facts, rather than over a separate extracted value expression.
+- Useful for turning uncertain memberships into a distribution.
+
+Typical pattern:
+
+    (FoldAllValue (In $room $kid)
+                  (ParticleFromPairs ((0 1.0)))
+                  ParticleAddBernoulliFromSTV
+                  ->
+                  $countDist)
+
+Here each matching `(In $room $kid)` contributes according to its `STV`, producing a particle distribution over counts.
+
+### 2.10 Distribution mapping: `MapDist`
+
+Surface syntax:
+
+    (MapDist function
+             (DistFact ... inputDist)
+             inputDist
+             ->
+             outputDist)
+
+Semantic effect:
+
+- Matches a fact containing a distribution.
+- Applies a unary function to the distribution’s samples.
+- Binds the resulting distribution.
+
+Example pattern:
+
+    (MapDist f (InputDist $x $inDist) $inDist -> $outDist)
+
+### 2.11 Binary distribution mapping: `Map2Dist`
+
+Surface syntax:
+
+    (Map2Dist function
+              (DistFactA ... distA)
+              distA
+              (DistFactB ... distB)
+              distB
+              ->
+              outputDist)
+
+Semantic effect:
+
+- Matches two distribution-bearing facts.
+- Applies a binary function to samples from the two distributions.
+- Binds the resulting distribution.
+
+Example:
+
+    (Map2Dist *
+       (LengthDist $rect $lengthDist)
+       $lengthDist
+       (WidthDist $rect $widthDist)
+       $widthDist
+       ->
+       $areaDist)
+
+### 2.12 Average distribution: `AverageDist`
+
+Surface syntax:
+
+    (AverageDist pattern valueDist -> avgDist)
+
+Semantic effect:
+
+- Matches all facts satisfying `pattern`.
+- Extracts a distribution-valued field `valueDist` from each match.
+- Produces a distribution for their average.
+
+Example:
+
+    (AverageDist (HeightDist $group $person $heightDist)
+                 $heightDist
+                 ->
+                 $avgDist)
+
+### 2.13 Distribution constructors and functions
+
+These are writable in facts/rules/queries wherever a value term is needed, especially as a distribution-valued argument or TV.
+
+#### `PointMass`
+
+    (PointMass x)
+
+A degenerate particle distribution concentrated at exactly `x`.
+
+#### `ParticleFromNormal`
+
+    (ParticleFromNormal mu sigma)
+
+Creates a deterministic normal-like particle approximation centered at `mu` with spread `sigma`.
+
+#### `ParticleFromPairs`
+
+    (ParticleFromPairs ((x1 w1) (x2 w2) ...))
+
+Creates a particle distribution from explicit weighted samples.
+
+#### `NatDist` and `FloatDist`
+
+    (NatDist ((value probability) ...))
+    (FloatDist ((value probability) ...))
+
+Exact small discrete distributions. `NatDist` is for natural-number-like values and `FloatDist` for floating values.
+
+#### `ParticleDist`
+
+    (ParticleDist ref)
+    (ParticleDist ref scale)
+
+Opaque particle distribution reference. In normal generated expressions, prefer constructors such as `PointMass`, `ParticleFromNormal`, or `ParticleFromPairs`; `ParticleDist` references are usually produced by evaluation.
+
+#### `DistGreaterThanFormula`
+
+    (DistGreaterThanFormula dist threshold)
+
+Returns an `STV` for the probability that `dist > threshold`.
+
+#### `DistGreaterThanDistFormula`
+
+    (DistGreaterThanDistFormula distA distB)
+
+Returns an `STV` for the probability that `distA > distB`.
+
+#### `ParticleMap`
+
+    (ParticleMap function particleDist)
+
+Unary sample-wise map over a particle distribution.
+
+#### `ParticleMap2`
+
+    (ParticleMap2 function particleDistA particleDistB)
+
+Binary sample-wise composition of two particle distributions.
+
+#### `ParticleAddBernoulliFromSTV`
+
+    (ParticleAddBernoulliFromSTV particleDist stv)
+
+Updates a count-like particle distribution by adding a Bernoulli contribution whose probability is taken from the `STV` strength.
+
+#### `CondDistFromJoint`
+
+    (CondDistFromJoint jointDist inputDist bandwidth)
+
+Constructs a conditional distribution from a joint distribution and an input distribution using a similarity bandwidth. This is specialized; generate it only for explicit conditional-distribution modeling.
+
+### 2.14 Proof-id idiom: `no_inverse`
+
+Surface syntax in proof-id position:
+
+    (: (no_inverse rule-id)
+       (Implication ...)
+       (STV s c))
+
+Semantic effect:
+
+- This is not a proposition connector.
+- It is a surface proof-id idiom used to prevent automatic inverse-rule behavior for that implication.
+- Use ordinary proof ids by default. Use `(no_inverse rule-id)` only when the intended rule should be applied forward/backward in the direct implication direction without generating inverse estimates.
+
+---
+
+## 3. Truth values and uncertainty
+
+Supported truth/value forms in the TV slot are:
+
+    (STV strength confidence)
+    (NatDist ((value probability) ...))
+    (FloatDist ((value probability) ...))
+    (ParticleDist ref)
+    (ParticleDist ref scale)
+    (PointMass x)
+    (ParticleFromNormal mu sigma)
+    (ParticleFromPairs ((x1 w1) (x2 w2) ...))
 
 ### `STV`
 
-Canonical form:
+    (STV strength confidence)
 
-`(STV strength confidence)`
-
-Meaning:
-
-- `strength`: belief/probability-like mass, conventionally in `[0, 1]`.
-- `confidence`: evidence/reliability, conventionally in `[0, 1]`.
-
-`STV` is for truth uncertainty about a proposition. It is not intended to encode measurement/value uncertainty.
-
-Examples:
-
-`(: d1 (Dog fido) (STV 1.0 1.0))`
-
-`(: in12 (In room1 kid2) (STV 0.5 1.0))`
-
-### Distribution-valued uncertainty
-
-Supported/validated distribution TV forms:
-
-`(NatDist ((value probability) ...))`
-
-`(FloatDist ((value probability) ...))`
-
-`(ParticleDist ref)`
-
-`(ParticleDist ref scale)`
-
-`(PointMass x)`
-
-`(ParticleFromNormal mu sigma)`
-
-`(ParticleFromPairs ((x1 w1) (x2 w2) ...))`
-
-The constructors in `dist_formulas.metta` produce particle-backed distributions:
-
-- `ParticleFromPairs` stores weighted particles and returns `(ParticleDist pid 1.0)`.
-- `PointMass x` is shorthand for a single weighted sample at `x`.
-- `ParticleFromNormal mu sigma` uses a deterministic 9-point normal-like kernel around `mu` scaled by `sigma`.
-- `ParticleDist pid scale` is an opaque reference into `&particle_store`.
-
-Recommended modeling pattern from the LLM rule spec:
-
-- Keep fact truth in the statement TV slot as `STV`.
-- Put numeric distributions as ordinary predicate arguments.
-
-Good examples:
-
-`(: h1 (HeightDist g1 alice (PointMass 160.0)) (STV 1.0 1.0))`
-
-`(: h2 (HeightDist g1 bob (ParticleFromNormal 170.0 2.0)) (STV 1.0 1.0))`
-
-The validator also accepts distribution forms in the TV slot, e.g. `(: s2 (HeightDist g1 alice) (PointMass 170.0))`, but the documented modeling advice is to separate truth uncertainty (`STV`) from value uncertainty (distribution term arguments).
-
-### Particle confidence semantics
-
-For particle threshold/comparison formulas:
-
-- Normalize particle weights.
-- Effective sample size: `N_eff = 1 / sum(w_i^2)`.
-- Confidence: `N_eff / (N_eff + 20)`.
-- For distribution-vs-distribution comparisons, confidence is the minimum of the two particle confidences.
-
-`ParticleAddBernoulliFromSTV` uses `tv-probability`, which for an STV is `clamp01(strength * confidence)`; non-STV inputs default to probability `1.0`.
-
----
-
-## 4. Rule templates and logical relations
-
-### Standard if-then rule
-
-Bare statement form:
-
-`(: ruleName (Implication (Premises premise1 premise2 ...) (Conclusions conclusion1 conclusion2 ...)) (STV s c))`
+- `strength` is belief/probability-like mass, normally in `[0, 1]`.
+- `confidence` is evidence/reliability, normally in `[0, 1]`.
+- Use `STV` for truth uncertainty: whether a proposition is true.
+- Do not use `STV` strength to encode a numeric measurement such as height, price, or count.
 
 Example:
 
-`(: dogAnimalRule (Implication (Premises (Dog $x)) (Conclusions (Animal $x))) (STV 1.0 1.0))`
+    (: d1 (Dog fido) (STV 1.0 1.0))
+    (: maybe_rain (Rainy tomorrow) (STV 0.6 0.8))
 
-Variables in rules use MeTTa variable syntax: `$x`, `$room`, `$dist`, etc.
+### Numeric/value uncertainty
 
-### Multiple premises
+Use distributions for uncertain numeric values.
 
-Multiple premises are conjoined through the compiler using `AndFormula`.
+Two modeling styles are accepted:
+
+1. Distribution in the proposition term, with an `STV` for truth/existence:
+
+       (: h1 (HeightDist group1 alice (PointMass 160.0)) (STV 1.0 1.0))
+       (: h2 (HeightDist group1 bob (ParticleFromNormal 170.0 2.0)) (STV 1.0 1.0))
+
+   This is the clearest recommended pattern for rules over numeric distributions.
+
+2. Distribution in the TV slot:
+
+       (: h1 (HeightDist group1 alice) (PointMass 160.0))
+
+   This is accepted by the validator, but it mixes the assertion’s TV slot with value uncertainty. Prefer style 1 when generating new expressions.
+
+---
+
+## 4. Rule composition patterns
+
+### 4.1 Canonical if-then rule
+
+Natural language: “If X is a dog, then X is an animal.”
+
+    (: dog_to_animal
+       (Implication
+          (Premises (Dog $x))
+          (Conclusions (Animal $x)))
+       (STV 1.0 1.0))
+
+### 4.2 Multi-premise rule
+
+Natural language: “If X is a dog and X lives in H, then X is a pet in H.”
+
+    (: pet_in_home_rule
+       (Implication
+          (Premises
+             (Dog $x)
+             (LivesIn $x $h))
+          (Conclusions
+             (PetInHome $x $h)))
+       (STV 1.0 1.0))
+
+Premises are conjunctive. Their TVs are combined with `And` semantics: minimum strength and minimum confidence.
+
+### 4.3 Explicit `And` premise
+
+Equivalent pattern using `And` explicitly:
+
+    (: expert_rule
+       (Implication
+          (Premises
+             (And (IndustryVeteran $p) (ManagedTeam $p)))
+          (Conclusions
+             (Expert $p)))
+       (STV 1.0 0.95))
+
+Prefer separate premises for simple conjunctions unless the compound `And` itself is intended as a proposition.
+
+### 4.4 Multi-conclusion rule
+
+    (: multi_conclusion_rule
+       (Implication
+          (Premises
+             (Parent $x $y))
+          (Conclusions
+             (Ancestor $x $y)
+             (Related $x $y)))
+       (STV 1.0 1.0))
+
+Multiple conclusions are allowed. For clarity and predictable proof behavior, a translator may instead generate separate single-conclusion rules unless the conjunction of conclusions is specifically intended.
+
+### 4.5 Rule with computation
+
+    (: next_count_rule
+       (Implication
+          (Premises
+             (CountAtTime $thing $t $n)
+             (Compute + ($t 1) -> $t1)
+             (Compute + ($n 1) -> $n1))
+          (Conclusions
+             (CountAtTime $thing $t1 $n1)))
+       (STV 1.0 1.0))
+
+Use `Compute` to derive numeric or functional intermediate values.
+
+### 4.6 Rule with negation
+
+    (: not_dog_rule
+       (Implication
+          (Premises
+             (Not (Dog $x)))
+          (Conclusions
+             (NonDog $x)))
+       (STV 1.0 1.0))
+
+Remember that `Not` negates the TV of a matched/proven expression. It is not absence-of-proof.
+
+### 4.7 Rule comparing distributions
+
+    (: taller_rule
+       (Implication
+          (Premises
+             (HeightDist countryA $distA)
+             (HeightDist countryB $distB)
+             (GreaterThan $distA $distB))
+          (Conclusions
+             (Taller countryA countryB)))
+       (STV 1.0 1.0))
+
+The comparison contributes an `STV` based on `P(distA > distB)`.
+
+### 4.8 Rule mapping one distribution
+
+    (: mapped_rule
+       (Implication
+          (Premises
+             (InputDist $x $inDist)
+             (MapDist f (InputDist $x $inDist) $inDist -> $outDist))
+          (Conclusions
+             (OutputDist $x $outDist)))
+       (STV 1.0 1.0))
+
+### 4.9 Rule combining two distributions
+
+    (: area_rule
+       (Implication
+          (Premises
+             (Rectangle $rect)
+             (Map2Dist *
+                (LengthDist $rect $lengthDist)
+                $lengthDist
+                (WidthDist $rect $widthDist)
+                $widthDist
+                ->
+                $areaDist))
+          (Conclusions
+             (AreaDist $rect $areaDist)))
+       (STV 1.0 1.0))
+
+### 4.10 Rule averaging distributions
+
+    (: avg_height_rule
+       (Implication
+          (Premises
+             (Group $g)
+             (AverageDist
+                (HeightDist $g $person $heightDist)
+                $heightDist
+                ->
+                $avgDist))
+          (Conclusions
+             (AvgHeightDist $g $avgDist)))
+       (STV 1.0 1.0))
+
+### 4.11 Rule counting uncertain memberships
+
+    (: count_kids_rule
+       (Implication
+          (Premises
+             (Room $room)
+             (FoldAllValue
+                (In $room $kid)
+                (ParticleFromPairs ((0 1.0)))
+                ParticleAddBernoulliFromSTV
+                ->
+                $cnt))
+          (Conclusions
+             (CntKidIn $room $cnt)))
+       (STV 1.0 1.0))
+
+Then a second rule can threshold the count distribution:
+
+    (: crowded_rule
+       (Implication
+          (Premises
+             (CntKidIn $room $cnt)
+             (GreaterThan $cnt 1))
+          (Conclusions
+             (Crowded $room)))
+       (STV 1.0 1.0))
+
+### 4.12 Rule with aggregation over values
+
+    (: total_score_rule
+       (Implication
+          (Premises
+             (FoldAll
+                (Score $name $n)
+                $n
+                0
+                (|-> ($acc $elem) (+ $acc $elem))
+                ->
+                $total))
+          (Conclusions
+             (TotalScore $total)))
+       (STV 1.0 1.0))
+
+---
+
+## 5. Query patterns and constraints
+
+### 5.1 Ground-fact existence query
+
+    (: $prf (Dog fido) $tv)
+
+Returns proofs and TVs for known or derivable `(Dog fido)`.
+
+### 5.2 Binding retrieval query
+
+    (: $prf (Dog $x) $tv)
+
+Retrieves bindings for `$x`.
+
+### 5.3 Query derived facts
+
+Given rules in the KB:
+
+    (: $prf (Animal fido) $tv)
+    (: $prf (Animal $x) $tv)
+
+### 5.4 Query a distribution-valued result
+
+    (: $prf (AvgHeightDist group1 $avgDist) $tv)
+
+The distribution variable is inside the proposition. The `$tv` describes the truth/existence of the derived proposition.
+
+### 5.5 Compound conjunction query
+
+    (: $prf (And (Own alice $x) (Pet $x)) $tv)
+
+This retrieves `$x` satisfying both conjuncts.
+
+### 5.6 Compound query with computation
+
+Use the non-arrow `Compute` form inside direct `And` queries:
+
+    (: $prf
+       (And (P $x) (Compute + ($x 1) $y) (P $y))
+       $tv)
+
+This finds pairs where `$y = $x + 1` and both `(P $x)` and `(P $y)` are provable.
+
+### 5.7 Aggregate query
+
+    (: $prf
+       (FoldAll
+          (Score $name $n)
+          $n
+          0
+          (|-> ($acc $elem) (+ $acc $elem))
+          ->
+          $total)
+       $tv)
+
+This directly queries an aggregate result.
+
+### 5.8 Query constraints
+
+- The proof slot must be a variable:
+
+      (: $prf (Dog fido) $tv)
+
+  Do not write:
+
+      (: proof1 (Dog fido) $tv)
+
+- Do not pass command wrappers to the Python API:
+
+      wrong for Python API: !(query 10 kb (: $prf (Dog fido) $tv))
+
+- The proposition pattern may be ground, partially variable, compound, or even very broad. Very broad queries such as `(: $prf $type $tv)` are syntactically possible but expensive and usually discouraged for NL translation.
+- Prefer a variable TV slot (`$tv`) unless intentionally filtering by a known TV pattern.
+- Query variables are existential/retrieval variables. The query asks for bindings that make the pattern provable.
+
+---
+
+## 6. Quantification and scope
+
+### 6.1 Universal quantification
+
+There is no explicit universal quantifier operator such as `ForAll`.
+
+Variables in rule premises/conclusions behave as rule variables: a rule applies for all bindings that satisfy the premises. For NL “all/every” statements, generate an implication rule.
+
+Natural language: “Every dog is an animal.”
+
+    (: every_dog_animal
+       (Implication
+          (Premises (Dog $x))
+          (Conclusions (Animal $x)))
+       (STV 1.0 1.0))
+
+### 6.2 Existential quantification
+
+There is no explicit existential quantifier operator for user expressions.
+
+Common existential meanings are represented indirectly:
+
+1. Assert a concrete entity:
+
+       (: f1 (Dog dog_001) (STV 1.0 1.0))
+
+2. Query with a variable:
+
+       (: $prf (Dog $x) $tv)
+
+3. Use a rule conclusion with a variable not bound by premises only with care. The system can create rule-tied existential/skolem-like terms for such unbound conclusion variables, but NL translators should avoid unbound conclusion variables unless an intentionally anonymous generated entity is desired.
+
+### 6.3 Cardinal quantification: exactly N, at least N, more than N
+
+There is no dedicated cardinal quantifier operator.
+
+Represent counts using explicit facts or aggregation:
+
+- Assert a count/cardinality fact:
+
+      (: c1 (Cardinality (DogsIn room1) 3) (STV 1.0 1.0))
+
+- Derive a count with `FoldAll` or `FoldAllValue`.
+- Compare distribution-valued counts with `GreaterThan` / `>`.
+
+For “more than N”, use a count distribution plus `GreaterThan`.
+
+For “exactly N”, either assert an explicit cardinality fact or use `Compute`/aggregation patterns appropriate to the numeric representation. There is no special `Exactly` operator.
+
+### 6.4 Vague quantifiers: most, many, few, majority
+
+There are no built-in natural-language quantifier operators for “most”, “many”, “few”, “a majority of”, etc.
+
+Represent them indirectly by:
+
+- aggregating counts with `FoldAll` / `FoldAllValue`;
+- computing ratios or thresholds with `Compute`;
+- comparing with `GreaterThan`;
+- assigning an `STV` strength/confidence to a proposition such as `(MostDogsBark group1)` if the vague quantifier is modeled as an uncertain assertion.
+
+Example sketch for “a majority”:
+
+    derive count of members
+    derive count of members satisfying property
+    compute or model ratio
+    compare ratio/count distribution to threshold
+    conclude (MajorityHaveProperty group property)
+
+The exact ratio machinery must be encoded with available `Compute` and aggregation functions; there is no dedicated majority operator.
+
+### 6.5 Negation scope
+
+`(Not expr)` scopes only over `expr`.
 
 Example:
 
-`(: r (Implication (Premises (A $x) (B $x)) (Conclusions (C $x))) (STV 1.0 1.0))`
+    (Not (Dog $x))
 
-### Multiple conclusions
+It negates the TV of a proof of `(Dog $x)`. There is no separate quantifier-negation scope syntax, so NL constructions such as “not every” or “no” must be modeled explicitly using rules, classes, counts, or truth-value negation.
 
-The compiler converts conclusion lists into a sequence expression via `seq2expr`; multiple conclusions are effectively represented as an `And` expression.
+### 6.6 Nesting
 
-Example shape:
-
-`(Conclusions (C1 $x) (C2 $x))`
-
-### Derived distribution rules
-
-Average height example:
-
-`(: avgHeightDistRule (Implication (Premises (Group $g) (AverageDist (HeightDist $g $person $heightDist) $heightDist -> $avgDist)) (Conclusions (AvgHeightDist $g $avgDist))) (STV 1.0 1.0))`
-
-Rectangle area example:
-
-`(: areaDistRule (Implication (Premises (Rectangle $rect) (Map2Dist * (LengthDist $rect $lengthDist) $lengthDist (WidthDist $rect $widthDist) $widthDist -> $areaDist)) (Conclusions (AreaDist $rect $areaDist))) (STV 1.0 1.0))`
-
-Probabilistic count example:
-
-`(: cntKidInParticleRule (Implication (Premises (Room $room) (FoldAllValue (In $room $kid) (ParticleFromPairs ((0 1.0))) ParticleAddBernoulliFromSTV -> $dist)) (Conclusions (CntKidInParticle $room $dist))) (STV 1.0 0.8))`
-
-### Inverse implications
-
-The compiler can generate inverse implication support internally, except when:
-
-- The proof id matches `(mined_implication ... ...)`.
-- The proof id matches `(no_inverse ...)`.
-- The compiled premise side contains a CPU helper.
-
-This is an internal reasoning optimization/feature, not a separate external rule syntax downstream users normally need.
-
-### Skolemization of conclusion-only variables
-
-If a conclusion contains variables not present in the premise side, `compile.metta` skolemizes them internally as terms of shape:
-
-`(exists rule idx premise-vars)`
-
-There is no user-facing existential quantifier syntax; this is an internal generated witness term.
+S-expressions can be nested freely as terms, and compound connectors such as `And` can contain nested propositions. However, there is no explicit nested quantifier syntax. Scope is represented structurally by where variables occur in rule premises, conclusions, and nested terms.
 
 ---
 
-## 5. Query patterns
+## 7. Entity identity and representation
 
-The external Python query API expects the bare form:
+### 7.1 Identity model
 
-`(: $proofVar typePattern $tvVar)`
-
-The proof variable is mandatory for validation.
-
-Common patterns:
-
-- Ask whether a ground fact is known/derivable:
-
-  `(: $prf (Dog fido) $tv)`
-
-- Retrieve bindings:
-
-  `(: $prf (Dog $x) $tv)`
-
-- Retrieve a derived distribution:
-
-  `(: $prf (AvgHeightDist g1 $avgDist) $tv)`
-
-- Query a compound expression:
-
-  `(: $prf (And (A) (B)) $tv)`
-
-- Broad query over any type is theoretically handled by `compileQuery` when the type slot is variable, e.g. `(: $prf $type $tv)`, but downstream translators should prefer specific type patterns.
-
-What must be variable vs constant:
-
-- Proof slot: must be a variable, e.g. `$prf`.
-- Type pattern: may be ground or may contain variables.
-- TV slot: normally should be a variable, e.g. `$tv`, to retrieve truth values.
-- Constants are bare symbols/numbers such as `fido`, `g1`, `countryA`, `170.0`.
-- Variables begin with `$`.
-
-Invalid for Python `query()`:
-
-`(: proof1 (Dog fido) $tv)` because proof is not variable.
-
-`!(query 10 kb (: $prf (Dog fido) $tv))` because external callers must not include the internal runtime wrapper.
-
----
-
-## 6. Naming conventions
-
-The codebase uses informal but consistent naming conventions:
-
-### Predicates/classes/relations
-
-Typically UpperCamelCase:
-
-`Dog`
-
-`Animal`
-
-`Room`
-
-`In`
-
-`HeightDist`
-
-`AvgHeightDist`
-
-`CountryHeightDist`
-
-`Taller`
-
-`Rectangle`
-
-`LengthDist`
-
-`WidthDist`
-
-`AreaDist`
-
-### Constants/entities
-
-Often lowercase or compact identifiers:
-
-`fido`
-
-`spot`
-
-`alice`
-
-`bob`
-
-`carol`
-
-`g1`
-
-`g2`
-
-`roomp1`
-
-`rectA`
-
-`countryA`
-
-Single uppercase constants also appear in tests:
-
-`A`, `B`, `Start`
-
-### Proof IDs
-
-Usually lowercase, snake/camel/mnemonic symbols:
-
-`d1`
-
-`group1`
-
-`hd11`
-
-`avgHeightDistRule`
-
-`areaDistRule`
-
-`fact_a`
-
-### Variables
-
-Always MeTTa-style variables beginning with `$`:
-
-`$x`
-
-`$room`
-
-`$kid`
-
-`$dist`
-
-`$avgDist`
-
-`$tv`
-
-`$prf`
-
-There is no declaration syntax for variables.
-
----
-
-## 7. Constraints and pitfalls
-
-### Do not pass internal wrappers to the Python API
-
-Use:
-
-`handler.add_atom("(: d1 (Dog fido) (STV 1.0 1.0))")`
-
-not:
-
-`handler.add_atom("!(compileadd kb (: d1 (Dog fido) (STV 1.0 1.0)))")`
-
-Use:
-
-`handler.query("(: $prf (Dog fido) $tv)")`
-
-not:
-
-`handler.query("!(query 10 kb (: $prf (Dog fido) $tv))")`
-
-The Python wrapper itself adds `!(compileadd ...)` and `!(query ...)`.
-
-### Statement proof IDs cannot be variables
-
-Invalid statement:
-
-`(: $prf (Dog fido) (STV 1.0 1.0))`
-
-### Statement TV cannot be a variable
-
-Invalid statement:
-
-`(: d1 (Dog fido) $tv)`
-
-### Query proof must be a variable
-
-Invalid query:
-
-`(: proof1 (Dog fido) $tv)`
-
-### TV forms are restricted
-
-Invalid statement TV:
-
-`(CustomTV 0.9)`
-
-The validator only accepts the supported TV/distribution forms listed above.
-
-### `STV` is not value uncertainty
-
-Do not encode “height is around 170” as `(STV 0.7 0.9)`. Use a distribution term such as `(ParticleFromNormal 170.0 2.0)` as an argument to a measurement predicate, with a separate `STV` for truth of the measurement fact.
-
-### `Not` is not absence-based negation
-
-`(Not expr)` requires `expr` to match and then negates the matched TV. It does not mean “there is no proof of expr.”
-
-### `GreaterThan` dispatch depends on syntactic variable status of the second argument
-
-The compiler chooses distribution-vs-distribution comparison if the second argument is a variable. Use a numeric literal/constant threshold for threshold comparisons.
-
-Good:
-
-`(GreaterThan $cnt 1)`
-
-Good after both distributions are bound:
-
-`(GreaterThan $distA $distB)`
-
-### Use constructors instead of hand-written `ParticleDist` IDs
-
-`ParticleDist` is an opaque reference into the particle store. Prefer:
-
-`(PointMass 160.0)`
-
-`(ParticleFromNormal 170.0 2.0)`
-
-`(ParticleFromPairs ((170 0.5) (180 0.5)))`
-
-rather than manually inventing `(ParticleDist pid scale)`.
-
-### No infix logical syntax
-
-Use prefix S-expressions only. There is no supported syntax like `A -> B`, `A and B`, or `forall x`.
-
-### Exact `Implication` structure matters
-
-Use exactly:
-
-`(Implication (Premises ...) (Conclusions ...))`
-
-Do not omit `Premises` or `Conclusions`.
-
-### Case matters
-
-The current chainer uses `STV`, not lowercase `stv`, in valid API statements. An old/demo `tuffy.metta` file uses different forms such as `stv` and `Inheritance`, but that is not the current PeTTaChainer API pattern.
-
-### No schema/type enforcement
-
-The chainer does not enforce predicate arity or argument types. `(Dog fido)`, `(Dog fido spot)`, and `(dog fido)` are different syntactic terms.
-
----
-
-## 8. Quantification and scope
-
-There are no dedicated user-facing quantifier operators in the chainer source:
-
-- No `ForAll`
-- No `Exists`
-- No `forall`
-- No cardinal quantifier syntax such as `Exactly`, `AtLeast`, or `AtMost`
-
-### Universal quantification
-
-Rule variables are implicitly universally scoped over the implication rule. For example:
-
-`(: r (Implication (Premises (Dog $x)) (Conclusions (Animal $x))) (STV 1.0 1.0))`
-
-means, operationally, for any binding of `$x` satisfying `(Dog $x)`, derive `(Animal $x)`.
-
-Scope is the whole rule expression. There is no nested quantifier syntax and no explicit quantifier precedence.
-
-### Existential meaning
-
-Existential claims are represented indirectly:
-
-1. By explicit witness constants, e.g. assert `(Owns alice dog1)` using a concrete symbol `dog1`.
-2. Internally, if a rule conclusion contains variables not appearing in the premise side, the compiler skolemizes them into generated terms of shape `(exists rule idx premise-vars)`.
-
-The internal `exists` term is not a general user-facing quantifier operator.
-
-### Cardinality / counting
-
-Cardinality-like reasoning is expressed through aggregation, not through quantifier syntax.
+The chainer has no built-in real-world entity resolution. Symbols are syntactic labels and match by exact symbolic identity.
 
 Examples:
 
-- Use `FoldAll` to count/sum exact matches.
-- Use `FoldAllValue` with `ParticleAddBernoulliFromSTV` to build a distribution over counts.
-- Use `GreaterThan` / `DistGreaterThanFormula` to ask threshold questions about count distributions.
+    fido
+    alice
+    paris
+    paris_fr
+    person_ben_001
+    city_paris_fr
 
-### Negation and quantifier interaction
+If two expressions use the same atom, they refer to the same entity for reasoning purposes. If they use different atoms, they are different unless you add your own equivalence/same-entity predicates and rules.
 
-There is no formal nested quantifier/negation scope system. `(Not expr)` simply matches `expr`, reads its TV, and applies `NotFormula`.
+### 7.2 Avoiding name collisions
 
-### Truth values and quantification
+Natural-language names are often ambiguous. A translator should generate stable unique IDs rather than raw surface names when ambiguity matters.
 
-Quantified formulas do not carry special quantifier TVs because there are no quantifier formulas. Rule statements carry an ordinary TV in their statement TV slot, and premise/conclusion truth propagation is handled by the formula functions such as `AndFormula` and `MpFormula`.
+Recommended:
+
+    ben_person_001
+    ben_person_002
+    paris_fr_city
+    paris_tx_city
+
+Then optionally add naming/label facts using a user-defined predicate:
+
+    (: n1 (Name ben_person_001 Ben) (STV 1.0 1.0))
+    (: n2 (Name paris_fr_city Paris) (STV 1.0 1.0))
+
+There is no built-in `Name` predicate; it is just a normal user predicate.
+
+### 7.3 Classes and instances
+
+Use unary predicates for instance-of-class:
+
+    (: f1 (Person alice) (STV 1.0 1.0))
+    (: f2 (Dog fido) (STV 1.0 1.0))
+    (: f3 (City paris_fr_city) (STV 1.0 1.0))
+
+Subclass/type rules are ordinary implications:
+
+    (: dog_is_animal
+       (Implication
+          (Premises (Dog $x))
+          (Conclusions (Animal $x)))
+       (STV 1.0 1.0))
+
+### 7.4 Pronouns and deictic entities
+
+There is no built-in convention for “I”, “we”, “you”, “here”, or “now”.
+
+If the referent is known from context, map it to a concrete entity ID:
+
+    speaker_001
+    addressee_001
+    conversation_group_001
+
+If the referent is unknown, do not invent a globally meaningful entity. Either skip the assertion/query, ask for resolution, or use an explicitly context-local placeholder such as `unknown_speaker_ctx123` only if the application can manage that identity.
+
+### 7.5 Expressions as entities
+
+Nested expressions can be used as terms/entities:
+
+    (i max)
+    (Pair alpha 1)
+    (XY 10.0 100.0)
+
+These are syntactic compound terms. They have no special identity semantics beyond exact structural matching unless rules give them meaning.
 
 ---
 
-## 9. Entity identity and representation
-
-The chainer has no built-in real-world entity identity system. Symbols are syntactic labels. Two occurrences of the same atom name match; different atom names do not match unless connected by rules you write.
-
-Examples:
-
-- `alice` is the same symbol wherever `alice` appears.
-- `Alice`, `alice`, and `alice_1` are distinct symbols.
-- `Paris` as a person and `Paris` as a city would be conflated if represented by the same symbol.
-
-Recommended practice for named entities:
-
-- Use stable unique identifiers as constants, e.g. `person_ben_001`, `city_paris_fr`, `city_paris_tx`.
-- If surface names matter, add your own naming facts, e.g. `(Name person_ben_001 "Ben")`, but note that `Name` is not a built-in semantic primitive in the chainer; it is just another predicate if you choose to use it.
-- Represent class membership with ordinary predicates, e.g. `(Person person_ben_001)`, `(City city_paris_fr)`, `(Dog fido)`. There is no special built-in `Instance` or `Member` operator in the current chainer API.
-- An old `tuffy.metta` file contains `Inheritance` examples, but these use a different/demo syntax and should not be treated as the PeTTaChainer API convention.
-
-Pronouns:
-
-- There is no built-in convention for `I`, `we`, or `you`.
-- If the referent is known, resolve the pronoun to a unique entity constant before adding facts.
-- If the referent is unknown, skip the pronoun-dependent assertion or represent uncertainty outside the chainer; do not assert facts about a literal symbol like `you` unless that is deliberately your entity ID.
-
----
-
-# Primitives cheat sheet
-
-This section is the consolidated quick reference for downstream translators. It lists the primitives documented above and only those primitives.
-
-## Expression scaffolding
-
-`(: proof-id type tv)` — Bare statement form for `add_atom`; asserts a fact or rule.
-
-`(: $prf typePattern $tv)` — Bare query form for `query`; proof slot must be a variable.
-
-`proof-id` — Non-variable symbol identifying an assertion/rule proof.
-
-`$var` — MeTTa variable syntax used in rules and queries.
-
-## Internal wrappers to avoid in Python API
-
-`!(compileadd kb stmt)` — Internal MeTTa command used by the wrapper; do not pass to `add_atom()`.
-
-`!(query steps kb queryPattern)` — Internal MeTTa command used by the wrapper; do not pass to `query()`.
-
-`(: kb proof type tv)` — Internal compiled/storage atom shape with KB context.
-
-`(CPU function args result)` — Internal compiled computation goal.
-
-`rules (premises |- conclusion)` — Internal compiled rule clause.
-
-## Rule structure
-
-`(Implication (Premises premise1 premise2 ...) (Conclusions conclusion1 conclusion2 ...))` — If all premises hold, derive the conclusions.
-
-`(Premises premise1 premise2 ...)` — Premise list inside an implication.
-
-`(Conclusions conclusion1 conclusion2 ...)` — Conclusion list inside an implication.
-
-## Predicate/fact forms
-
-`(Predicate arg1 arg2 ...)` — Plain user-defined predicate; predicate names and arities are conventional.
-
-`(Class entity)` — Common idiom for class membership, e.g. `(Dog fido)` or `(Person alice)`; not a special primitive.
-
-## Logical/connective forms
-
-`(And expr1 expr2 ...)` — Compound conjunction recognized by the compiler; combines TVs via `AndFormula`.
-
-`(Or expr1 expr2 ...)` — Compound disjunction-like connector recognized by the compiler; combines TVs via `OrFormula`.
-
-`(LikelierThan expr1 expr2)` — Compound comparison connector; returns the likelier STV by strength.
-
-`(Not expr)` — Premise helper that matches `expr` and negates its TV; not negation-as-failure.
-
-## Computation and aggregation premise helpers
-
-`(Compute function (arg1 arg2 ...) -> $out)` — Run a MeTTa function and bind its result.
-
-`(FoldAll pattern value init fold-function -> $out)` — Aggregate extracted values over all matching facts.
-
-`(FoldAllValue pattern init fold-function -> $out)` — Aggregate matched fact TVs over all matching facts.
-
-`(AverageDist pattern value -> $outDist)` — Average distribution-valued matches.
-
-`(MapDist function factPattern inputDist -> $outDist)` — Apply unary distribution map to one matched distribution.
-
-`(Map2Dist function factPatternA distA factPatternB distB -> $outDist)` — Apply binary distribution map to two matched distributions.
-
-## Comparison premise helpers
-
-`(GreaterThan $dist threshold)` — Distribution-vs-numeric-threshold premise; compiles to `DistGreaterThanFormula`.
-
-`(> $dist threshold)` — Alias form for threshold comparison.
-
-`(GreaterThan $distA $distB)` — Distribution-vs-distribution premise when second argument is a variable; compiles to `DistGreaterThanDistFormula`.
-
-`(> $distA $distB)` — Alias form for distribution comparison.
-
-## Truth-value forms
-
-`(STV strength confidence)` — Simple truth value for proposition truth.
-
-`(NatDist ((value probability) ...))` — Exact discrete natural/integer-valued distribution TV form, documented/validated.
-
-`(FloatDist ((value probability) ...))` — Exact discrete float-valued distribution TV form, documented/validated.
-
-`(ParticleDist ref)` — Accepted particle distribution reference form; prefer constructors.
-
-`(ParticleDist ref scale)` — Particle distribution reference with scale; constructors produce this shape.
-
-## Distribution constructors and value forms
-
-`(ParticleFromPairs ((x1 w1) (x2 w2) ...))` — Build a particle distribution from weighted samples.
-
-`(PointMass x)` — Build a degenerate particle distribution concentrated at `x`.
-
-`(ParticleFromNormal mu sigma)` — Build a deterministic 9-point normal-like particle approximation.
-
-`(ParticlePairs particleDist)` — Return weighted particle pairs for a particle distribution.
-
-## Distribution formula/helper functions
-
-`(DistGreaterThanFormula dist threshold)` — Return `STV(P(dist > threshold), confidence)`.
-
-`(DistGreaterThanDistFormula distA distB)` — Return `STV(P(distA > distB), confidence)`.
-
-`(ParticleAddBernoulliFromSTV particleDist stv)` — Update a count distribution by adding a Bernoulli trial whose probability is derived from an STV.
-
-`(ParticleMap function particleDist)` — Apply unary function to particle values.
-
-`(ParticleMap2 function particleDistA particleDistB)` — Apply binary function to pairs of particle values.
-
-`(DistMapFormula function dist)` — Distribution-map formula; implemented via `ParticleMap`.
-
-`(DistMap2Formula function distA distB)` — Binary distribution-map formula; implemented via `ParticleMap2`.
-
-`(DistSumCountAcc (SumCount sumDist count) hdist)` — Accumulator helper for distribution averaging.
-
-`(DistAverageFromSumCount (SumCount sumDist count))` — Convert sum/count accumulator into an average distribution.
-
-## Truth/formula functions
-
-`(MpFormula implicationTV premiseTV)` — Modus-ponens TV propagation.
-
-`(AndFormula tv1 tv2)` — Conjunction TV formula: min strength, min confidence.
-
-`(OrFormula tv1 tv2)` — Source-defined Or TV formula: min strength, max confidence.
-
-`(LikelierThanFormula tvA tvB)` — Return the stronger STV with min confidence.
-
-`(AndProjection tv)` — Projection helper for `And`; returns the TV unchanged.
-
-`(OrProjection tv)` — Projection helper for `Or`; returns the TV unchanged.
-
-`(NotFormula tv)` — Negate an STV strength: `(STV (- 1 s) c)`.
-
-`(InversionFormula premiseTV conclusionTV implicationTV)` — Internal formula for inverse implication support.
-
-`(Equal a b)` — Return MeTTa equality result `==`.
-
-`(NotEqual a b)` — Return negated MeTTa equality.
-
-## Particle store and budget utilities
-
-`(ParticleStoreCount)` — Count stored particle atoms.
-
-`(ParticleStoreClear)` — Clear particle store and reset particle ID counter.
-
-`(ParticleStorePruneKB)` — Keep only particles reachable from current KB facts.
-
-`(ParticleSetBudget n)` — Set particle compression/resampling budget.
-
-`(ParticleGetBudget)` — Get current particle budget.
-
-## Quantification idioms
-
-`variables in Implication rules` — Implicit universal quantification over rule matches.
-
-`explicit witness constants` — Idiom for existential claims; use a concrete entity symbol.
-
-`FoldAll / FoldAllValue` — Idiom for all-matches aggregation/cardinality-like reasoning.
-
-`compiler-generated (exists rule idx vars)` — Internal skolem term for conclusion-only variables; not a user-facing quantifier.
+## 8. Practical generation guidelines
+
+1. Always wrap assertions and queries in `(: ... ... ...)`.
+2. For `add_atom()`, use a non-variable proof id and a supported TV.
+3. For `query()`, use a variable proof id, usually `$prf`.
+4. Use `STV` for truth; use distributions for uncertain numeric values.
+5. Prefer distribution-valued arguments plus `STV` for facts about measurements:
+
+       (: h1 (HeightDist group1 alice (ParticleFromNormal 160.0 2.0)) (STV 1.0 1.0))
+
+6. Translate “all/every/if” into `Implication`.
+7. Translate “and” in rule antecedents into multiple `Premises` or explicit `And`.
+8. Translate numeric derivations with `Compute`.
+9. Translate counts/aggregates with `FoldAll` or `FoldAllValue`.
+10. Translate uncertain numeric comparisons with `GreaterThan` / `>`.
+11. Avoid unbound variables in rule conclusions unless intentionally creating anonymous/skolem-like entities.
+12. Use unique entity IDs; add user-defined name facts if human-readable labels are needed.

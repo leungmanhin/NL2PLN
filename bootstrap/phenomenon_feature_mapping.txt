@@ -1,704 +1,1035 @@
-1. Entity classification  
-   Recap: English states that an individual belongs to a category, kind, or class.  
-   Chainer features to exercise: Plain predicates; Class entity idiom; `STV`; `Implication`, `Premises`, `Conclusions` for class-inclusion readings.  
-   Constraint templates:  
-   - If the English sentence is a general class inclusion such as “robins are birds,” the proof should use an `Implication` whose premise is the narrower class predicate with a variable and whose conclusion is the broader class predicate with the same variable.  
-   - If the English sentence classifies a named individual, the proof may be a ground class-membership predicate with an `STV` truth value.
-
-2. Entity identification and naming  
-   Recap: Proper names, titles, and labels identify particular entities.  
-   Chainer features to exercise: Entity identity and representation; stable unique constants; optional plain `Name` predicates.  
-   Constraint templates:  
-   - Repeated references to the same named entity should use the same entity constant unless the example explicitly involves ambiguity or distinct entities with the same name.  
-   - Surface names should not be relied on as built-in semantics; if names are represented, they should appear in ordinary predicates such as `Name`.
-
-3. Properties and attributes  
-   Recap: English assigns qualities, colors, sizes, ages, and other attributes to entities.  
-   Chainer features to exercise: Plain predicates; `STV`; distribution constructors such as `PointMass` and `ParticleFromNormal` for scalar attributes.  
-   Constraint templates:  
-   - Scalar measurement uncertainty should be represented with distribution-valued predicate arguments, not solely by lowering the `STV` of the proposition.
-
-4. Relational properties  
-   Recap: Some properties relate one entity to another rather than describing one entity alone.  
-   Chainer features to exercise: Plain predicates; `GreaterThan` / `>` for scalar comparisons; distribution constructors for measured relational values.  
-   Constraint templates:  
-   - Comparative scalar relations with numeric uncertainty should bind distribution-valued measurements and use `GreaterThan $distA $distB` or `> $distA $distB`.
-
-5. Possession and ownership  
-   Recap: English expresses ownership, custody, association, and belonging.  
-   Chainer features to exercise: Plain predicates for relations such as ownership, possession, custody, or association.  
-   Constraint templates: (none)
-
-6. Part-whole relations  
-   Recap: English describes components, members, and physical or abstract parts of wholes.  
-   Chainer features to exercise: Plain predicates; `FoldAll` or `FoldAllValue` for counted parts; `GreaterThan` for part-count thresholds.  
-   Constraint templates:  
-   - If the example requires proving a numerical part count, the proof should use `FoldAll` or `FoldAllValue` over part-whole facts rather than a single monolithic count predicate.
-
-7. Identity and equivalence  
-   Recap: English can state that two descriptions refer to the same entity or value.  
-   Chainer features to exercise: Entity identity and representation; stable constants; `Equal`; `NotEqual`; optional plain predicates such as `SameAs`.  
-   Constraint templates:  
-   - Exact equality of computed or measured values should use `Equal` or a shared value representation rather than unrelated constants.
-
-8. Existence and nonexistence  
-   Recap: English asserts that something exists, occurs, or is absent.  
-   Chainer features to exercise: Explicit witness constants; query variables; `STV`; `Not` / `NotFormula` with the negation pitfall noted.  
-   Constraint templates:  
-   - Existential assertions should use an explicit witness constant or a query variable; the proof should not use a non-existent user-facing `Exists` operator.  
-   - Nonexistence should not be represented by absence of a fact alone; if a truth value is required for the positive proposition, its `STV` strength should be in `[0.0, 0.2]`.  
-   - `Not` should only be used when the negated expression is matchable; it must not be treated as negation-as-failure.
-
-9. States and stative predication  
-   Recap: English describes conditions or states that hold rather than events that unfold.  
-   Chainer features to exercise: Plain predicates; `STV`.  
-   Constraint templates: (none)
-
-10. Actions and events  
-   Recap: English describes happenings with participants such as agents and patients.  
-   Chainer features to exercise: Plain predicates; event constants; role predicates.  
-   Constraint templates: (none)
-
-11. Thematic roles  
-   Recap: Event descriptions assign roles such as agent, patient, theme, recipient, source, goal, instrument, and beneficiary.  
-   Chainer features to exercise: Plain predicates; event constants shared across role predicates; `And` for compound event descriptions.  
-   Constraint templates:  
-   - Multiple role facts belonging to one event should share the same event constant or event variable.
-
-12. Transitive and intransitive events  
-   Recap: Some verbs take direct objects, while others describe events without one.  
-   Chainer features to exercise: Plain predicates; event constants; role predicates.  
-   Constraint templates: (none)
-
-13. Ditransitive and transfer events  
-   Recap: English expresses transfer of objects, information, or possession among participants.  
-   Chainer features to exercise: Plain predicates; event constants; role predicates for giver, recipient, and theme.  
-   Constraint templates: (none)
-
-14. Instrumental relations  
-   Recap: English marks tools or means used to perform actions.  
-   Chainer features to exercise: Plain predicates; event constants; role predicates for instruments or means.  
-   Constraint templates: (none)
-
-15. Beneficiaries and maleficiaries  
-   Recap: English identifies who benefits from or is harmed by an event.  
-   Chainer features to exercise: Plain predicates; event constants; beneficiary/maleficiary role predicates.  
-   Constraint templates: (none)
-
-16. Experiencer and stimulus roles  
-   Recap: Perception, emotion, and cognition often involve an experiencer and a stimulus.  
-   Chainer features to exercise: Plain predicates; event or state constants; role predicates.  
-   Constraint templates: (none)
-
-17. Agentless and natural events  
-   Recap: Some events occur without an explicit intentional agent.  
-   Chainer features to exercise: Plain predicates; event constants; optional omission of agent role predicates.  
-   Constraint templates:  
-   - Agentless events should not invent an arbitrary `Agent` fact unless the English explicitly supplies an agent or cause.
-
-18. Passive voice  
-   Recap: English can foreground the affected participant and background or omit the agent.  
-   Chainer features to exercise: Plain predicates; event constants; role predicates.  
-   Constraint templates:  
-   - Passive clauses with a by-phrase should produce the same agent/patient role structure as the corresponding active clause.  
-   - Agentless passives should not create a spurious concrete agent constant.
-
-19. Causative alternation  
-   Recap: English alternates between an entity changing state and another entity causing that change.  
-   Chainer features to exercise: Plain predicates; event/state predicates; `Implication` for rules connecting causative events to resulting states.  
-   Constraint templates:  
-   - If the example requires deriving the result state from a causative event, the proof should use an `Implication` from the causative event predicate to the resulting state predicate.
-
-20. Causation  
-   Recap: English expresses that one event or state brings about another.  
-   Chainer features to exercise: `Implication`, `Premises`, `Conclusions`; multiple premises; `STV` for uncertain causal claims.  
-   Constraint templates:  
-   - General causal claims should use an `Implication` rather than only a monolithic causal predicate.  
-   - Hedged causal claims such as “probably caused” should have an `STV` strength in `[0.5, 0.9]` and should not default to `(STV 1.0 1.0)`.
-
-21. Purpose and intention  
-   Recap: English expresses goals, intended outcomes, and reasons for actions.  
-   Chainer features to exercise: Plain predicates; event constants; `Implication` for goal-to-action or action-to-intended-result dependencies.  
-   Constraint templates:  
-   - If the sentence states a rule-like purpose relation, the proof should use an `Implication` connecting the action or intention to the intended outcome.
-
-22. Result and consequence  
-   Recap: English describes outcomes produced by actions or events.  
-   Chainer features to exercise: `Implication`, `Premises`, `Conclusions`; multiple conclusions; `STV`.  
-   Constraint templates:  
-   - Consequence markers such as “so,” “therefore,” or “as a result” should trigger an `Implication` when the expected proof derives the consequence from the cause.  
-   - If the consequence is only probable, the rule or derived conclusion should use an `STV` strength below `1.0`.
-
-23. Spatial containment  
-   Recap: English expresses being inside, outside, or within bounded regions.  
-   Chainer features to exercise: Plain predicates for spatial relations; `STV` for uncertain location.  
-   Constraint templates: (none)
-
-24. Spatial support and contact  
-   Recap: English marks relations such as on, under, touching, and attached to.  
-   Chainer features to exercise: Plain predicates for support/contact relations.  
-   Constraint templates: (none)
-
-25. Spatial proximity and distance  
-   Recap: English describes nearness, farness, adjacency, and separation.  
-   Chainer features to exercise: Plain predicates; distribution constructors for uncertain distances; `GreaterThan` for distance thresholds.  
-   Constraint templates:  
-   - Approximate or uncertain distances should use distribution-valued arguments such as `ParticleFromNormal` or `ParticleFromPairs`, not only `STV`.
-
-26. Spatial orientation and direction  
-   Recap: English encodes left, right, above, below, in front of, behind, and facing.  
-   Chainer features to exercise: Plain predicates for orientation/direction relations.  
-   Constraint templates: (none)
-
-27. Motion events  
-   Recap: English describes movement with source, path, goal, and manner.  
-   Chainer features to exercise: Plain predicates; event constants; role predicates for source, path, goal, and manner.  
-   Constraint templates: (none)
-
-28. Temporal location  
-   Recap: English locates events at times, dates, and intervals.  
-   Chainer features to exercise: Plain predicates; event constants; time constants.  
-   Constraint templates: (none)
-
-29. Temporal ordering  
-   Recap: English expresses before, after, during, while, and simultaneity.  
-   Chainer features to exercise: Plain predicates for temporal relations; event constants.  
-   Constraint templates: (none)
-
-30. Duration and time span  
-   Recap: English describes how long states or events last.  
-   Chainer features to exercise: Plain predicates; distribution constructors for uncertain durations; `PointMass` for exact durations.  
-   Constraint templates:  
-   - Exact durations should use exact numeric values or `PointMass` value arguments.  
-   - Approximate durations such as “about an hour” or “roughly two days” should use `ParticleFromNormal` or `ParticleFromPairs`.
-
-31. Tense  
-   Recap: English marks event time relative to speech time or another reference time.  
-   Chainer features to exercise: Plain predicates; event constants; time arguments or temporal relation predicates.  
-   Constraint templates: (none)
-
-32. Aspect  
-   Recap: English distinguishes ongoing, completed, habitual, and bounded event structure.  
-   Chainer features to exercise: Plain predicates for aspectual status; event constants; `STV` for habitual tendencies.  
-   Constraint templates:  
-   - Habitual aspect with frequency adverbs such as “usually” should not default to `(STV 1.0 1.0)`; use an `STV` strength in `[0.6, 0.9]`.
-
-33. Frequency and habituality  
-   Recap: English expresses how often events occur and whether they are customary.  
-   Chainer features to exercise: `STV`; `FoldAll`; `FoldAllValue`; `GreaterThan`; event predicates.  
-   Constraint templates:  
-   - “Usually” or “often” claims should use an `STV` strength in `[0.6, 0.9]`.  
-   - “Rarely” or “seldom” claims should use an `STV` strength in `[0.0, 0.35]`.  
-   - Exact frequency counts should use `FoldAll` or `FoldAllValue` rather than only a lexical frequency predicate.
-
-34. Existential quantification  
-   Recap: English says that at least one entity satisfying a description exists.  
-   Chainer features to exercise: Explicit witness constants; query variables; compiler-generated conclusion-only skolemization only indirectly.  
-   Constraint templates:  
-   - Asserted existential claims should introduce at least one explicit witness constant satisfying the description.  
-   - The proof should not use a user-facing `Exists` or `ForAll` operator, since the chainer has no such external quantifier syntax.
-
-35. Universal quantification  
-   Recap: English makes claims about all members of a relevant set.  
-   Chainer features to exercise: Variables in `Implication` rules; `Premises`; `Conclusions`; domain predicates.  
-   Constraint templates:  
-   - Universal claims with “all,” “every,” or “each” should use an `Implication` with a variable in the domain premise and the same variable in the conclusion.  
-   - The proof should not use a user-facing `ForAll` operator.
-
-36. Cardinality and numerals  
-   Recap: English specifies exact or approximate numbers of entities or events.  
-   Chainer features to exercise: `FoldAll`; `FoldAllValue`; `ParticleAddBernoulliFromSTV`; `GreaterThan`; distribution constructors.  
-   Constraint templates:  
-   - Exact or derived counts should be produced with `FoldAll` or `FoldAllValue` over matching facts.  
-   - Probabilistic counts over uncertain facts should use `FoldAllValue` with `ParticleAddBernoulliFromSTV`.  
-   - Approximate numerals such as “about twenty” should use a distribution-valued count, not a fully certain exact count.
-
-37. At-least and at-most quantification  
-   Recap: English sets lower or upper numerical bounds.  
-   Chainer features to exercise: `FoldAll`; `FoldAllValue`; `GreaterThan` / `>`; `Not` / `NotFormula`; distribution-valued counts.  
-   Constraint templates:  
-   - “At least N” should be checked by deriving a count distribution and applying `GreaterThan $countDist N-1`.  
-   - “More than N” should apply `GreaterThan $countDist N`.  
-   - “At most N” should not rely on absence of a proof; it should either negate or assign low strength to `GreaterThan $countDist N`.
-
-38. Proportional and vague quantifiers  
-   Recap: English uses quantifiers such as most, many, few, several, and some.  
-   Chainer features to exercise: `STV`; `FoldAll`; `FoldAllValue`; `GreaterThan`; distribution-valued counts.  
-   Constraint templates:  
-   - “Most” claims should have an `STV` strength in `[0.6, 0.95]` unless an explicit proportion is computed.  
-   - “Few” claims should have an `STV` strength in `[0.0, 0.35]` unless an explicit proportion is computed.  
-   - “Many” or “several” claims should not default to `(STV 1.0 1.0)` unless exact supporting counts are provided.
-
-39. Partitives and measure expressions  
-   Recap: English quantifies portions, amounts, and units of substances or groups.  
-   Chainer features to exercise: Plain predicates; distribution constructors; `PointMass`; `ParticleFromNormal`; `FoldAll` for aggregated portions.  
-   Constraint templates:  
-   - Exact measures such as “two liters” should use numeric value arguments or `PointMass`.  
-   - Approximate measures should use distribution-valued arguments, not only weakened `STV`.
-
-40. Distributive and collective readings  
-   Recap: Plural descriptions can apply to individuals separately or to a group together.  
-   Chainer features to exercise: Variables in `Implication` rules; group constants; plain predicates; `FoldAll`.  
-   Constraint templates:  
-   - Distributive readings marked by “each” should use a variable ranging over group members in an `Implication` or aggregation pattern.  
-   - Collective readings should use a group-level predicate or group constant rather than forcing separate facts for every member.
-
-41. Cumulative readings  
-   Recap: Plural participants may be related across totals rather than one-to-one pairings.  
-   Chainer features to exercise: `FoldAll`; `FoldAllValue`; aggregation patterns; event predicates.  
-   Constraint templates:  
-   - Cumulative total readings should use aggregation with `FoldAll` or `FoldAllValue` rather than assuming pairwise one-to-one relations.
-
-42. Generic statements  
-   Recap: English makes generalizations about kinds or typical members rather than particular individuals.  
-   Chainer features to exercise: Variables in `Implication` rules; `STV` for default or typical generalizations.  
-   Constraint templates:  
-   - Generic statements should normally use an `Implication` from kind/class membership to the generic property.  
-   - Non-exceptionless generics should use rule `STV` strength in `[0.6, 0.95]`, not necessarily `(STV 1.0 1.0)`.
-
-43. Definiteness and uniqueness  
-   Recap: Articles and demonstratives signal familiarity, uniqueness, or identifiability.  
-   Chainer features to exercise: Entity identity and representation; stable constants; optional uniqueness predicates.  
-   Constraint templates:  
-   - Once a definite referent is resolved, all facts about it should use the same stable entity constant.
-
-44. Indefiniteness and specificity  
-   Recap: Indefinite noun phrases may refer to a particular but unidentified entity or to any suitable entity.  
-   Chainer features to exercise: Explicit witness constants; variables in queries/rules.  
-   Constraint templates:  
-   - Specific asserted indefinites should introduce a witness constant.  
-   - Non-specific indefinites in rules or queries should use variables, not a literal constant such as `someone`.
-
-45. Anaphora and pronoun reference  
-   Recap: Pronouns and other referring expressions depend on earlier or contextual entities.  
-   Chainer features to exercise: Entity identity and representation; stable constants.  
-   Constraint templates:  
-   - Resolved pronouns should be replaced by the same entity constant as their antecedent before adding facts.  
-   - Do not assert facts about literal symbols such as `he`, `she`, `it`, or `they` unless those are deliberately chosen entity IDs.
-
-46. Reflexives and reciprocals  
-   Recap: English marks participants acting on themselves or on each other.  
-   Chainer features to exercise: Plain predicates; shared constants or variables; `And` for reciprocal multi-fact encodings.  
-   Constraint templates:  
-   - Reflexive readings should use the same constant or variable in the relevant role slots.  
-   - Reciprocal readings should include both directional relations or an explicit symmetric reciprocal predicate.
-
-47. Deixis  
-   Recap: Some expressions depend on speaker, addressee, time, or place of utterance.  
-   Chainer features to exercise: Entity identity and representation; stable constants for speaker/addressee/place/time.  
-   Constraint templates:  
-   - Deictic expressions such as “I,” “you,” “here,” and “now” should be resolved to contextual constants before adding facts.  
-   - Do not use literal constants such as `I`, `you`, `here`, or `now` unless the dataset explicitly defines them as entity/time/place IDs.
-
-48. Negation  
-   Recap: English denies propositions, events, properties, existence, or participation.  
-   Chainer features to exercise: `STV`; `Not`; `NotFormula`; `NotEqual`.  
-   Constraint templates:  
-   - Simple denial of a proposition should be represented by the positive proposition with `STV` strength in `[0.0, 0.2]`, or by a rule using `Not` over a matchable expression.  
-   - `Not` must not be used as negation-as-failure; the negated expression must be derivable or matchable.  
-   - Negative existential claims should not be represented solely by omitting all witnesses.
-
-49. Negative polarity and minimizers  
-   Recap: Some expressions are licensed in negative or downward-entailing contexts.  
-   Chainer features to exercise: `Not`; `STV`; plain predicates after polarity resolution.  
-   Constraint templates:  
-   - Negative-polarity items should not introduce independent positive existential witnesses unless the English entails them.  
-   - If the construction denies seeing or doing anything, the relevant positive proposition should have `STV` strength in `[0.0, 0.2]`.
-
-50. Double negation and negative concord  
-   Recap: Multiple negative expressions may cancel or reinforce depending on dialect and construction.  
-   Chainer features to exercise: `STV`; `Not`; `NotFormula`.  
-   Constraint templates:  
-   - Logical double negation readings such as “not impossible” should yield a positive proposition with `STV` strength at least `0.6`.  
-   - Negative-concord readings should be represented as a single semantic denial with the positive proposition’s `STV` strength in `[0.0, 0.2]`.
-
-51. Modality of ability  
-   Recap: English expresses capacity, skill, or opportunity to act.  
-   Chainer features to exercise: Plain predicates for ability/capacity; `Implication` for conditionally enabled abilities.  
-   Constraint templates:  
-   - Conditional ability claims should use an `Implication` from enabling conditions to the ability predicate.
-
-52. Modality of possibility and probability  
-   Recap: English expresses what may, might, could, or is likely to be true.  
-   Chainer features to exercise: `STV`; `Or`; `LikelierThan` for comparing alternative hypotheses.  
-   Constraint templates:  
-   - “May,” “might,” or epistemic “could” claims should use `STV` strength in `[0.2, 0.7]`.  
-   - “Likely” or “probably” claims should use `STV` strength in `[0.6, 0.9]`.  
-   - Modal probability claims should not default to `(STV 1.0 1.0)`.
-
-53. Modality of necessity and obligation  
-   Recap: English expresses what must, has to, or needs to happen.  
-   Chainer features to exercise: Plain predicates for obligation/necessity; `Implication` for conditional obligations.  
-   Constraint templates:  
-   - Deontic obligations should be represented with obligation-like predicates or rules, not merely by assigning high `STV` to the obligated action.  
-   - Conditional obligations such as “if the light is red, cars must stop” should use an `Implication`.
-
-54. Permission and prohibition  
-   Recap: English expresses what is allowed, forbidden, or authorized.  
-   Chainer features to exercise: Plain predicates for permission/prohibition; `Implication`; `Not` for prohibition only with care.  
-   Constraint templates:  
-   - Conditional permissions or prohibitions should use an `Implication` from the licensing condition to the permission/prohibition predicate.  
-   - Prohibition should not be encoded as absence of permission alone.
-
-55. Epistemic versus deontic modal readings  
-   Recap: The same modal can express inference about truth or rules about action.  
-   Chainer features to exercise: `STV` for epistemic readings; plain obligation/permission predicates; `Implication`.  
-   Constraint templates:  
-   - Epistemic modal readings should affect the `STV` of the proposition.  
-   - Deontic modal readings should use obligation/permission/prohibition predicates or `Implication`, not just high or low `STV`.
-
-56. Comparison of inequality  
-   Recap: English compares entities or degrees using greater, lesser, more, less, and related forms.  
-   Chainer features to exercise: `GreaterThan` / `>`; distribution constructors; `PointMass`; `ParticleFromNormal`.  
-   Constraint templates:  
-   - Inequality comparisons over measured values should bind value distributions and use `GreaterThan $distA $distB`.  
-   - Exact scalar values may use `PointMass`; uncertain scalar values should use `ParticleFromNormal` or `ParticleFromPairs`.
-
-57. Equality and similarity comparison  
-   Recap: English expresses equal degree, sameness, or resemblance.  
-   Chainer features to exercise: `Equal`; `NotEqual`; `Compute`; plain similarity predicates.  
-   Constraint templates:  
-   - Exact numeric equality should use `Equal` or shared exact value representations.  
-   - Similarity claims that are vague should not be forced into `Equal`; they may use ordinary similarity predicates with appropriate `STV`.
-
-58. Superlatives and extremes  
-   Recap: English identifies maximal or minimal members along a scale.  
-   Chainer features to exercise: `FoldAll`; `GreaterThan`; `LikelierThan`; distribution constructors.  
-   Constraint templates:  
-   - Superlative proofs over an explicit comparison set should compare the candidate against alternatives using `GreaterThan` or aggregation, rather than only asserting a monolithic superlative predicate.  
-   - If measurements are uncertain, comparisons should operate over distributions.
-
-59. Ordinals and ranking  
-   Recap: English orders entities by position in a sequence or hierarchy.  
-   Chainer features to exercise: Plain predicates for ranks; `FoldAll` for deriving rank from predecessors.  
-   Constraint templates:  
-   - If a rank is derived rather than asserted, the proof should use `FoldAll` or an equivalent aggregation over preceding items.
-
-60. Degree modification  
-   Recap: English modifies intensity, extent, or scalar values.  
-   Chainer features to exercise: Plain predicates; scalar value arguments; distribution constructors; `STV` for vague degree claims.  
-   Constraint templates:  
-   - Degree modifiers such as “very,” “slightly,” or “extremely” should preferably affect scalar degree/value arguments or threshold predicates, not arbitrary entity constants.
-
-61. Approximation and precision  
-   Recap: English expresses exactness, approximation, and uncertainty about values.  
-   Chainer features to exercise: `PointMass`; `ParticleFromNormal`; `ParticleFromPairs`; `STV`.  
-   Constraint templates:  
-   - “Exactly N” should use an exact numeric value or `PointMass N`.  
-   - “About,” “around,” or “roughly N” should use `ParticleFromNormal` or `ParticleFromPairs`.  
-   - Measurement/value uncertainty should not be encoded solely as a lower `STV`.
-
-62. Conjunction  
-   Recap: English combines entities, predicates, events, or clauses with “and” and similar expressions.  
-   Chainer features to exercise: `And`; multiple premises in `Implication`; `AndFormula`.  
-   Constraint templates:  
-   - Proposition-level conjunction should use `And` or multiple `Premises` when a compound proof is expected.  
-   - The resulting conjunction truth value should be compatible with `AndFormula`, i.e. strength and confidence should not exceed the weaker conjunct.
-
-63. Disjunction  
-   Recap: English presents alternatives using “or,” “either,” and related forms.  
-   Chainer features to exercise: `Or`; `OrFormula`; `STV`.  
-   Constraint templates:  
-   - Proposition-level disjunction should use `Or` when the proof preserves the alternatives.  
-   - Do not assume probabilistic union semantics; expected truth values should be compatible with the chainer’s `OrFormula`.
-
-64. Exclusive and inclusive alternatives  
-   Recap: Disjunction may allow one or both options, or exactly one option.  
-   Chainer features to exercise: `Or`; `Not`; `STV`; optional explicit exclusive-choice predicates.  
-   Constraint templates:  
-   - Inclusive alternatives may use `Or`.  
-   - Exclusive alternatives should not be represented by `Or` alone; the proof should also rule out both alternatives being simultaneously true or use an explicit exclusive-choice predicate.
-
-65. Coordination scope  
-   Recap: Coordinated expressions may share modifiers, subjects, objects, or operators in different ways.  
-   Chainer features to exercise: `And`; `Or`; shared variables in predicates or `Implication` premises.  
-   Constraint templates:  
-   - Shared-scope coordination should reuse the same variable or constant across the coordinated predicates.
-
-66. Conditionals  
-   Recap: English expresses dependencies between antecedents and consequents.  
-   Chainer features to exercise: `Implication`, `Premises`, `Conclusions`; multiple premises; `STV`.  
-   Constraint templates:  
-   - If/when conditionals should use `Implication` with the antecedent in `Premises` and the consequent in `Conclusions`.  
-   - Multiple antecedent conditions should appear as multiple premises, not as an opaque single predicate.  
-   - Hedged conditionals should use a rule `STV` strength below `1.0`.
-
-67. Counterfactual conditionals  
-   Recap: English describes hypothetical situations contrary to fact or uncertain reality.  
-   Chainer features to exercise: `Implication`; `STV`; explicit hypothetical/context predicates.  
-   Constraint templates:  
-   - Counterfactual antecedents should not be asserted as ordinary factual premises unless the example explicitly says they hold.  
-   - Counterfactual dependency rules should use `Implication` with `STV` confidence below `1.0`.
-
-68. Unless and exceptive conditions  
-   Recap: English marks negative or exceptional conditions.  
-   Chainer features to exercise: `Implication`; `Not`; `NotEqual`; explicit exception predicates.  
-   Constraint templates:  
-   - “Unless P, Q” should not be implemented as absence of `P`; use `Not` only over a matchable `P` or use an explicit exception condition.  
-   - “Everyone except X” should include a domain restriction and an exception exclusion such as `NotEqual` or an explicit exception predicate.
-
-69. Propositional attitudes of belief and knowledge  
-   Recap: English reports mental relations to propositions.  
-   Chainer features to exercise: Plain predicates; proposition-as-term conventions; `STV` for uncertain attitudes.  
-   Constraint templates:  
-   - Belief, suspicion, and report complements should not automatically be asserted as world facts.  
-   - “Suspect” or weak belief attitudes should use `STV` strength in `[0.3, 0.7]` for the attitude claim when uncertainty is represented.
-
-70. Desires, wants, and preferences  
-   Recap: English expresses goals, wishes, and preferred states of affairs.  
-   Chainer features to exercise: Plain predicates for desires/preferences; event or proposition terms.  
-   Constraint templates:  
-   - Desired propositions should not automatically be asserted as actual world facts.
-
-71. Intentions, plans, and decisions  
-   Recap: English describes commitments or planned future actions.  
-   Chainer features to exercise: Plain predicates for intentions/plans; event constants; time predicates.  
-   Constraint templates:  
-   - Planned or intended future events should not be asserted as already completed events unless the English entails completion.
-
-72. Speech and reporting events  
-   Recap: English attributes utterances, questions, promises, requests, and claims to speakers.  
-   Chainer features to exercise: Plain predicates; event constants; proposition-as-term conventions; `STV` for source reliability.  
-   Constraint templates:  
-   - Reported speech or claims should not automatically make the reported complement true in the world model.  
-   - If the report is hedged or source reliability is uncertain, the report/complement should use `STV` confidence below `1.0`.
-
-73. Factivity and presupposition in attitudes  
-   Recap: Some attitude verbs imply the truth of their complements, while others do not.  
-   Chainer features to exercise: `Implication`; `STV`; plain predicates for attitude types.  
-   Constraint templates:  
-   - Factive attitudes such as “realized” or “regretted” should support a separate derivation of the complement proposition with `STV` strength at least `0.8`.  
-   - Nonfactive attitudes such as “believed” should not by themselves entail the complement proposition.
-
-74. Questions  
-   Recap: English asks for truth values, entities, quantities, times, reasons, or choices.  
-   Chainer features to exercise: Bare query scaffold `(: $prf typePattern $tv)`; query variables.  
-   Constraint templates:  
-   - Generated chainer queries must use a variable proof slot such as `$prf`.  
-   - Wh-questions should place variables in the appropriate argument positions of the type pattern.  
-   - Queries should use a TV variable such as `$tv` to retrieve truth values.
-
-75. Imperatives and requests  
-   Recap: English directs an addressee to perform an action or gives instructions.  
-   Chainer features to exercise: Plain predicates for directives/requests; event constants; addressee constants.  
-   Constraint templates:  
-   - Imperatives should be represented as directive or requested-action facts, not as completed action facts unless completion is stated.
-
-76. Adverbs of manner  
-   Recap: English describes how an action is performed.  
-   Chainer features to exercise: Plain predicates; event constants; manner role/modifier predicates.  
-   Constraint templates: (none)
-
-77. Adverbs of degree, time, and place  
-   Recap: Adverbs modify extent, timing, or location of events and states.  
-   Chainer features to exercise: Plain predicates; event constants; `STV`; distribution constructors for near-threshold degree cases.  
-   Constraint templates:  
-   - “Almost” or “nearly” claims should not be represented as fully true completion; use `STV` strength in `[0.4, 0.8]` for the target proposition or encode a scalar value near the relevant threshold.
-
-78. Focus-sensitive expressions  
-   Recap: Words such as only, even, also, and too depend on alternatives in context.  
-   Chainer features to exercise: `STV`; `Not`; `FoldAll`; explicit alternative-set predicates.  
-   Constraint templates:  
-   - “Only X P” should include positive support for `P(X)` and negative or low-strength support for relevant alternatives `P(Y)`.  
-   - The alternative domain should be explicit when a quantified or exhaustive proof is expected.
-
-79. Restrictive and nonrestrictive modification  
-   Recap: Modifiers may narrow reference or add extra information.  
-   Chainer features to exercise: Multiple premises in `Implication`; `And`; shared variables.  
-   Constraint templates:  
-   - Restrictive modifiers should be represented as additional predicates sharing the same entity variable.  
-   - Nonrestrictive modifiers should add separate facts about the resolved entity rather than restrict the domain variable.
-
-80. Relative clauses  
-   Recap: English uses clauses to modify nouns and identify entities.  
-   Chainer features to exercise: Shared variables; `And`; multiple premises in `Implication`; query variables.  
-   Constraint templates:  
-   - Relative-clause filters should use the same variable for the head noun and the role inside the relative clause.
-
-81. Apposition  
-   Recap: English places two noun phrases side by side to identify or describe the same entity.  
-   Chainer features to exercise: Entity identity and representation; same constant reuse; optional plain predicates such as `Name`, `Title`, or `SameAs`.  
-   Constraint templates:  
-   - Appositive descriptions should refer to the same entity constant unless the example explicitly marks contrast or ambiguity.
-
-82. Ellipsis and omitted material  
-   Recap: English often leaves recoverable words or phrases unspoken.  
-   Chainer features to exercise: (no chainer-specific features beyond default)  
-   Constraint templates: (none)
-
-83. Gapping and sluicing  
-   Recap: Some coordinated or interrogative structures omit verbal or clausal material.  
-   Chainer features to exercise: Query variables for sluicing; otherwise no chainer-specific features beyond resolved predicates.  
-   Constraint templates:  
-   - Sluiced wh-remnants should become ordinary chainer queries with a variable in the missing argument position.
-
-84. Control constructions  
-   Recap: Some verbs imply that an unspoken subject of an embedded action is controlled by another participant.  
-   Chainer features to exercise: Shared entity constants or variables; event constants; role predicates.  
-   Constraint templates:  
-   - Controlled embedded subjects should reuse the controller’s entity constant or variable.
-
-85. Raising constructions  
-   Recap: A participant of an embedded clause appears as the subject or object of the main clause.  
-   Chainer features to exercise: Plain predicates; shared variables; `STV` for seeming/appearing.  
-   Constraint templates:  
-   - Raising predicates such as “seems” or “appears” should not assert the embedded property with full certainty; use `STV` strength in `[0.4, 0.8]` unless the example states the property independently.
-
-86. Event nominalization  
-   Recap: English turns events or states into nouns that still imply participants and timing.  
-   Chainer features to exercise: Event constants; role predicates; plain predicates.  
-   Constraint templates:  
-   - Nominalized events should preserve participant roles using the same event constant when those participants are semantically present.
-
-87. Prepositional attachment ambiguity  
-   Recap: Prepositional phrases can modify different words or phrases.  
-   Chainer features to exercise: `Or`; `LikelierThan`; `STV` for competing analyses.  
-   Constraint templates:  
-   - If PP attachment ambiguity is intentionally preserved, competing attachments should be represented as alternative hypotheses using `Or` or separate facts with non-full `STV`.  
-   - If one attachment is selected, the unselected attachment should not also be asserted with `(STV 1.0 1.0)`.
-
-88. Lexical ambiguity and polysemy  
-   Recap: Single words may have multiple related or unrelated meanings.  
-   Chainer features to exercise: Entity identity and representation; sense-specific predicates/constants; `Or`; `LikelierThan`; `STV`.  
-   Constraint templates:  
-   - Unresolved lexical ambiguity should use alternative sense predicates with non-full `STV` or `Or`.  
-   - Resolved senses should use distinct predicates or constants so unrelated meanings are not conflated.
-
-89. Phrasal verbs and multiword predicates  
-   Recap: English uses verb-particle or fixed multiword expressions with meanings not always predictable from parts.  
-   Chainer features to exercise: Plain predicates with lexicalized predicate names.  
-   Constraint templates: (none)
-
-90. Idioms and figurative fixed expressions  
-   Recap: Some phrases have conventional meanings distinct from their literal words.  
-   Chainer features to exercise: Plain predicates with idiomatic meanings.  
-   Constraint templates:  
-   - Idiomatic readings should not generate literal component facts unless the example explicitly intends the literal reading.
-
-91. Metaphor and metonymy  
-   Recap: English often refers indirectly through associated concepts or figurative mappings.  
-   Chainer features to exercise: Plain predicates; entity representation; optional `Implication` for conventional metonymic mappings.  
-   Constraint templates:  
-   - Metonymic references should resolve to the intended entity constant when context supplies it, rather than conflating the surface expression with the referent.
-
-92. Count and mass nouns  
-   Recap: English distinguishes countable individuals from substances or masses.  
-   Chainer features to exercise: Explicit witness constants for count nouns; measure predicates for mass nouns; distribution constructors for quantities.  
-   Constraint templates:  
-   - Count-noun numerals should introduce countable witness facts or derived counts.  
-   - Mass-noun quantities should use measure/value predicates rather than inventing arbitrary individual units unless units are specified.
-
-93. Units, dimensions, and measurements  
-   Recap: English expresses length, weight, temperature, speed, money, and other measured quantities.  
-   Chainer features to exercise: Distribution-valued predicate arguments; `PointMass`; `ParticleFromNormal`; `ParticleFromPairs`; `MapDist`; `Map2Dist`; `GreaterThan`.  
-   Constraint templates:  
-   - Exact measurements should use numeric values or `PointMass` in predicate arguments.  
-   - Approximate measurements should use `ParticleFromNormal` or `ParticleFromPairs`.  
-   - Measurement uncertainty should not be encoded solely by the statement `STV`.
-
-94. Calendrical and named temporal expressions  
-   Recap: English refers to structured calendar times and named occasions.  
-   Chainer features to exercise: Plain predicates; time/date constants; event constants.  
-   Constraint templates: (none)
-
-95. Aggregation and collective quantities  
-   Recap: English expresses totals, averages, sums, and group-level measures.  
-   Chainer features to exercise: `FoldAll`; `FoldAllValue`; `AverageDist`; `Compute`; `MapDist`; `Map2Dist`; distribution constructors.  
-   Constraint templates:  
-   - Average-value proofs should use `AverageDist` when averaging distribution-valued facts.  
-   - Sum or total proofs should use `FoldAll` or `FoldAllValue`.  
-   - Derived numeric quantities such as areas or products should use `MapDist` or `Map2Dist` when input values are distributions.
-
-96. Exceptions and exclusions  
-   Recap: English specifies members left out of a generalization or set.  
-   Chainer features to exercise: `Implication`; `NotEqual`; `Not`; explicit exception predicates; domain predicates.  
-   Constraint templates:  
-   - Generalizations with exceptions should include an explicit domain premise and an explicit exclusion condition such as `NotEqual` or an exception predicate.  
-   - The excluded individual should not receive the general conclusion through the same rule.
-
-97. Scalar particles and threshold expressions  
-   Recap: English marks minimal, maximal, or surprising points on a scale.  
-   Chainer features to exercise: `GreaterThan`; `FoldAll`; `FoldAllValue`; `STV`; distribution-valued counts.  
-   Constraint templates:  
-   - “At least N” should use `GreaterThan $countDist N-1` over a derived count distribution.  
-   - “Only N” should include both lower-bound and upper-bound/exclusion evidence, not only an at-least proof.  
-   - “Even” may be represented with ordinary truth plus an explicit noteworthiness/surprise predicate; it should not change truth conditions by itself.
-
-98. Similarity, difference, and contrast  
-   Recap: English compares entities by shared or contrasting properties.  
-   Chainer features to exercise: Plain predicates; `Equal`; `NotEqual`; `And` for shared properties.  
-   Constraint templates:  
-   - Difference claims over exact values should use `NotEqual` or distinct value predicates.  
-   - Similarity claims should not be forced into exact `Equal` unless sameness is entailed.
-
-99. Coreference across clauses  
-   Recap: Multiple noun phrases may refer to the same entity across a sentence or discourse.  
-   Chainer features to exercise: Entity identity and representation; stable constants; `Or` or `LikelierThan` for unresolved coreference.  
-   Constraint templates:  
-   - Coreferent mentions should use the same entity constant across clauses.  
-   - If coreference is unresolved, competing resolutions should not all be asserted with `(STV 1.0 1.0)`.
-
-100. Discourse relations  
-   Recap: English connects sentences through explanation, contrast, elaboration, and sequence.  
-   Chainer features to exercise: `Implication` for explanation/consequence; `And` for combined discourse facts; event predicates.  
-   Constraint templates:  
-   - “Therefore,” “because,” or explanatory relations should use `Implication` when the proof derives one proposition from another.  
-   - Contrast relations should not by themselves force logical negation unless the English entails contradiction.
-
-101. Context-dependent domain restriction  
-   Recap: Quantifiers and descriptions often depend on an implicit relevant domain.  
-   Chainer features to exercise: Variables in `Implication` rules; domain predicates; `FoldAll` / `FoldAllValue` patterns.  
-   Constraint templates:  
-   - Quantified rules should include an explicit domain predicate in `Premises`.  
-   - Count or aggregation proofs should include the relevant domain restriction in the `FoldAll` or `FoldAllValue` pattern.  
-   - Do not leave quantified variables unconstrained over the whole KB unless the English explicitly has unrestricted scope.
-
-102. Polarity and truth-value operators beyond negation  
-   Recap: English includes affirmation, denial, contradiction, and confirmation.  
-   Chainer features to exercise: `STV`; `Not`; `NotFormula`; `NotEqual`.  
-   Constraint templates:  
-   - Affirmation or confirmation of `P` should yield `P` with `STV` strength at least `0.8`.  
-   - “False that P” should yield the positive proposition `P` with `STV` strength in `[0.0, 0.2]` or use `Not` over a matchable `P`.  
-   - Contradiction between exact values should use `NotEqual` or incompatible low/high `STV` assignments.
-
-103. Uncertainty and hedging  
-   Recap: English marks weak commitment, approximation, or tentative claims.  
-   Chainer features to exercise: `STV`; distribution constructors for approximate values.  
-   Constraint templates:  
-   - “Probably” should use `STV` strength in `[0.6, 0.9]`.  
-   - “Possibly,” “maybe,” “may,” or “might” should use `STV` strength in `[0.2, 0.7]`.  
-   - “Seems,” “appears,” “I think,” or “I suspect” should use confidence below `1.0`, typically in `[0.3, 0.8]`.  
-   - Hedged claims should not default to `(STV 1.0 1.0)`.
-
-104. Comparative subdeletion and differential comparison  
-   Recap: English compares degrees while mentioning differences or missing measure phrases.  
-   Chainer features to exercise: `Compute`; `MapDist`; `Map2Dist`; `GreaterThan`; distribution constructors; `FoldAllValue` for count comparisons.  
-   Constraint templates:  
-   - Differential comparisons such as “two inches wider” should compute or map a difference value using `Compute`, `MapDist`, or `Map2Dist`.  
-   - “More X than Y” count comparisons should derive count distributions and compare them with `GreaterThan $distX $distY`.
-
-105. Temporal recurrence and schedules  
-   Recap: English describes repeated events tied to schedules or cycles.  
-   Chainer features to exercise: `Implication`; variables in rules; `STV`; temporal predicates.  
-   Constraint templates:  
-   - Recurring schedule claims such as “every hour” or “on Saturdays” should use variables or schedule predicates rather than a single isolated event fact.  
-   - Irregular or usual schedules should use `STV` strength below `1.0`.
-
-106. Change of state  
-   Recap: English describes transitions into or out of properties, locations, or conditions.  
-   Chainer features to exercise: Event predicates; state predicates; `Implication` from change events to resulting states.  
-   Constraint templates:  
-   - If the proof derives a final state from a change event, it should use an `Implication` from the event predicate to the resulting state predicate.
-
-107. Creation and destruction events  
-   Recap: English distinguishes bringing entities into existence and eliminating them.  
-   Chainer features to exercise: Event predicates; explicit witness constants; `STV`; `Implication` for creation/destruction consequences.  
-   Constraint templates:  
-   - Creation events should introduce or reference an explicit witness constant for the created entity.  
-   - Destruction events that imply nonexistence should support a low-strength `Exists`-like ordinary predicate or positive existence predicate with `STV` strength in `[0.0, 0.2]`; do not rely on absence alone.  
-   - If creation/destruction consequences are derived, use `Implication`.
-
-108. Information structure and topic-comment organization  
-   Recap: English signals what the sentence is about and what new information is asserted.  
-   Chainer features to exercise: Plain predicates; entity identity and representation; optional focus/topic predicates.  
-   Constraint templates: (none)
+1. Entity classification and kind membership — Recap: classify an entity as a kind. Chainer features to exercise: Plain predicate / proposition form; unary predicates for class membership; Classes and instances; STV. Constraint templates: (none)
+
+2. Properties and attributes — Recap: assign a property/state to an entity. Chainer features to exercise: Plain predicate / proposition form; STV. Constraint templates: Use STV strength in [0.3, 0.8] only for vague or hedged property claims; otherwise unit STV is allowed.
+
+3. Relational attributes — Recap: relate an entity to a value, role, or other entity. Chainer features to exercise: Plain predicate / proposition form; distribution-valued arguments plus STV for numeric attributes. Constraint templates: For uncertain measurements, represent the numeric value with PointMass, ParticleFromNormal, FloatDist, or NatDist inside the proposition, not as STV strength.
+
+4. Identity and equivalence — Recap: state sameness or equality. Chainer features to exercise: Entity identity and representation; Plain predicate / proposition form. Constraint templates: If two descriptions are intended identical, downstream examples should reuse the same entity ID or assert an explicit user predicate such as (SameEntity a b); do not rely on implicit entity resolution.
+
+5. Existence and nonexistence — Recap: assert presence or absence. Chainer features to exercise: Plain predicate / proposition form; Not; FoldAll/FoldAllValue for “no/none” counts. Constraint templates: Nonexistence examples must not model absence as missing data; use Not over a provable proposition or a count/aggregation pattern proving zero/threshold failure.
+
+6. Definite and indefinite reference — Recap: introduce or retrieve discourse referents. Chainer features to exercise: Entity identity and representation; existential query variables; stable unique IDs. Constraint templates: Indefinite existential assertions must use a concrete fresh entity ID, while existential questions must use a query variable in the proposition.
+
+7. Proper names and named entities — Recap: refer to named individuals/places/orgs. Chainer features to exercise: Entity identity and representation; optional user-defined Name facts. Constraint templates: Ambiguous surface names should map to distinct stable IDs plus optional Name facts; exact same ID is required for intended coreference.
+
+8. Pronouns and coreference — Recap: resolve pronouns to antecedents. Chainer features to exercise: Entity identity and representation; pronouns/deictic entities guidance. Constraint templates: Resolved pronouns must reuse the antecedent entity ID; unresolved pronouns should use context-local placeholders or be rejected, not globally meaningful invented IDs.
+
+9. Deixis and context-dependent reference — Recap: interpret I/you/here/now/this by context. Chainer features to exercise: Pronouns and deictic entities; Entity identity and representation. Constraint templates: Deictic referents must be concrete context IDs such as speaker_001/addressee_001 or explicit context-local placeholders.
+
+10. Count nouns, mass nouns, and substances — Recap: distinguish countable objects and masses. Chainer features to exercise: Plain predicate / proposition form; Cardinality facts; FoldAll. Constraint templates: Exact count claims must use explicit Cardinality facts or FoldAll-derived counts, not STV strength.
+
+11. Plurality and number — Recap: express singular/plural/group cardinality. Chainer features to exercise: Plain predicate / proposition form; FoldAll; Cardinality facts. Constraint templates: Numeral plural examples should contain either distinct entity assertions or an explicit Cardinality predicate with unit STV.
+
+12. Collective entities and group reference — Recap: treat groups as wholes or members. Chainer features to exercise: Plain predicate / proposition form; membership predicates; And. Constraint templates: Collective readings should use a group entity; distributive readings should use member-level predicates or rules.
+
+13. Part-whole relations — Recap: express parts, portions, members, containment. Chainer features to exercise: Plain predicate / proposition form; Implication for inherited part/member rules. Constraint templates: (none)
+
+14. Possession and ownership — Recap: ownership/control/association. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+15. Actions and events with thematic roles — Recap: encode events and roles. Chainer features to exercise: Plain predicate / proposition form; nested expressions as entities. Constraint templates: Event-role examples should use a shared event ID or nested event term for all role predicates.
+
+16. Agent and patient relations — Recap: identify doer and affected entity. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+17. Transfer and ditransitive events — Recap: giver/item/recipient events. Chainer features to exercise: Plain predicate / proposition form; nested event terms. Constraint templates: (none)
+
+18. Instrument and means — Recap: tool or means used. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+19. Benefactive and malefactive roles — Recap: beneficiary or harmed participant. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+20. Experiencers and psychological states — Recap: perception/emotion/cognition states. Chainer features to exercise: Plain predicate / proposition form; STV for uncertain attitudes. Constraint templates: Hedged psychological-state claims should use STV strength in [0.3, 0.8] rather than (STV 1.0 1.0).
+
+21. Perception events — Recap: perceiver and perceived content/object. Chainer features to exercise: Plain predicate / proposition form; nested expressions as entities. Constraint templates: (none)
+
+22. Speech and communication events — Recap: communicative act with speaker/content/addressee. Chainer features to exercise: Plain predicate / proposition form; nested expressions as proposition/content entities. Constraint templates: (none)
+
+23. Motion events — Recap: movement with source/path/goal/manner. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+24. Spatial location — Recap: place entities spatially. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+25. Spatial containment and support — Recap: in/on/attached/supported. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+26. Spatial orientation and direction — Recap: directional spatial relations. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+27. Distance and proximity — Recap: nearness/farness/adjacency. Chainer features to exercise: Plain predicate / proposition form; distribution-valued arguments for uncertain distances; GreaterThan for comparisons. Constraint templates: Numeric uncertain distance must use distribution-valued arguments; comparative proximity should use GreaterThan over distance distributions or explicit comparison predicates.
+
+28. Paths and boundaries — Recap: through/across/into/out paths. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+29. Temporal tense — Recap: locate situations in time. Chainer features to exercise: Plain predicate / proposition form; nested AtTime-style terms. Constraint templates: Tense-sensitive examples should encode time as an explicit argument or nested term; do not rely on assertion time.
+
+30. Temporal ordering — Recap: before/after/during/simultaneous. Chainer features to exercise: Plain predicate / proposition form; Implication for temporal rules. Constraint templates: (none)
+
+31. Dates, times, and calendar expressions — Recap: specific or relative calendar times. Chainer features to exercise: Plain predicate / proposition form; stable constants for times. Constraint templates: (none)
+
+32. Duration and intervals — Recap: how long events/states last. Chainer features to exercise: Plain predicate / proposition form; PointMass/FloatDist for durations. Constraint templates: Uncertain duration values must be distributions, not STV strength.
+
+33. Aspect and event structure — Recap: ongoing/completed/repeated/begin/end. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+34. Habitual and generic aspect — Recap: regular behaviors or characteristic truths. Chainer features to exercise: Implication; STV for tendencies. Constraint templates: Generic/habitual rules should use Implication; non-absolute tendencies should use rule STV strength in [0.5, 0.95].
+
+35. Frequency — Recap: how often events occur. Chainer features to exercise: STV; NatDist/FloatDist; FoldAll; Compute. Constraint templates: Vague frequency claims such as often/rarely/seldom should use STV strength in [0.05, 0.9], with rarely/seldom ≤0.35 and often/frequently ≥0.6.
+
+36. Existential quantification — Recap: at least one matching entity. Chainer features to exercise: existential query variables; concrete entity assertions. Constraint templates: Existential assertions must introduce a concrete entity ID; existential queries must use a variable inside the query proposition and variable proof slot.
+
+37. Universal quantification — Recap: claim over all members. Chainer features to exercise: Implication; rule variables. Constraint templates: Universal “all/every/each” statements must be represented as Implication with variables in Premises and Conclusions, not as a monolithic universal predicate.
+
+38. Cardinality and exact number — Recap: exact/min/max/approx quantities. Chainer features to exercise: Cardinality facts; FoldAll; FoldAllValue; GreaterThan; Compute. Constraint templates: Exact N must use explicit Cardinality or aggregation; “more than/at least” must use GreaterThan or Compute comparison over counts, not STV strength.
+
+39. Generalized quantifiers — Recap: many/most/few/several/enough. Chainer features to exercise: FoldAll; FoldAllValue; Compute; GreaterThan; STV. Constraint templates: Most/majority examples should aggregate numerator and denominator counts and compare a ratio/threshold; vague many/few may use STV strength in [0.2, 0.8].
+
+40. Proportions and percentages — Recap: fractions/ratios/shares. Chainer features to exercise: FoldAll; Compute; GreaterThan; FloatDist. Constraint templates: Percentage claims must compute or assert numeric ratios/counts; do not encode the percentage as STV strength unless it is belief uncertainty.
+
+41. Distributive, collective, and cumulative readings — Recap: plural readings over individuals/groups/quantities. Chainer features to exercise: And; FoldAll; membership predicates. Constraint templates: Distributive “each” readings should use member-level variables/rules; collective readings should use a group entity.
+
+42. Scope interactions — Recap: interacting quantifiers/negation/modality. Chainer features to exercise: Implication; Not; STV; rule variables. Constraint templates: Scope-sensitive examples must encode the selected reading structurally via rule variable placement, Not scope, or separate propositions.
+
+43. Negation — Recap: deny propositions/properties/events. Chainer features to exercise: Not; STV. Constraint templates: Use Not only over a provable expression; do not use Not to mean absence of a proof unless explicitly modeled.
+
+44. Constituent negation and contrastive negation — Recap: negate a phrase/alternative. Chainer features to exercise: Not; And. Constraint templates: Contrastive “not X but Y” should include Not(X) and positive Y as separate conjunctive propositions.
+
+45. Negative polarity items — Recap: any/ever in negative or conditional environments. Chainer features to exercise: Not; Implication. Constraint templates: (none)
+
+46. Modality of ability — Recap: capacity or skill. Chainer features to exercise: Plain predicate / proposition form; Implication for conditional ability; STV for uncertain ability. Constraint templates: Conditional ability must use Implication with ability preconditions in Premises.
+
+47. Modality of possibility — Recap: may/might/could truth. Chainer features to exercise: STV. Constraint templates: Epistemic possibility claims must use STV strength in [0.1, 0.7] and not default to (STV 1.0 1.0).
+
+48. Modality of necessity — Recap: must/required/unavoidable. Chainer features to exercise: Implication; STV. Constraint templates: Rule-like necessity/requirements should use Implication; strong epistemic necessity should use STV strength ≥0.85.
+
+49. Permission and prohibition — Recap: allowed or forbidden actions. Chainer features to exercise: Plain predicate / proposition form; Not; Implication. Constraint templates: Prohibition should be represented with a forbidden/prohibited predicate or Not over permission; conditional permission should use Implication.
+
+50. Obligation and advice — Recap: duties/recommendations/norms. Chainer features to exercise: Plain predicate / proposition form; Implication; STV. Constraint templates: Advice/should claims should use STV confidence or strength below 1.0 when weaker than obligation; conditional duties use Implication.
+
+51. Causation — Recap: cause brings about effect. Chainer features to exercise: Implication; Premises/Conclusions. Constraint templates: General causal laws should use Implication from cause-condition premises to effect conclusions.
+
+52. Purpose and intention — Recap: goal motivating action. Chainer features to exercise: Plain predicate / proposition form; Implication for means-end rules. Constraint templates: (none)
+
+53. Result and consequence — Recap: outcome produced by event/state. Chainer features to exercise: Implication; multi-premise rules. Constraint templates: Consequence patterns should use Implication when expressed as a general dependency.
+
+54. Comparison of degree — Recap: compare scale values. Chainer features to exercise: GreaterThan; distribution-valued arguments; LikelierThan for likelihood comparisons. Constraint templates: Numeric/degree comparisons should use GreaterThan over values/distributions or explicit comparative facts; uncertain measurements must use distributions.
+
+55. Equality and similarity — Recap: equal values or resemblance. Chainer features to exercise: Plain predicate / proposition form; Compute for equality checks. Constraint templates: (none)
+
+56. Superlatives and extremes — Recap: maximal/minimal member. Chainer features to exercise: FoldAll; GreaterThan; Compute. Constraint templates: Superlative examples should compare candidates via aggregation or pairwise GreaterThan rather than asserting only a bare label, when proof of maximality is expected.
+
+57. Ordinal relations and ranking — Recap: first/second/next/ranked order. Chainer features to exercise: Plain predicate / proposition form; Compute for successor/order. Constraint templates: Numeric rank succession should use Compute where deriving next/previous ranks.
+
+58. Conjunction — Recap: combine clauses/entities/properties. Chainer features to exercise: And; multiple Premises. Constraint templates: Rule antecedent conjunctions should be separate Premises or explicit And, not fused monolithic predicates.
+
+59. Disjunction and alternatives — Recap: alternatives or choices. Chainer features to exercise: Or. Constraint templates: Inclusive-or examples should use Or; exclusive-or requires additional Not/constraint predicates because Or alone is not exclusive.
+
+60. Coordination of unlike categories — Recap: coordinate mixed phrase types. Chainer features to exercise: And; Plain predicate / proposition form. Constraint templates: (none)
+
+61. Conditionals — Recap: if-then dependencies. Chainer features to exercise: Implication; Premises; Conclusions. Constraint templates: Conditional statements should be represented as Implication with antecedent propositions in Premises and consequent propositions in Conclusions.
+
+62. Counterfactual conditionals — Recap: remote/unreal hypotheses. Chainer features to exercise: Implication; STV. Constraint templates: Counterfactual examples should not assert the antecedent as true; if encoded as a rule, use STV confidence <1.0 or separate hypothetical-context predicates.
+
+63. Unless and exceptive conditions — Recap: negative or exceptional conditions. Chainer features to exercise: Implication; Not; no_inverse. Constraint templates: “Unless P, Q” should use an Implication with Not(P) among Premises or explicit exception predicates.
+
+64. Propositional attitudes — Recap: beliefs/knowledge/doubt about propositions. Chainer features to exercise: nested expressions as entities; STV. Constraint templates: Attitude complements should be nested proposition terms and not automatically asserted as true unless factive/veridical.
+
+65. Desire, intention, and preference — Recap: wants/plans/preferences. Chainer features to exercise: Plain predicate / proposition form; LikelierThan or GreaterThan for preference comparisons. Constraint templates: Preference ordering should use explicit Prefer/Preference predicates or LikelierThan only when comparing truth-bearing alternatives.
+
+66. Factivity and presupposed truth — Recap: complements taken as true. Chainer features to exercise: Plain predicate / proposition form; STV. Constraint templates: Factive verbs should produce both the attitude proposition and the complement proposition with STV strength ≥0.9 unless hedged.
+
+67. Intensional and opaque contexts — Recap: references inside attitudes/modals/search. Chainer features to exercise: nested expressions as entities; Entity identity and representation. Constraint templates: Opaque complements must not force identity substitution or existence of described entities unless separately asserted.
+
+68. Manner adverbs — Recap: how an event is performed. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+69. Degree adverbs and intensifiers — Recap: modify degree/extent. Chainer features to exercise: STV; distribution-valued arguments for degrees. Constraint templates: Intensifiers of uncertain/vague predicates may adjust STV strength upward/downward but should not alter numeric measurements encoded as STV.
+
+70. Temporal adverbs — Recap: adverbial time location. Chainer features to exercise: Plain predicate / proposition form; time arguments. Constraint templates: (none)
+
+71. Aspectual adverbs — Recap: still/already/again/anymore. Chainer features to exercise: Plain predicate / proposition form; Not for no-longer/anymore. Constraint templates: (none)
+
+72. Relative clauses — Recap: clausal noun modification. Chainer features to exercise: And; multiple Premises. Constraint templates: Restrictive relatives should add conjunctive constraints on the same entity variable.
+
+73. Restrictive and nonrestrictive modification — Recap: identifying vs supplemental modifiers. Chainer features to exercise: And; Plain predicate / proposition form. Constraint templates: Restrictive modifiers constrain retrieval variables with And/Premises; nonrestrictive supplements assert separate facts about an already identified entity.
+
+74. Apposition — Recap: side-by-side identifying/descriptive NPs. Chainer features to exercise: Entity identity and representation; unary predicates. Constraint templates: Identifying apposition should reuse the same entity ID or assert SameEntity.
+
+75. Complement clauses — Recap: embedded propositions as arguments. Chainer features to exercise: nested expressions as entities; Plain predicate / proposition form. Constraint templates: (none)
+
+76. Control constructions — Recap: implicit embedded participant controlled by another. Chainer features to exercise: variable sharing; Plain predicate / proposition form. Constraint templates: Controlled embedded event must reuse controller entity ID in the embedded role.
+
+77. Raising constructions — Recap: surface subject belongs semantically to embedded clause. Chainer features to exercise: Plain predicate / proposition form; STV for likely/seems. Constraint templates: Raising predicates like likely/seems should avoid asserting embedded content with unit STV; use STV strength in [0.3, 0.9] for the embedded claim if asserted.
+
+78. Passive voice and voice alternations — Recap: foreground affected participant. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Passive and active paraphrases should map to the same event-role structure when roles are specified.
+
+79. Causative-inchoative alternation — Recap: caused change vs undergoing change. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: (none)
+
+80. Reflexives and reciprocals — Recap: self-directed or mutual relations. Chainer features to exercise: Entity identity and representation; And for reciprocal pairs. Constraint templates: Reflexives must use identical entity IDs in both relevant argument positions.
+
+81. Ellipsis and omitted material — Recap: recover omitted material. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Recovered ellipsis should generate complete propositions, not partial predicates.
+
+82. Anaphoric one, do so, and substitution — Recap: substitute for earlier material. Chainer features to exercise: Entity identity and representation; Plain predicate / proposition form. Constraint templates: (none)
+
+83. Questions and interrogatives — Recap: ask for truth/entities/times/quantities. Chainer features to exercise: query envelope; binding retrieval query; aggregate query. Constraint templates: Every query must use a variable proof slot such as $prf; wh-questions must use variables in the proposition pattern.
+
+84. Embedded questions — Recap: questions inside clauses. Chainer features to exercise: nested expressions as entities; query patterns when answered. Constraint templates: (none)
+
+85. Imperatives and directives — Recap: commands/requests/instructions. Chainer features to exercise: Plain predicate / proposition form; Implication for conditional directives. Constraint templates: (none)
+
+86. Requests and indirect speech acts — Recap: indirect requested actions. Chainer features to exercise: Plain predicate / proposition form; STV for politeness/indirectness if uncertain. Constraint templates: (none)
+
+87. Speech reports and quotation — Recap: direct/indirect reported utterance. Chainer features to exercise: nested expressions as entities; context-local IDs. Constraint templates: Quoted indexicals should be represented relative to quoted speaker context, not current context.
+
+88. Tense sequence and reported time — Recap: tense shifts in reports. Chainer features to exercise: Plain predicate / proposition form; time arguments. Constraint templates: Reported events should encode event time separately from report time.
+
+89. Generics and kind-level statements — Recap: broad kind claims. Chainer features to exercise: Implication; STV for defeasible generics. Constraint templates: Generic kind regularities should use Implication; non-exceptionless generics should use rule STV strength in [0.5, 0.95].
+
+90. Exceptions and default generalizations — Recap: rules with exceptions/tendencies. Chainer features to exercise: Implication; Not; STV; no_inverse. Constraint templates: Default generalizations like usually/normally should use Implication with STV strength in [0.5, 0.95], not unit STV.
+
+91. Vagueness and gradability — Recap: context-sensitive degree predicates. Chainer features to exercise: STV; distribution-valued degree facts. Constraint templates: Borderline vague predicates should use STV strength in [0.3, 0.7].
+
+92. Approximation and imprecision — Recap: rough quantities/times/descriptions. Chainer features to exercise: ParticleFromNormal; FloatDist/NatDist; STV for truth hedge. Constraint templates: Approximate numeric values should use distributions such as ParticleFromNormal or FloatDist, not exact PointMass unless approximation is ignored intentionally.
+
+93. Measurement and units — Recap: quantities with units. Chainer features to exercise: distribution-valued arguments; PointMass; ParticleFromNormal. Constraint templates: Measurement values must be represented as value/distribution terms in propositions, not as STV strength.
+
+94. Rates and speeds — Recap: quantity per unit. Chainer features to exercise: distribution-valued arguments; Compute. Constraint templates: Derived rates should use Compute from quantity/time when proof requires derivation.
+
+95. Monetary and value expressions — Recap: prices/costs/payments. Chainer features to exercise: distribution-valued arguments; PointMass/FloatDist. Constraint templates: Monetary amounts are numeric value terms/distributions, not STV strengths.
+
+96. Age expressions — Recap: ages and age comparisons. Chainer features to exercise: distribution-valued arguments; GreaterThan. Constraint templates: Age comparisons should use GreaterThan over age values/distributions when derived.
+
+97. Change of state — Recap: becoming/remaining/ceasing states. Chainer features to exercise: Plain predicate / proposition form; Implication. Constraint templates: (none)
+
+98. State versus event distinctions — Recap: static vs dynamic situations. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+99. Achievements, accomplishments, activities, and states — Recap: temporal verb classes. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+100. Incremental themes and affected objects — Recap: object changes with event progress. Chainer features to exercise: Plain predicate / proposition form; Compute for progress measures. Constraint templates: (none)
+
+101. Polarity, contrast, and focus — Recap: highlight alternatives/contrast. Chainer features to exercise: Not; And; Plain predicate / proposition form. Constraint templates: Only-focus examples should include an exclusivity constraint using Not or explicit Excluded alternatives if exhaustivity is required.
+
+102. Additive and scalar particles — Recap: also/even/only/just. Chainer features to exercise: And; Not; STV. Constraint templates: Even/only examples involving expectation should use STV or explicit alternative predicates; “only” requires exclusion of salient alternatives.
+
+103. Presupposition triggers — Recap: background assumptions. Chainer features to exercise: Plain predicate / proposition form; STV. Constraint templates: Presupposed content should be separately asserted with STV strength ≥0.9 unless the example is about presupposition failure.
+
+104. Implicature and pragmatic enrichment — Recap: context-enriched meaning. Chainer features to exercise: STV. Constraint templates: Pragmatic enrichments should use lower confidence than explicit assertions, e.g. STV confidence in [0.3, 0.8].
+
+105. Lexical ambiguity and polysemy — Recap: multiple word senses. Chainer features to exercise: Entity identity and representation; unique predicate/entity symbols. Constraint templates: Distinct senses should map to distinct predicates or entity IDs.
+
+106. Structural ambiguity — Recap: multiple parses/attachments. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Ambiguous examples should generate one explicit selected reading per proof target.
+
+107. Modifier attachment — Recap: modifier applies to different hosts. Chainer features to exercise: Plain predicate / proposition form; nested expressions. Constraint templates: (none)
+
+108. Idioms and fixed expressions — Recap: non-compositional phrases. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Idiomatic reading should use a lexicalized predicate distinct from literal component predicates.
+
+109. Light verb constructions — Recap: light verb plus event noun. Chainer features to exercise: Plain predicate / proposition form; event IDs. Constraint templates: (none)
+
+110. Phrasal verbs — Recap: verb-particle meanings. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Idiomatic phrasal verbs should map to dedicated predicates.
+
+111. Nominalization — Recap: event/property as noun. Chainer features to exercise: nested expressions as entities; event IDs. Constraint templates: (none)
+
+112. Comparative subdeletion and differential comparison — Recap: compare degrees with differences. Chainer features to exercise: GreaterThan; Compute; distribution-valued arguments. Constraint templates: Differential comparisons should include a Compute step deriving the numeric difference when proof requires it.
+
+113. Correlatives and proportional comparison — Recap: paired scale changes. Chainer features to exercise: Implication; Compute; GreaterThan. Constraint templates: “The more X, the more Y” should be encoded as a rule-like dependency using Implication, optionally with Compute over degrees.
+
+114. Similarity, difference, and distinction — Recap: sameness/difference in properties/identity. Chainer features to exercise: Plain predicate / proposition form; Not. Constraint templates: (none)
+
+115. Set membership and inclusion — Recap: membership and subset/category inclusion. Chainer features to exercise: unary predicates; Implication; membership predicates. Constraint templates: Subtype inclusion should use Implication from subtype predicate to supertype predicate.
+
+116. Selection and choice — Recap: choose alternatives. Chainer features to exercise: Plain predicate / proposition form; Or. Constraint templates: (none)
+
+117. Exclusion and inclusion — Recap: include/exclude/add/remove. Chainer features to exercise: Not; And. Constraint templates: Explicit exclusion should use Not or Excluded predicate rather than omission.
+
+118. Ordering and sequencing of events — Recap: procedural chronological order. Chainer features to exercise: Plain predicate / proposition form; Compute for next steps. Constraint templates: (none)
+
+119. Purpose clauses and rationale clauses — Recap: goals vs reasons. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: Causal reasons as generalizations should use Implication; purposes should not assert outcome unless stated.
+
+120. Reason and explanation — Recap: causes/justifications/evidence. Chainer features to exercise: Implication; STV for evidential inference. Constraint templates: Evidence-based conclusions should use Implication with rule STV strength <1.0 unless deductive.
+
+121. Concession and contrast — Recap: unexpected coexistence/opposition. Chainer features to exercise: And; STV. Constraint templates: (none)
+
+122. Temporal recurrence and schedules — Recap: repeated scheduled events. Chainer features to exercise: Implication; Compute; Plain predicate / proposition form. Constraint templates: Recurring schedules should use rules or explicit recurrence predicates, not multiple invented event facts unless instances are enumerated.
+
+123. Ability versus opportunity — Recap: capacity vs circumstantial chance. Chainer features to exercise: Implication; STV. Constraint templates: Opportunity readings should include circumstance premises in Implication; capacity readings should use an ability predicate.
+
+124. Permission versus possibility ambiguity — Recap: modal allowedness vs factual possibility. Chainer features to exercise: STV; Plain predicate / proposition form. Constraint templates: Permission readings should use Permission/Allowed predicates; possibility readings should use STV strength in [0.1, 0.7].
+
+125. Epistemic modality and evidential flavor — Recap: certainty/evidence degree. Chainer features to exercise: STV; Implication. Constraint templates: “Might/may/apparently/probably” should use non-unit STV; might/may in [0.1,0.7], probably/apparently in [0.55,0.9].
+
+126. Attitude toward events and evaluation — Recap: likelihood/desirability/surprise. Chainer features to exercise: STV; nested expressions as entities. Constraint templates: Likely/unlikely evaluations should encode likelihood with STV strength, not a fully true bare event unless separately asserted.
+
+127. Predicative versus attributive modification — Recap: adjective position effects. Chainer features to exercise: Plain predicate / proposition form; And. Constraint templates: Intersective attributives should become conjunctive predicates on the same entity.
+
+128. Intersective and nonintersective adjectives — Recap: modifiers may or may not assert noun property. Chainer features to exercise: And; Plain predicate / proposition form; STV. Constraint templates: Nonintersective adjectives such as former/fake/alleged must not automatically assert the base noun predicate.
+
+129. Adjective ordering and stacked modification — Recap: multiple modifiers. Chainer features to exercise: And; unary predicates. Constraint templates: Stacked intersective modifiers should become multiple conjunctive property predicates.
+
+130. Adverbial placement and scope — Recap: adverb scope changes meaning. Chainer features to exercise: Not; And; Plain predicate / proposition form. Constraint templates: Scope-sensitive adverbs like only should encode the selected scope using distinct propositions or explicit exclusions.
+
+131. Parentheticals and supplements — Recap: side comments/commitment modifiers. Chainer features to exercise: STV; Plain predicate / proposition form. Constraint templates: Parenthetical hedges like “I think” should reduce asserted content STV confidence or strength below 1.0.
+
+132. Coordination scope and grouping — Recap: ambiguous coordination grouping. Chainer features to exercise: And; Or. Constraint templates: Coordinated alternatives should preserve selected grouping with nested And/Or structure.
+
+133. Quantification over events — Recap: quantify over occurrences. Chainer features to exercise: Implication; FoldAll; Not. Constraint templates: Event universal/existential claims should quantify over event IDs using rule variables or aggregation.
+
+134. Bare plurals and bare mass terms — Recap: bare NP generic/existential/kind readings. Chainer features to exercise: Implication; concrete assertions; STV. Constraint templates: Generic bare plurals should use Implication; existential bare plurals should introduce concrete entity facts.
+
+135. Specificity and nonspecificity — Recap: particular vs arbitrary indefinites. Chainer features to exercise: concrete entity IDs; query variables; nested intensional contexts. Constraint templates: Specific indefinites use concrete IDs; nonspecific/intensional indefinites should not assert a real entity unless licensed.
+
+136. Definiteness and uniqueness — Recap: identifiable/unique definites. Chainer features to exercise: Entity identity and representation; FoldAll for uniqueness checks. Constraint templates: If uniqueness is tested, use aggregation/count constraints rather than assuming a name resolves uniquely.
+
+137. Anaphoric definites and bridging — Recap: definites inferred from prior discourse. Chainer features to exercise: Entity identity and representation; Implication for bridging rules. Constraint templates: Bridging references should be connected by explicit relation facts or rules, not raw surface names.
+
+138. Recency and salience in reference — Recap: discourse prominence guides reference. Chainer features to exercise: Entity identity and representation. Constraint templates: Resolved referents must reuse a concrete prior entity ID.
+
+139. Comparisons involving quantities — Recap: compare numbers/amounts. Chainer features to exercise: GreaterThan; Compute; distributions. Constraint templates: “More/fewer/as much” quantity proofs should compare numeric values/counts using GreaterThan/Compute, not STV strength.
+
+140. Minimum and maximum constraints — Recap: lower/upper bounds. Chainer features to exercise: GreaterThan; Compute; Not. Constraint templates: At-least/more-than bounds should use GreaterThan or Compute comparison over the numeric value/count.
+
+141. Enumeration and listing — Recap: list set/sequence members. Chainer features to exercise: And; membership predicates. Constraint templates: Exhaustive enumerations should assert each listed item and, if required, a Cardinality fact equal to the list size.
+
+142. Exception handling in quantification — Recap: quantified claims with exceptions. Chainer features to exercise: Implication; Not; STV. Constraint templates: Exceptions should appear as explicit exception predicates or Not-premises in Implication, not hidden in predicate names.
+
+143. Proportional and vague frequency — Recap: precise/vague rates of occurrence. Chainer features to exercise: STV; FoldAll; Compute. Constraint templates: Precise rates should use numeric facts/Compute; vague rates use STV strength ranges: seldom≤0.35, often≥0.6, almost-always≥0.85.
+
+144. Generic habitual with dispositional meaning — Recap: characteristic designed tendencies. Chainer features to exercise: Implication; STV. Constraint templates: Dispositional generics should use Implication with STV strength in [0.5,0.95] unless exceptionless.
+
+145. Event participants left implicit — Recap: omitted understood roles. Chainer features to exercise: Plain predicate / proposition form; variables/context-local placeholders. Constraint templates: Implicit participants should be omitted as arguments only if predicate schema allows it; otherwise use explicit unknown/context-local IDs.
+
+146. Middle voice — Recap: object’s ease/tendency to undergo action. Chainer features to exercise: Implication; STV. Constraint templates: Middle/disposition claims should use tendency rules or predicates with non-unit STV when defeasible.
+
+147. Generic second person and arbitrary subjects — Recap: you/one/they as people generally. Chainer features to exercise: Implication; rule variables. Constraint templates: Generic arbitrary-subject claims should use variables in Implication, not the addressee entity ID.
+
+148. Comparative deletion and ellipsis — Recap: omitted comparative material. Chainer features to exercise: GreaterThan; Compute. Constraint templates: Recovered comparative target must be made explicit as values or predicates before GreaterThan comparison.
+
+149. Subordination and clause linking — Recap: because/although/when clause relations. Chainer features to exercise: Implication; And. Constraint templates: Conditional/causal subordinators should use Implication when expressing reusable dependency.
+
+150. Relative time from reference points — Recap: time located relative to another time/event. Chainer features to exercise: Compute; Plain predicate / proposition form. Constraint templates: Derived relative times should use Compute over explicit reference-time values when numeric.
+
+151. Prospective aspect — Recap: expected/about-to future events. Chainer features to exercise: STV; Plain predicate / proposition form. Constraint templates: About-to/expected events should use prospective predicates or STV strength <1.0 unless already scheduled as fact.
+
+152. Continuation and persistence — Recap: condition remains true. Chainer features to exercise: Plain predicate / proposition form; Implication. Constraint templates: (none)
+
+153. Cessation and termination — Recap: stopping/no longer true. Chainer features to exercise: Not; Plain predicate / proposition form. Constraint templates: “No longer P” should include Not(P at later time) and prior P if contrast is needed.
+
+154. Start and inception — Recap: beginning of event/state. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+155. Repetition and iteration — Recap: repeated occurrences. Chainer features to exercise: FoldAll; Cardinality facts; event IDs. Constraint templates: “N times” should use distinct event IDs plus Cardinality/FoldAll count when proof checks repetition.
+
+156. Logical relations expressed by discourse connectives — Recap: result/contrast/elaboration/sequence across discourse. Chainer features to exercise: Implication; And. Constraint templates: Therefore/result connectives should use Implication or explicit Supports/Causes relation when inferential.
+
+157. Numerals as labels versus quantities — Recap: numbers identify or count. Chainer features to exercise: Entity identity and representation; Cardinality facts. Constraint templates: Label numerals must be entity/name constants, not Cardinality; quantity numerals must use counts or numeric value arguments.
+
+158. Units of measure versus containers — Recap: measured amount vs container portions. Chainer features to exercise: Plain predicate / proposition form; distribution-valued arguments. Constraint templates: Container expressions should distinguish container entity from measured substance amount.
+
+159. Substance portions and individuation — Recap: mass nouns packaged as portions. Chainer features to exercise: Plain predicate / proposition form; Cardinality facts. Constraint templates: Counted portions of mass nouns should introduce portion entities or a quantity fact.
+
+160. Classifiers and measure nouns — Recap: piece/pair/group/type counting. Chainer features to exercise: Plain predicate / proposition form; Cardinality facts. Constraint templates: Classifier counts should represent classifier unit and counted substance/entity separately.
+
+161. Taxonomic and subtype relations — Recap: kind/type hierarchy. Chainer features to exercise: Implication; unary predicates. Constraint templates: Subtype claims must use Implication from subtype class predicate to supertype class predicate.
+
+162. Role nouns and social relations — Recap: jobs/kinship/roles. Chainer features to exercise: unary predicates; relational predicates; time arguments for role change. Constraint templates: (none)
+
+163. Kinship and interpersonal relations — Recap: family/social relations. Chainer features to exercise: Plain predicate / proposition form; Implication for derived kinship. Constraint templates: (none)
+
+164. Symmetric and asymmetric relations — Recap: directionality of relations. Chainer features to exercise: Implication for symmetry rules; no_inverse. Constraint templates: Symmetric relation derivation should use an explicit Implication R(x,y)->R(y,x); asymmetric relations should not generate inverse rules unless intended.
+
+165. Reciprocal social events — Recap: mutual participation events. Chainer features to exercise: And; Plain predicate / proposition form. Constraint templates: Reciprocal relations should encode both directions or a symmetric group/event predicate.
+
+166. Creation and destruction events — Recap: coming into/out of existence. Chainer features to exercise: Implication; Not; time arguments. Constraint templates: Destruction should imply Not(Exists entity) at later time only via explicit Implication/time modeling.
+
+167. Acquisition and loss — Recap: gaining/losing/lacking. Chainer features to exercise: Implication; Not. Constraint templates: Loss/lacking should not be modeled by missing possession facts; use Not(Possesses ... ) or explicit Lost/Lacks predicates.
+
+168. Availability and accessibility — Recap: obtainable/reachable/usable. Chainer features to exercise: STV; Implication. Constraint templates: Conditional availability/accessibility should use Implication with access conditions as Premises.
+
+169. Capacity and containment limits — Recap: maximum support/holding amounts. Chainer features to exercise: numeric value facts; GreaterThan; Compute. Constraint templates: Capacity comparisons should use numeric values and GreaterThan/Compute.
+
+170. Function and use — Recap: intended use/function. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: Generic artifact functions should use Implication from artifact type to possible/use action.
+
+171. Norms, rules, and laws — Recap: institutional/social rules. Chainer features to exercise: Implication; Not; STV. Constraint templates: Normative rules must be Implication rules; prohibitions should use Not or Forbidden predicates in conclusions.
+
+172. Definitions and descriptions — Recap: meanings/identifying descriptions. Chainer features to exercise: Implication; multi-premise rules. Constraint templates: Definitions should use high-confidence Implication rules, often bidirectional via two explicit rules if equivalence is intended.
+
+173. Metalinguistic statements — Recap: talk about words/expressions. Chainer features to exercise: expressions as entities; Plain predicate / proposition form; Compute for string/count if available. Constraint templates: Words mentioned as words should be represented as entities, not interpreted as their referents.
+
+174. Uncertainty and hedging — Recap: weak commitment/probable truth. Chainer features to exercise: STV. Constraint templates: Hedged claims such as think/probably/seems should use STV strength in [0.4,0.9] or confidence <1.0, not (STV 1.0 1.0).
+
+175. Evidentials and information source — Recap: source of information. Chainer features to exercise: STV; Implication. Constraint templates: Reported/apparent evidence should lower confidence to [0.4,0.9] unless direct evidence is asserted.
+
+176. Surprise and mirativity — Recap: unexpected information. Chainer features to exercise: STV; Plain predicate / proposition form. Constraint templates: Surprise itself is separate from truth; asserted event may be unit STV, while unexpectedness can be an evaluation predicate.
+
+177. Emphasis and intensification — Recap: strengthened commitment/contrast. Chainer features to exercise: STV. Constraint templates: Certainty intensifiers may use STV strength/confidence ≥0.9; degree intensifiers should not encode numeric degree as STV.
+
+178. Politeness and social meaning — Recap: politeness/formality stance. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+179. Register and domain-specific meaning — Recap: context/domain-specific senses. Chainer features to exercise: unique predicates/entity IDs. Constraint templates: Domain-specific senses should map to domain-specific predicates when meanings diverge.
+
+180. Metaphor and figurative extension — Recap: figurative cross-domain meaning. Chainer features to exercise: Plain predicate / proposition form; STV. Constraint templates: Figurative readings should use dedicated figurative predicates or lowered confidence if interpretation is uncertain.
+
+181. Hyperbole and understatement — Recap: exaggeration/minimization. Chainer features to exercise: STV; distributions for approximate quantities. Constraint templates: Hyperbolic numeric claims should not be treated as exact PointMass measurements unless literal reading is selected.
+
+182. Irony and sarcasm — Recap: contextually opposite/evaluative meaning. Chainer features to exercise: STV; Not. Constraint templates: Sarcastic interpretations should not assert literal polarity with unit STV when intended meaning reverses it.
+
+183. Ambiguous attachment of negation and modality — Recap: unclear scope of negation/modality. Chainer features to exercise: Not; STV; Implication. Constraint templates: Selected reading must place Not structurally over the intended proposition/modality predicate.
+
+184. Comparative ambiguity — Recap: implicit standard/class. Chainer features to exercise: GreaterThan; distribution-valued arguments; STV. Constraint templates: If comparison standard is unspecified, either encode explicit context standard or use lower-confidence STV for the comparative claim.
+
+185. Contextual standards for adjectives — Recap: adjective threshold depends on class/context. Chainer features to exercise: STV; distribution-valued degree facts. Constraint templates: Context-relative adjective claims should use explicit comparison-class predicates or STV strength in [0.3,0.8].
+
+186. Anaphora to events and propositions — Recap: pronouns refer to events/facts. Chainer features to exercise: nested expressions as entities; event IDs. Constraint templates: Event/proposition anaphora should reuse the same event ID or nested proposition term.
+
+187. Abstract entities — Recap: ideas/facts/events/qualities as entities. Chainer features to exercise: nested expressions as entities; Plain predicate / proposition form. Constraint templates: (none)
+
+188. Events as nominal referents — Recap: events counted/described as things. Chainer features to exercise: event IDs; Cardinality/FoldAll. Constraint templates: Counted events should use distinct event IDs and aggregation/cardinality if count is derived.
+
+189. Relations between propositions — Recap: entail/support/contradict claims. Chainer features to exercise: nested expressions as entities; Implication. Constraint templates: “Implies” as logical dependency should use Implication when meant as an inference rule.
+
+190. Topic and comment structure — Recap: topic foregrounded separately. Chainer features to exercise: Entity identity and representation. Constraint templates: (none)
+
+191. Clefts and pseudoclefts — Recap: focus constituent. Chainer features to exercise: Plain predicate / proposition form; Not for exhaustivity. Constraint templates: Exhaustive clefts should include explicit exclusion of alternatives if proof requires exhaustivity.
+
+192. Left and right dislocation — Recap: dislocated topic with pronoun. Chainer features to exercise: Entity identity and representation. Constraint templates: Dislocated NP and resumptive pronoun must resolve to the same entity ID.
+
+193. Coordination with shared arguments — Recap: shared subjects/objects/modifiers. Chainer features to exercise: And; multiple propositions. Constraint templates: Shared arguments should be copied into each coordinated predicate/proposition.
+
+194. Gapping and stripping — Recap: omitted repeated coordinated material. Chainer features to exercise: And. Constraint templates: Recovered material should produce complete conjunct propositions.
+
+195. Comparative and equative standards — Recap: standards for more/less/as/same. Chainer features to exercise: GreaterThan; Compute. Constraint templates: Comparative/equative proofs over numeric degrees should expose both compared values and use GreaterThan or equality/Compute.
+
+196. Interrogative quantification — Recap: ask about amounts/degrees/frequency. Chainer features to exercise: query envelope; FoldAll; aggregate query. Constraint templates: How-many queries should use aggregation or a variable count; query proof slot must be variable.
+
+197. Alternative questions — Recap: choose among alternatives. Chainer features to exercise: Or; query envelope. Constraint templates: Alternative-question proofs should preserve alternatives with Or or separate candidate queries.
+
+198. Tag questions and confirmation seeking — Recap: seek confirmation of proposition. Chainer features to exercise: query envelope; STV. Constraint templates: Confirmation queries must use variable proof slot and target the asserted proposition pattern.
+
+199. Embedded imperatives and instructions — Recap: reported directives. Chainer features to exercise: nested expressions as entities; Plain predicate / proposition form. Constraint templates: (none)
+
+200. Conditional commands and permissions — Recap: directives/permissions under conditions. Chainer features to exercise: Implication; Premises/Conclusions. Constraint templates: Conditional command/permission examples must use Implication with condition in Premises and directive/permission in Conclusions.
+
+201. Temporal conditionals — Recap: when/once/after as conditions. Chainer features to exercise: Implication; time predicates. Constraint templates: Temporal conditionals that trigger actions should use Implication from temporal event premise to action conclusion.
+
+202. Nonfinite clauses — Recap: infinitive/gerund/participial clauses. Chainer features to exercise: Plain predicate / proposition form; variable sharing. Constraint templates: (none)
+
+203. Participial modifiers — Recap: participles modifying nouns/events. Chainer features to exercise: And; Plain predicate / proposition form. Constraint templates: Restrictive participial modifiers should add conjunctive predicates on the modified entity.
+
+204. Absolute constructions — Recap: detached background circumstance. Chainer features to exercise: And; Plain predicate / proposition form. Constraint templates: (none)
+
+205. Small clauses — Recap: verbless predication. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Resultative small clauses should assert resulting state only if event entails it.
+
+206. Resultative constructions — Recap: action causes result state. Chainer features to exercise: Implication; And. Constraint templates: Resultative proofs should include both action event and resulting state; general resultatives may use Implication.
+
+207. Depictive secondary predicates — Recap: participant state during event. Chainer features to exercise: And; time/event IDs. Constraint templates: Depictive state should be linked to same event time/event ID as main event.
+
+208. Temporal simultaneity and overlap — Recap: events co-occur/overlap. Chainer features to exercise: Plain predicate / proposition form; And. Constraint templates: (none)
+
+209. Temporal precedence and succession — Recap: before/after/order. Chainer features to exercise: Plain predicate / proposition form; Compute for successor. Constraint templates: (none)
+
+210. Temporal deadlines and endpoints — Recap: by/until/before endpoints. Chainer features to exercise: GreaterThan; Compute; time value facts. Constraint templates: Deadline satisfaction should compare event completion time to deadline using GreaterThan/Compute or explicit Before predicate.
+
+211. Temporal starting points — Recap: since/from/starting at. Chainer features to exercise: Plain predicate / proposition form; time arguments. Constraint templates: (none)
+
+212. Duration versus completion ambiguity — Recap: for/in/through time readings. Chainer features to exercise: Plain predicate / proposition form; duration values. Constraint templates: Selected reading must distinguish duration-of-activity from time-to-completion via separate predicates.
+
+213. Location versus destination ambiguity — Recap: where vs goal PP. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Selected reading must encode location or goal/source relation explicitly.
+
+214. Source, goal, and route distinction — Recap: motion origin/destination/path. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+215. Contact and attachment — Recap: touching/fastening/connection. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+216. Orientation relative to observer — Recap: viewpoint-dependent orientation. Chainer features to exercise: Plain predicate / proposition form; context IDs. Constraint templates: Viewpoint-dependent orientation should include observer/reference-frame argument.
+
+217. Ownership versus temporary possession — Recap: legal ownership vs holding/control. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Use distinct predicates for Own, Have, Hold/Possess when contrast matters.
+
+218. Alienable and inalienable possession — Recap: detachable vs inherent possession. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+219. Quantified possession — Recap: possession plus quantity. Chainer features to exercise: Cardinality facts; FoldAll; Not. Constraint templates: “Has N” must use explicit count/cardinality or distinct possessed entities; “no” must use Not or zero count.
+
+220. Comparative possession and more-than relations — Recap: compare owned/contained counts. Chainer features to exercise: FoldAll; FoldAllValue; GreaterThan. Constraint templates: More/fewer possession claims should derive or assert count distributions and compare with GreaterThan.
+
+221. Permission, obligation, and authority source — Recap: who grants/imposes deontic status. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: Authority source should be an argument or supporting premise in permission/obligation predicates/rules.
+
+222. Ability under conditions — Recap: capacity conditional on circumstances. Chainer features to exercise: Implication; Premises/Conclusions. Constraint templates: Conditional abilities must use Implication with circumstance Premises and Ability/Can conclusion.
+
+223. Preference ordering — Recap: rank alternatives by desirability. Chainer features to exercise: LikelierThan; GreaterThan; Plain predicate / proposition form. Constraint templates: Use LikelierThan only if alternatives are truth-valued propositions; otherwise use explicit Prefer/Preference predicates or numeric utilities.
+
+224. Desire conflicts and competing goals — Recap: incompatible wants/priorities. Chainer features to exercise: And; Not; STV. Constraint templates: (none)
+
+225. Belief reports with mistaken identity — Recap: beliefs conflict with facts/identity. Chainer features to exercise: nested expressions as entities; Entity identity and representation. Constraint templates: Belief complements should not trigger actual SameEntity/class facts unless separately asserted.
+
+226. Knowledge-wh and acquaintance — Recap: know facts/answers/people/skills. Chainer features to exercise: nested expressions as entities; query patterns. Constraint templates: Knowledge-that is factive: complement assertion should have STV strength ≥0.9 unless denied/hedged.
+
+227. Remembering and forgetting — Recap: retained/lost information/obligations. Chainer features to exercise: Plain predicate / proposition form; Not. Constraint templates: Forgetting a fact should not imply the fact is false; represent memory state separately.
+
+228. Learning and discovery — Recap: change in knowledge. Chainer features to exercise: Plain predicate / proposition form; time arguments. Constraint templates: Factive discovery/learn-that should also assert discovered content with high STV.
+
+229. Attention and awareness — Recap: notice/ignore/focus/aware. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+230. Emotion and evaluation predicates — Recap: emotions and causes. Chainer features to exercise: Plain predicate / proposition form; STV for intensity/uncertainty. Constraint templates: (none)
+
+231. Physical condition and health states — Recap: bodily states/symptoms. Chainer features to exercise: Plain predicate / proposition form; STV for uncertain diagnosis. Constraint templates: Suspected health states should use STV strength in [0.3,0.8].
+
+232. Weather and environmental predicates — Recap: weather/environment conditions. Chainer features to exercise: Plain predicate / proposition form; STV for forecasts. Constraint templates: Weather forecasts with may/probably should use non-unit STV.
+
+233. Impersonal and expletive subjects — Recap: dummy it/there subjects. Chainer features to exercise: Plain predicate / proposition form; existential assertions. Constraint templates: Expletive subjects must not introduce real entity IDs unless deictic/actual referent is intended.
+
+234. Existential there constructions — Recap: introduce existing entities. Chainer features to exercise: concrete entity assertions; existential query variables. Constraint templates: “There is/are” assertions should introduce concrete entity IDs satisfying described predicates and locations.
+
+235. Numerical identity and distinctness — Recap: same vs distinct counted entities. Chainer features to exercise: Entity identity and representation; Cardinality facts. Constraint templates: “Different” counted entities must use distinct IDs; “same” recurring entity must reuse one ID or SameEntity.
+
+236. Repetition of individuals versus events — Recap: same entity vs new event occurrence. Chainer features to exercise: event IDs; Entity identity and representation. Constraint templates: “Again” for events should use a new event ID; “same X” should reuse or link the entity ID.
+
+237. Alternation between states and locations — Recap: have/be/contain/include locative alternation. Chainer features to exercise: Implication. Constraint templates: Paraphrase equivalence should be encoded by Implication rules between containment/location predicates.
+
+238. Event causation by absences and omissions — Recap: absence/failure as cause. Chainer features to exercise: Not; Implication. Constraint templates: Absence-causes-effect must use Not(absent proposition) in Premises of an Implication.
+
+239. Prevention and enablement — Recap: block or allow events. Chainer features to exercise: Implication; Not. Constraint templates: Prevention should conclude Not(outcome) or a Prevented predicate via Implication.
+
+240. Attempt and success — Recap: trying vs achieving/failing. Chainer features to exercise: Plain predicate / proposition form; Implication. Constraint templates: Attempt should not imply success unless using managed/succeeded implicative rule.
+
+241. Implicative verbs — Recap: verbs implying complement success/failure. Chainer features to exercise: Implication; Not. Constraint templates: Managed-to should imply complement via Implication; failed-to should imply Not(complement) via Implication.
+
+242. Aspectual coercion — Recap: shifted event interpretation. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+243. Eventive readings of nouns — Recap: infer associated events from nouns. Chainer features to exercise: nested expressions as entities; Implication. Constraint templates: Associated-event inference should be explicit via Implication, not implicit in a noun predicate.
+
+244. Institutional and conventional roles — Recap: status by social practice. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: Institutional status changes should be derived from declaration/rule premises via Implication when general.
+
+245. Classification by function rather than form — Recap: classify by use/role. Chainer features to exercise: Implication; STV. Constraint templates: Functional classification may use Implication from Use/ServesAs to class predicate; defeasible cases use STV <1.0.
+
+246. Similarity classes and comparison sets — Recap: implicit comparison group. Chainer features to exercise: STV; GreaterThan. Constraint templates: “For a X” standards should include comparison-class argument or lower-confidence STV if implicit.
+
+247. Salient alternatives in focus-sensitive expressions — Recap: only/even/also depend on alternatives. Chainer features to exercise: And; Not; STV. Constraint templates: Only requires exclusion of salient alternatives using Not or explicit Excluded predicates.
+
+248. Free choice expressions — Recap: unrestricted choice with any. Chainer features to exercise: Implication; rule variables. Constraint templates: Free-choice “any” should use universal-like Implication over eligible choices, not existential one.
+
+249. Choice functions and arbitrary selection language — Recap: pick unspecified selectable member. Chainer features to exercise: query variables; concrete selected entity assertions. Constraint templates: Before selection, use variable/choice predicate; after selection, bind/assert a concrete entity ID.
+
+250. Donkey anaphora and dependent pronouns — Recap: pronouns dependent on quantified/conditional antecedents. Chainer features to exercise: Implication; shared variables. Constraint templates: Dependent pronouns must reuse the antecedent variable inside the same Implication rule.
+
+251. Quantifier domain restriction — Recap: context-limited quantifier domains. Chainer features to exercise: Implication; additional domain Premises. Constraint templates: Universal/negative quantifiers must include explicit domain predicates in Premises or count patterns.
+
+252. Modal domain restriction — Recap: modals depend on rules/facts/goals/evidence. Chainer features to exercise: Implication; STV. Constraint templates: Modal rules should include relevant domain/source predicates as Premises.
+
+253. Embedded modality — Recap: modals inside attitudes/questions/conditionals. Chainer features to exercise: nested expressions as entities; STV; Implication. Constraint templates: Embedded modal content should remain nested and not automatically assert unmodalized content.
+
+254. Layered modification — Recap: nested modifier effects. Chainer features to exercise: And; nested expressions; STV. Constraint templates: Nonintersective modifiers in stacks must block automatic assertion of modified base predicate.
+
+255. Fake, former, alleged, and other intensional adjectives — Recap: adjectives affect category truth. Chainer features to exercise: Not; STV; time arguments. Constraint templates: Fake must not assert base kind; former should assert past role and Not current role; alleged should use low-confidence/attitude predicate.
+
+256. Temporal adjectives and stage-level properties — Recap: current/available/visible temporary properties. Chainer features to exercise: time arguments; STV. Constraint templates: Temporary adjectives should include time/context arguments when contrasted with stable properties.
+
+257. Stage-level and individual-level predicates — Recap: temporary vs enduring predicates. Chainer features to exercise: time arguments; Plain predicate / proposition form. Constraint templates: Stage-level predicates should be time-indexed when persistence matters.
+
+258. Result states and perfect meanings — Recap: past event with present relevance. Chainer features to exercise: Implication; time arguments. Constraint templates: Perfect-result examples should link past event to current result state via explicit fact or Implication.
+
+259. Future reference without will — Recap: present forms with future meaning. Chainer features to exercise: time arguments; STV for planned futures. Constraint templates: Future reference must encode future time explicitly.
+
+260. Generic present versus current present — Recap: timeless regularity vs now. Chainer features to exercise: Implication; time arguments. Constraint templates: Generic present uses Implication; current present uses time-indexed factual assertion.
+
+261. Events with multiple agents — Recap: joint/shared agency. Chainer features to exercise: And; group entities; event IDs. Constraint templates: Joint action may use group agent entity or multiple Agent role facts sharing one event ID.
+
+262. Events with multiple patients or themes — Recap: several affected entities. Chainer features to exercise: And; event IDs. Constraint templates: Multiple themes should be separate role facts sharing the event ID or a group theme.
+
+263. Reciprocal comparison and matching — Recap: pairwise correspondence across groups. Chainer features to exercise: Implication; FoldAll; shared variables. Constraint templates: Pairing claims should use explicit Match/Corresponds predicates with variables for both sides.
+
+264. Mapping and correspondence relations — Recap: one-to-one/many-to-one correspondences. Chainer features to exercise: Implication; FoldAll; Compute. Constraint templates: “Each X has Y” should use Implication with X variable and corresponding Y predicate/conclusion.
+
+265. Distribution over time and space — Recap: spread across intervals/regions. Chainer features to exercise: FoldAll; Plain predicate / proposition form. Constraint templates: (none)
+
+266. Boundedness and telicity — Recap: endpoint vs open activity. Chainer features to exercise: Plain predicate / proposition form; duration values. Constraint templates: (none)
+
+267. Plural event readings — Recap: multiple events collectively/individually. Chainer features to exercise: FoldAll; event IDs. Constraint templates: Individuated plural events should use multiple event IDs and counts if queried.
+
+268. Event counting and individuation — Recap: count occurrences. Chainer features to exercise: FoldAll; Cardinality facts; event IDs. Constraint templates: Event-count claims must use distinct event IDs and Cardinality/FoldAll count derivation.
+
+269. Manner of motion versus path of motion — Recap: manner separated from path. Chainer features to exercise: Plain predicate / proposition form; event IDs. Constraint templates: (none)
+
+270. Sound emission and sensory emission — Recap: entities emit perceptibles. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+271. Symptom and evidence relations — Recap: observations support conclusions. Chainer features to exercise: Implication; STV. Constraint templates: Evidence-to-conclusion rules should use Implication with rule STV strength in [0.4,0.9], not unit certainty unless diagnostic.
+
+272. Argument realization alternations — Recap: same verb with different role patterns. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: Alternating paraphrases should normalize to same role predicates or be linked by Implication.
+
+273. Locative alternation — Recap: material vs location emphasis. Chainer features to exercise: Implication. Constraint templates: Paraphrase alternants should derive common placement/content facts via Implication.
+
+274. Dative alternation — Recap: double-object vs to-dative. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Both alternants should map to same transfer event roles.
+
+275. Unaccusative and unergative distinctions — Recap: undergoing change vs activity subject. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+276. Scalar change — Recap: value changes along scale. Chainer features to exercise: GreaterThan; Compute; time-indexed value facts. Constraint templates: Scalar increase/decrease should compare values at different times with GreaterThan/Compute.
+
+277. Incremental comparison over time — Recap: value changes relative to earlier. Chainer features to exercise: GreaterThan; Compute; time arguments. Constraint templates: “Getting/becoming more” proofs should compare later and earlier values using GreaterThan.
+
+278. Counterexpectation markers — Recap: nevertheless/still/even so. Chainer features to exercise: And; STV. Constraint templates: (none)
+
+279. Additive discourse relations — Recap: add related information. Chainer features to exercise: And. Constraint templates: (none)
+
+280. Elaboration and exemplification — Recap: expand or illustrate content. Chainer features to exercise: membership predicates; And. Constraint templates: Nonexhaustive examples should not imply complete Cardinality unless explicitly marked exhaustive.
+
+281. Summarization and reformulation — Recap: restate/clarify prior content. Chainer features to exercise: Entity identity and representation; SameEntity-style predicates. Constraint templates: Reformulations should reuse proposition/entity IDs or link by explicit Paraphrase/SameMeaning predicate.
+
+282. Contrastive topic — Recap: parallel topics contrasted. Chainer features to exercise: And; Not. Constraint templates: (none)
+
+283. Conditional probability and tendency — Recap: condition raises likelihood. Chainer features to exercise: Implication; STV. Constraint templates: Probabilistic/tendency conditionals must use Implication rule STV strength in [0.2,0.9], not unit STV.
+
+284. Statistical and probabilistic language — Recap: likelihood/odds/chance/risk. Chainer features to exercise: STV; distributions. Constraint templates: Probability-language assertions should use STV strength matching qualitative level: low≤0.35, high≥0.65, likely≥0.6.
+
+285. Correlation and association — Recap: variables/properties co-occur. Chainer features to exercise: STV; Implication. Constraint templates: Correlational claims should not be encoded as causal Implication unless causation is stated; use association predicate or non-unit STV rule.
+
+286. Causal versus correlational distinction — Recap: cause vs mere association. Chainer features to exercise: Implication; STV. Constraint templates: Causal claims may use Implication; association claims should not conclude effects via deterministic rules.
+
+287. Plans, schedules, and commitments — Recap: intended future organized events. Chainer features to exercise: time arguments; STV. Constraint templates: Planned/scheduled futures should encode future time and may use STV confidence <1.0 unless fixed.
+
+288. Promises, threats, and offers — Recap: social commitments to future actions. Chainer features to exercise: nested expressions as entities; time arguments. Constraint templates: Promise/threat content should not be asserted as already happened; represent commitment separately.
+
+289. Permission requests and grants — Recap: ask/give authorization. Chainer features to exercise: query envelope; Permission predicates; Implication. Constraint templates: Permission questions use query variable proof slot; grants assert Permission/Allowed predicate.
+
+290. Capability of artifacts — Recap: designed capacities of tools/devices. Chainer features to exercise: Implication; STV. Constraint templates: Artifact capability generics should use Implication from artifact type to Can/Function conclusion, often with STV <1.0 if defeasible.
+
+291. Functional dependency — Recap: outcome/value depends on another. Chainer features to exercise: Implication; Compute; MapDist/Map2Dist. Constraint templates: Numeric functional dependencies should use Compute or MapDist/Map2Dist rather than monolithic predicates when derivation is expected.
+
+292. Constraints and requirements — Recap: necessary conditions for validity/goals. Chainer features to exercise: Implication; Not. Constraint templates: Requirement claims should use Implication from goal/action premise to required condition or obligation conclusion.
+
+293. Eligibility and qualification — Recap: meeting criteria. Chainer features to exercise: Implication; multi-premise rules. Constraint templates: Eligibility proofs should use Implication with criteria as Premises and Eligible conclusion.
+
+294. Sufficiency — Recap: condition enough for outcome. Chainer features to exercise: Implication. Constraint templates: Sufficiency claims must use Implication from sufficient condition to outcome.
+
+295. Necessity of conditions — Recap: condition required for outcome. Chainer features to exercise: Implication; Not. Constraint templates: Necessity claims should encode outcome/action implies required condition, or Not(required) implies Not(outcome).
+
+296. Conditional exclusion and restriction — Recap: limit action to circumstances. Chainer features to exercise: Implication; Not. Constraint templates: “Only if/unless” restrictions should use Implication in necessary-condition direction and Not for forbidden cases.
+
+297. Adversative causation — Recap: cause undesirable/contrasting result. Chainer features to exercise: Implication; Not. Constraint templates: General adversative-cause rules should use Implication from cause to harmful/prevented outcome.
+
+298. Facilitation and assistance — Recap: help event occur. Chainer features to exercise: Implication; STV. Constraint templates: Facilitation should use non-deterministic Implication STV strength in [0.4,0.9] unless guaranteed.
+
+299. Obviation and avoidance — Recap: act to prevent outcome. Chainer features to exercise: Implication; Not. Constraint templates: Avoid/prevent purpose should not assert avoided event; use IntendedPrevent or Not(outcome) only if prevention is stated.
+
+300. Purpose versus result ambiguity — Recap: intended goal vs actual outcome. Chainer features to exercise: Plain predicate / proposition form; Implication. Constraint templates: Purpose reading should encode intention/goal without asserting result; result reading should assert or derive outcome.
+
+301. Conditional purpose — Recap: goals depend on conditions. Chainer features to exercise: Implication. Constraint templates: Conditional-purpose examples should use Implication from possible condition to intended action/goal.
+
+302. Nonveridical contexts — Recap: embedded content not asserted. Chainer features to exercise: nested expressions as entities; STV. Constraint templates: Hope/if/question complements must not be asserted as true with unit STV merely because embedded.
+
+303. Veridical and antiveridical expressions — Recap: imply truth/falsity of complement. Chainer features to exercise: Implication; Not. Constraint templates: Veridical expressions should imply complement via Implication; antiveridical expressions should imply Not(complement).
+
+304. Attitude strength and certainty — Recap: graded mental commitment. Chainer features to exercise: STV. Constraint templates: Suspect/uncertain use STV strength in [0.2,0.7]; sure/certain use STV strength/confidence ≥0.9.
+
+305. Preference under uncertainty — Recap: desire plus uncertain outcome. Chainer features to exercise: STV; nested expressions. Constraint templates: Desired content should remain separate from belief STV; hope/fear may use non-unit STV for expected outcome.
+
+306. Temporal attitude content — Recap: attitudes about past/present/future. Chainer features to exercise: nested expressions as entities; time arguments. Constraint templates: Attitude content time must be explicit when different from attitude time.
+
+307. Agentive intention versus accidental action — Recap: deliberate vs accidental. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Intentionality/accidentality should be separate event properties, not encoded by changing agent role.
+
+308. Volition and willingness — Recap: consent/refusal/readiness to act. Chainer features to exercise: Plain predicate / proposition form; Not. Constraint templates: Refusal should not imply inability; use distinct Refuse/Unwilling predicates.
+
+309. Consent and coercion — Recap: voluntary vs forced action. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+310. Social permissions and rights — Recap: entitlements/authority. Chainer features to exercise: Implication; Permission predicates. Constraint templates: Rights/permissions under classes should use Implication from class/member conditions to Allowed/Right conclusion.
+
+311. Obligations over time — Recap: deadlines/recurring duties. Chainer features to exercise: Implication; time arguments; Compute. Constraint templates: Recurring/deadline obligations must encode time/period arguments explicitly.
+
+312. Norm violation and compliance — Recap: obey/break/satisfy rules. Chainer features to exercise: Implication; Not; And. Constraint templates: Compliance/violation should be derived by comparing obligation/requirement predicates with action facts or Not action.
+
+313. Conditional obligation — Recap: duties under conditions. Chainer features to exercise: Implication. Constraint templates: Conditional obligations must use Implication with triggering condition in Premises and Obligation conclusion.
+
+314. Event permission versus object permission — Recap: allow action vs authorize object use. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Distinguish PermissionToAct predicates from AllowsObject/PassAllows predicates.
+
+315. Attributive possession and relational nouns — Recap: compressed possessive relations. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Relational noun compounds should expand to explicit relation predicates when proof depends on relation.
+
+316. Compound nouns — Recap: noun-noun underspecified relation. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+317. Genitives and possessive constructions — Recap: ownership/authorship/kinship/parts/time. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Ambiguous genitives should encode the selected relation explicitly.
+
+318. Prepositional relation diversity — Recap: PPs for space/time/cause/topic/etc. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Preposition senses should map to distinct relation predicates when semantic relation differs.
+
+319. Aboutness and topic relations — Recap: subject matter of speech/thought/text. Chainer features to exercise: Plain predicate / proposition form; nested expressions. Constraint templates: (none)
+
+320. Reference to information objects — Recap: physical artifact vs content. Chainer features to exercise: Entity identity and representation; nested content terms. Constraint templates: Physical-document and informational-content properties should use distinct predicates/arguments.
+
+321. Medium and content distinction — Recap: carrier vs message. Chainer features to exercise: nested expressions as entities. Constraint templates: Content claims should not imply physical-medium properties and vice versa.
+
+322. File, document, and data entities — Recap: informational artifacts/properties/contents. Chainer features to exercise: Plain predicate / proposition form; nested content terms. Constraint templates: (none)
+
+323. Agentive organizations — Recap: organizations as actors. Chainer features to exercise: Entity identity and representation; Plain predicate / proposition form. Constraint templates: (none)
+
+324. Institutional events — Recap: socially defined events. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: Institutional outcomes should be derivable from declaration/authority facts via Implication if rule-like.
+
+325. Geopolitical entities — Recap: place/government/people/team metonymy. Chainer features to exercise: Entity identity and representation. Constraint templates: Different metonymic senses should use distinct entity IDs or role predicates if reasoning differs.
+
+326. Metonymy — Recap: related entity stands for another. Chainer features to exercise: Entity identity and representation; Implication. Constraint templates: Metonymic interpretation should be explicit via relation predicates or distinct IDs, not silent identity.
+
+327. Type-token distinctions — Recap: type/work vs copies/instances. Chainer features to exercise: Entity identity and representation; membership predicates. Constraint templates: Types and tokens must use distinct IDs linked by InstanceOf/TokenOf predicates.
+
+328. Event location versus participant location — Recap: locate event or participant. Chainer features to exercise: event IDs; Plain predicate / proposition form. Constraint templates: Use distinct predicates/arguments for EventLocation and ParticipantLocation when contrast matters.
+
+329. Event time versus reference time — Recap: event time vs schedule/discussion time. Chainer features to exercise: time arguments. Constraint templates: Event time and reference/report/schedule time must be separate arguments or predicates.
+
+330. Reported plans and future-in-the-past — Recap: future relative to past viewpoint. Chainer features to exercise: time arguments; nested expressions. Constraint templates: Encode viewpoint/report time and planned future event time separately.
+
+331. Conditional perfect and past unreal outcomes — Recap: hypothetical past consequences. Chainer features to exercise: Implication; STV. Constraint templates: Past-unreal antecedents/consequents should not be asserted as actual facts; use hypothetical-context predicates or low-confidence rule.
+
+332. Alternative possible outcomes — Recap: could/might/would alternatives. Chainer features to exercise: STV; Or. Constraint templates: Possible outcomes should use non-unit STV strength in [0.1,0.7] or Or alternatives.
+
+333. Counterfactual desire — Recap: wishes contrary to fact. Chainer features to exercise: Not; nested expressions. Constraint templates: Counterfactual wishes should represent desired content separately and may assert Not(desired content) for contrary-to-fact reading.
+
+334. Regret and evaluation of alternatives — Recap: evaluate past choices/possibilities. Chainer features to exercise: nested expressions; STV. Constraint templates: Regret factive complements should assert actual past content with high STV.
+
+335. Conditional questions — Recap: ask under assumed condition. Chainer features to exercise: query envelope; Implication. Constraint templates: Conditional questions should include condition in query context/premise or query a conditional rule; proof slot variable required.
+
+336. Subjunctive and mandative constructions — Recap: demands/recommendations/hypotheticals. Chainer features to exercise: Implication; nested expressions. Constraint templates: Mandative complements should be represented as obligations/recommendations, not automatically actual facts.
+
+337. Degree questions and exclamatives — Recap: ask/exclaim degree. Chainer features to exercise: query envelope; distribution-valued arguments. Constraint templates: Degree questions should query a numeric value/distribution variable, not an STV strength.
+
+338. Exclamatives — Recap: strong evaluation/surprise. Chainer features to exercise: Plain predicate / proposition form; STV. Constraint templates: (none)
+
+339. Vocatives and address — Recap: directly address participant. Chainer features to exercise: context IDs. Constraint templates: Vocative addressee should map to addressee/context entity, not event participant unless stated.
+
+340. Names used descriptively — Recap: name as similarity/role description. Chainer features to exercise: Plain predicate / proposition form; Entity identity. Constraint templates: Descriptive names must not assert SameEntity with the named person/place.
+
+341. Categorization with borderline cases — Recap: uncertain/contested membership. Chainer features to exercise: STV. Constraint templates: Borderline category membership should use STV strength in [0.3,0.7].
+
+342. Scalar endpoints and closed scales — Recap: full/empty/straight endpoints. Chainer features to exercise: STV; numeric degree facts. Constraint templates: Almost/nearly endpoint claims should use degree distributions or STV strength below 1.0.
+
+343. Open-scale adjectives — Recap: context-relative gradable adjectives. Chainer features to exercise: STV; distributions. Constraint templates: Open-scale adjective truth should use context standard or STV strength in [0.3,0.8].
+
+344. Absolute versus relative adjectives — Recap: fixed vs context criteria. Chainer features to exercise: STV; GreaterThan. Constraint templates: Relative adjectives require comparison class/threshold; absolute adjectives may use direct predicates.
+
+345. Comparative standards left implicit — Recap: omitted comparison standard. Chainer features to exercise: STV; GreaterThan. Constraint templates: If standard is implicit, either add explicit contextual standard or lower confidence below 1.0.
+
+346. Measure phrases with adjectives — Recap: measurements specify degree. Chainer features to exercise: distribution-valued arguments; PointMass. Constraint templates: Measure phrase values must be numeric terms/distributions, not STV strength.
+
+347. Degree achievements — Recap: gradual scalar change verbs. Chainer features to exercise: GreaterThan; Compute; time arguments. Constraint templates: Degree-change proofs should compare earlier/later scalar values.
+
+348. Intensified comparatives — Recap: much/slightly/far more. Chainer features to exercise: GreaterThan; Compute. Constraint templates: Differential intensity should be represented as numeric difference/threshold when proof requires it.
+
+349. Superlative comparison class — Recap: superlative relative to group. Chainer features to exercise: FoldAll; GreaterThan. Constraint templates: Superlative proofs must encode comparison class/domain and compare candidate values against members.
+
+350. Uniqueness and maximality in plural definites — Recap: maximal definite groups. Chainer features to exercise: FoldAll; Cardinality facts. Constraint templates: Maximal-group proof should aggregate all context-domain members if uniqueness/maximality is tested.
+
+351. Plural definites with exceptions — Recap: plural definite plus exceptions. Chainer features to exercise: Implication; Not; STV. Constraint templates: Exceptions should be explicit exception predicates or excluded members, not omitted silently.
+
+352. Inclusive and exclusive we — Recap: first-person plural includes/excludes addressee. Chainer features to exercise: context IDs; group entities. Constraint templates: We must map to a concrete group ID whose membership records whether addressee is included.
+
+353. Pronoun gender and animacy — Recap: pronoun features constrain referents. Chainer features to exercise: Entity identity; unary predicates. Constraint templates: Resolved pronouns should satisfy relevant gender/animacy predicates if such facts are modeled.
+
+354. Singular they and gender-neutral reference — Recap: they for singular/gender-neutral. Chainer features to exercise: Entity identity. Constraint templates: Singular they must reuse one entity ID, not create a plural group, unless plural reading selected.
+
+355. Quantified pronouns — Recap: everyone/someone/nobody/each/all. Chainer features to exercise: Implication; query variables; Not; FoldAll. Constraint templates: Everyone/all/each use Implication; someone uses concrete existential or query variable; nobody uses Not or zero-count aggregation.
+
+356. Indefinite pronouns and vague reference — Recap: unspecified people/things. Chainer features to exercise: concrete entity assertions; query variables; STV. Constraint templates: Existential vague pronouns in assertions require a fresh concrete placeholder ID; in queries use variables.
+
+357. Reciprocal scope — Recap: reciprocal grouping ambiguity. Chainer features to exercise: And; Implication. Constraint templates: Pairwise reciprocal readings should assert/derive both directions for each relevant pair.
+
+358. Reflexive binding constraints — Recap: local antecedent for reflexives. Chainer features to exercise: Entity identity. Constraint templates: Reflexive argument must be identical to its resolved antecedent ID.
+
+359. Logophoric and perspective-sensitive pronouns — Recap: pronouns depend on perspective. Chainer features to exercise: context IDs; nested expressions. Constraint templates: Perspective-sensitive pronouns should resolve within the represented perspective context.
+
+360. Indexical shift in quotation and reported speech — Recap: I/here/now shift in quotes. Chainer features to exercise: context IDs; nested expressions. Constraint templates: Quoted indexicals must be resolved to quoted speaker/time/place context, not outer context.
+
+361. Direct versus indirect evidence in perception reports — Recap: direct event perception vs inference. Chainer features to exercise: STV; nested expressions. Constraint templates: Indirect/inferential perception conclusions should use lower confidence than direct observed event facts.
+
+362. Perception of states versus events — Recap: perceive object/state/event. Chainer features to exercise: nested expressions; event IDs. Constraint templates: (none)
+
+363. Object permanence and tracking across change — Recap: same entity through property change. Chainer features to exercise: Entity identity; time arguments. Constraint templates: Same changing object must reuse entity ID across time-indexed properties.
+
+364. Temporal persistence of identity — Recap: identity preserved over time. Chainer features to exercise: Entity identity; time arguments. Constraint templates: Persistence examples should reuse same entity ID unless transformation creates a distinct entity.
+
+365. Role change and becoming — Recap: enter/leave roles. Chainer features to exercise: time arguments; Not. Constraint templates: Become/stop-role examples should assert role at new time and optionally Not role at contrasting time.
+
+366. Naming and renaming — Recap: assigning/changing names. Chainer features to exercise: user-defined Name facts; Entity identity. Constraint templates: Renaming should update/add Name facts while preserving entity ID.
+
+367. Labeling and classification acts — Recap: speech acts classify/designate. Chainer features to exercise: Implication; Plain predicate. Constraint templates: Declarative classification by authority may imply classified predicate only via explicit Implication/rule.
+
+368. Evidence-based inference with must and cannot — Recap: modal conclusions from evidence. Chainer features to exercise: Implication; STV; Not. Constraint templates: Evidence-based “must” conclusions should use STV strength ≥0.85; “cannot” should use Not with high confidence.
+
+369. Conditional inference markers — Recap: conclusions signaled from premises. Chainer features to exercise: Implication; STV. Constraint templates: Probably/may inference should use rule or conclusion STV below 1.0.
+
+370. Temporal inference from aspect — Recap: aspect suggests completion/ongoing. Chainer features to exercise: Implication; time arguments. Constraint templates: Aspectual inferences should be encoded as explicit rules if proof expects completion/ongoing conclusions.
+
+371. Implicit arguments in passives and nominals — Recap: unspecified agents/participants. Chainer features to exercise: event IDs; variables/placeholders. Constraint templates: Unknown implicit agents should not be invented as specific named entities.
+
+372. Generic agents in passives — Recap: unnamed people generally as agents. Chainer features to exercise: Implication; rule variables. Constraint templates: Generic passive claims should use arbitrary variable agents or omit agent role, not a concrete person ID.
+
+373. By-phrases and agent expression — Recap: passive agent expressed. Chainer features to exercise: Plain predicate / proposition form; event roles. Constraint templates: By-phrase agent must populate Agent role of the same event.
+
+374. Information packaging in passives — Recap: passive foregrounds patient/topic. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Passive packaging should not change core event-role truth conditions.
+
+375. Rhetorical questions — Recap: questions used as assertions/evaluations. Chainer features to exercise: STV; query envelope if literal. Constraint templates: If rhetorical reading is selected, encode intended assertion/evaluation, not an open query.
+
+376. Negative questions and bias — Recap: negative questions with expectation. Chainer features to exercise: Not; query envelope; STV. Constraint templates: Literal negative questions query Not(proposition) with variable proof slot; biased expectation may be a separate high-STV belief.
+
+377. Polarity alternatives in questions — Recap: positive/negative alternatives. Chainer features to exercise: Or; Not; query envelope. Constraint templates: Polarity alternative questions should represent Or(P, Not(P)) or separate positive/negative queries.
+
+378. Wh-scope and multiple questions — Recap: ask for multiple values/pairings. Chainer features to exercise: binding retrieval query; And. Constraint templates: Multiple wh-questions should use multiple variables in the query proposition/And pattern.
+
+379. Island-sensitive dependencies — Recap: constraints on extraction. Chainer features to exercise: (no chainer-specific features beyond default). Constraint templates: (none)
+
+380. Long-distance dependencies — Recap: displaced phrase linked to gap. Chainer features to exercise: query variables; Plain predicate. Constraint templates: Long-distance dependencies should resolve to complete propositions with the moved phrase filling the gap role.
+
+381. Topicalization — Recap: fronted topic/contrast. Chainer features to exercise: Entity identity. Constraint templates: (none)
+
+382. Preposition stranding and pied-piping — Recap: wh/relative with prepositions. Chainer features to exercise: query variables; relation predicates. Constraint templates: Stranded/pied-piped forms should map to same relation predicate and variable binding.
+
+383. Relative pronoun omission — Recap: relative clause without pronoun. Chainer features to exercise: And; variable sharing. Constraint templates: Omitted relative pronoun should be recovered as the shared modified-entity variable.
+
+384. Free relatives — Recap: wh-clause as noun phrase. Chainer features to exercise: query variables; Implication. Constraint templates: Universal free relatives like whoever/whatever should use Implication over a variable domain.
+
+385. Headless relatives and fused determiners — Recap: determiner+noun fused. Chainer features to exercise: query variables; unary predicates. Constraint templates: (none)
+
+386. Comparative relatives and correlatives — Recap: wh/relative clauses with comparison. Chainer features to exercise: Implication; GreaterThan. Constraint templates: Whoever/whatever universal readings use Implication; “the more” correlatives use rule-like dependencies.
+
+387. Adverbial clauses of manner — Recap: event done as/like another. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: (none)
+
+388. As-if and as-though clauses — Recap: resemblance/pretense/hypothetical appearance. Chainer features to exercise: STV; nested expressions. Constraint templates: As-if complement should not be asserted as true; represent appearance/similarity separately.
+
+389. Counterfactual manner — Recap: unreal manner comparison. Chainer features to exercise: Not; nested expressions. Constraint templates: Counterfactual manner complements should not be asserted as actual; optional Not complement if contrary-to-fact stated.
+
+390. Temporal anaphora in discourse — Recap: times depend on prior events. Chainer features to exercise: time arguments; Compute. Constraint templates: Relative discourse times like “later” should use prior event time plus Compute where numeric.
+
+391. Narrative progression — Recap: simple-past sequence advances time. Chainer features to exercise: temporal ordering predicates. Constraint templates: Narrative sequence should encode event ordering if temporal inference is targeted.
+
+392. Backgrounding in narrative — Recap: progressive/perfect sets background. Chainer features to exercise: And; time arguments. Constraint templates: (none)
+
+393. Discourse referent introduction and tracking — Recap: introduce entity then track it. Chainer features to exercise: Entity identity; concrete IDs. Constraint templates: Later references must reuse introduced entity IDs.
+
+394. Topic continuity and pronoun choice — Recap: salience affects pronouns. Chainer features to exercise: Entity identity. Constraint templates: Resolved pronouns must reuse selected antecedent ID.
+
+395. Bridging inferences — Recap: infer related entity from prior mention. Chainer features to exercise: Implication; Entity identity. Constraint templates: Bridging entity should be linked by explicit relation/rule to prior entity.
+
+396. World knowledge in interpretation — Recap: common knowledge fills roles. Chainer features to exercise: Implication; Plain predicate. Constraint templates: World-knowledge inferences should be explicit Implication rules, not assumed by predicate names.
+
+397. Selectional preferences — Recap: predicates favor participant types. Chainer features to exercise: Implication; STV. Constraint templates: Selectional preference inferences should use non-unit STV rules unless strict type constraints.
+
+398. Animacy effects — Recap: grammar/meaning depends on animacy. Chainer features to exercise: unary predicates for animacy. Constraint templates: Animacy-based constraints should be explicit predicates/rules if enforced.
+
+399. Agency and intentionality — Recap: intentional agents vs nonintentional causes. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Intentional agency should use Agent/Intentional predicates distinct from Cause.
+
+400. Control by instruments and machines — Recap: instruments/systems as subjects. Chainer features to exercise: Implication; event roles. Constraint templates: Instrument-subject readings may include implicit user/mechanism only if explicitly modeled.
+
+401. Natural forces as causes — Recap: storms/gravity/fire as causes. Chainer features to exercise: Implication; event roles. Constraint templates: (none)
+
+402. Events without clear agents — Recap: spontaneous/unknown-cause events. Chainer features to exercise: event IDs; Plain predicate. Constraint templates: Do not invent an agent for agentless events unless specified.
+
+403. Chance and accident — Recap: randomness/lack of planning. Chainer features to exercise: STV; Plain predicate. Constraint templates: Accidentality should be a separate event property; random outcomes may use non-unit STV if uncertain.
+
+404. Manner versus result complementarity — Recap: manner/result packaging. Chainer features to exercise: Implication; And. Constraint templates: Resultative readings should assert/derive result state separately from manner predicate.
+
+405. Agentless generics and dispositions — Recap: tendencies without agents. Chainer features to exercise: Implication; STV. Constraint templates: Dispositional generics should use Implication with STV strength in [0.5,0.95].
+
+406. Cognitive frames and scripts — Recap: conventional event structures. Chainer features to exercise: Implication; multi-premise rules. Constraint templates: Script inferences should be explicit Implication rules, often with STV <1.0.
+
+407. Argument omission in instructions and recipes — Recap: imperatives omit recoverable args. Chainer features to exercise: context IDs/placeholders; Plain predicate. Constraint templates: Omitted objects should be resolved to context entities or explicit placeholders.
+
+408. Telegraphic and fragmentary utterances — Recap: fragments convey meaning by context. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Fragments should expand to full propositions before assertion/query.
+
+409. Headlines and compressed style — Recap: omitted function words/compressed events. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Headlines should expand to complete event/property propositions.
+
+410. Lists, tables, and labels in language — Recap: non-sentential classification/instruction. Chainer features to exercise: Plain predicate / proposition form; And. Constraint templates: Labels should map to classification/property predicates, not necessarily events.
+
+411. Multisentence coherence — Recap: meaning across sentences. Chainer features to exercise: Implication; And; temporal ordering. Constraint templates: Cross-sentence causal/result coherence should be represented by explicit rules/relations if queried.
+
+412. Cross-sentence negation and correction — Recap: later sentence cancels prior claim. Chainer features to exercise: Not; STV. Constraint templates: Corrections should add Not(prior claim) or lower confidence/conflicting assertion, not delete prior facts.
+
+413. Contrastive correction — Recap: replace one claim with another. Chainer features to exercise: Not; And. Constraint templates: “Not X; Y” corrections should assert Not(X) and Y separately.
+
+414. Answerhood and short answers — Recap: elliptical answers. Chainer features to exercise: query variables; Plain predicate. Constraint templates: Short answers should be expanded using the question pattern and fill the queried variable/proposition.
+
+415. Yes-no response polarity — Recap: yes/no to positive/negative questions. Chainer features to exercise: query envelope; Not. Constraint templates: Negative-question answers must map polarity to the underlying proposition or Not(proposition) explicitly.
+
+416. Scalar implicature from quantifiers — Recap: weaker term implies not stronger. Chainer features to exercise: STV; Not. Constraint templates: Scalar implicatures should use lower confidence than explicit content, e.g. STV confidence in [0.3,0.8].
+
+417. Exhaustivity in answers and focus — Recap: answer completeness. Chainer features to exercise: FoldAll; Not; Cardinality. Constraint templates: Exhaustive answers require exclusion of unlisted alternatives or cardinality equal to listed set size.
+
+418. Cumulative readings with plurals — Recap: plural groups related cumulatively. Chainer features to exercise: FoldAll; Cardinality facts. Constraint templates: Cumulative totals should aggregate over group/event members with FoldAll or explicit total facts.
+
+419. Branching and complex quantification — Recap: interdependent quantified groups. Chainer features to exercise: Implication; shared variables; FoldAll. Constraint templates: “Every X every Y” should use rules/queries with both variables and explicit domain predicates.
+
+420. Quantification over kinds — Recap: quantify types/species/models. Chainer features to exercise: unary kind predicates; FoldAll; Implication. Constraint templates: Kind quantification should range over kind/type entities, not individual tokens.
+
+421. Generic quantifiers over situations — Recap: regularities across occasions. Chainer features to exercise: Implication; STV. Constraint templates: Whenever/when generic rules should use Implication; defeasible situation regularities use STV <1.0.
+
+422. Modal subordination — Recap: continue hypothetical/modal scenario. Chainer features to exercise: nested expressions; STV; context-local IDs. Constraint templates: Later modal-scenario pronouns/entities should remain in hypothetical context, not actual KB.
+
+423. Conditional anaphora — Recap: pronouns refer to conditional indefinites. Chainer features to exercise: Implication; shared variables. Constraint templates: Conditional anaphors must reuse antecedent variables within the same Implication.
+
+424. Discourse-level alternatives — Recap: alternatives tracked across discourse. Chainer features to exercise: Or; Plain predicate. Constraint templates: Alternatives introduced by or/whether should be represented as Or or explicit alternative entities.
+
+425. Whether-clauses and alternative complements — Recap: embedded open alternatives. Chainer features to exercise: Or; nested expressions. Constraint templates: Whether complements should encode alternatives without asserting either alternative as true.
+
+426. Exhaustive versus nonexhaustive lists — Recap: complete vs illustrative lists. Chainer features to exercise: And; Cardinality. Constraint templates: Exhaustive lists may include Cardinality; nonexhaustive “such as” lists must not assert completeness.
+
+427. Including and excluding examples — Recap: illustrative inclusion or exception. Chainer features to exercise: membership predicates; Not. Constraint templates: “Except” examples should explicitly exclude listed entities from general rule/count.
+
+428. Scalar endpoints with almost and barely — Recap: closeness to threshold. Chainer features to exercise: STV; GreaterThan; distributions. Constraint templates: Almost/barely threshold claims should use non-unit STV or distribution/threshold comparison near boundary.
+
+429. Approximate comparison and tolerance — Recap: near equality/rough comparison. Chainer features to exercise: distributions; Compute. Constraint templates: Approximate equality should use tolerance predicates/Compute or overlapping distributions, not exact equality.
+
+430. Numerical ranges — Recap: bounded intervals. Chainer features to exercise: GreaterThan; Compute; distributions. Constraint templates: Range constraints should represent lower and upper numeric bounds explicitly.
+
+431. Open-ended ranges — Recap: over/under/above/below thresholds. Chainer features to exercise: GreaterThan; Not. Constraint templates: Open-ended numeric thresholds should use GreaterThan or Not(GreaterThan) over value/count distributions.
+
+432. Collective measurements — Recap: measure groups/totals. Chainer features to exercise: FoldAll; Compute; distribution-valued arguments. Constraint templates: Collective totals should aggregate member values with FoldAll/Compute when derived.
+
+433. Comparative rates of change — Recap: compare change speeds. Chainer features to exercise: Compute; GreaterThan. Constraint templates: Rate-of-change comparisons should compute rates/differences and use GreaterThan.
+
+434. Temporal frequency with quantifiers — Recap: recurrence count per period. Chainer features to exercise: FoldAll; Compute; Cardinality. Constraint templates: Precise temporal frequencies should encode count and period explicitly, not STV strength.
+
+435. Periodic and interval-based recurrence — Recap: regular cycles/intervals. Chainer features to exercise: Implication; Compute. Constraint templates: Periodic recurrence should use explicit interval/period predicates or Compute-derived next times.
+
+436. Irregular recurrence — Recap: occasional/nonfixed repetition. Chainer features to exercise: STV. Constraint templates: Occasionally/from-time-to-time should use STV strength in [0.1,0.5] for event tendency claims.
+
+437. Habitual exceptions — Recap: habits allowing deviations. Chainer features to exercise: Implication; STV; exception predicates. Constraint templates: Usually/normally/generally habits should use rule STV strength in [0.5,0.95] and explicit exceptions if stated.
+
+438. Dispositional frequency — Recap: tendency to happen often. Chainer features to exercise: Implication; STV. Constraint templates: Dispositional frequency rules should use non-unit STV reflecting tendency.
+
+439. Quantified time spans — Recap: claims restricted to periods. Chainer features to exercise: FoldAll; Not; time arguments. Constraint templates: Quantified time claims should include explicit time-span/domain predicates in aggregation/rules.
+
+440. Historical present — Recap: present tense for past narratives. Chainer features to exercise: time arguments. Constraint templates: Historical present should encode past event time, not current time.
+
+441. Timeless mathematical and definitional statements — Recap: timeless truths. Chainer features to exercise: Implication; Compute. Constraint templates: Mathematical derivations should use Compute where arithmetic proof is expected; definitions use high-confidence Implication.
+
+442. Fictional and hypothetical discourse — Recap: imagined-world entities/events. Chainer features to exercise: context-local IDs; nested expressions. Constraint templates: Fictional/hypothetical facts should be tagged with a world/context and not asserted as actual-world facts.
+
+443. Fictional names and nonactual entities — Recap: referents in fiction/nonactuality. Chainer features to exercise: Entity identity; context-local IDs. Constraint templates: Nonactual entities should use fictional/world-specific IDs, not actual existence facts.
+
+444. Dreams, plans, and imagined objects — Recap: mental/planned objects maybe nonexistent. Chainer features to exercise: nested expressions; context-local IDs. Constraint templates: Imagined/planned objects should not be asserted as existing unless realization is stated.
+
+445. Reference failure — Recap: descriptions with no existing referent. Chainer features to exercise: Not; FoldAll. Constraint templates: Reference failure should be modeled with zero-count/Not existence, not by inventing a satisfying entity.
+
+446. Contradiction and inconsistency — Recap: incompatible claims. Chainer features to exercise: And; Not; STV. Constraint templates: Contradictions should include both P and Not(P) or incompatible predicates with explicit conflict rules.
+
+447. Tautology and trivial truth — Recap: form/meaning guarantees truth. Chainer features to exercise: Or; Not; Implication. Constraint templates: Logical tautologies may use Or(P, Not(P)) or definitional Implication patterns.
+
+448. Entailment through lexical meaning — Recap: word meaning implies truth. Chainer features to exercise: Implication. Constraint templates: Lexical entailments should be encoded as Implication rules from stronger predicate/event to entailed predicate/event.
+
+449. Antonymy and opposition — Recap: opposed meanings. Chainer features to exercise: Not; Implication. Constraint templates: Antonym exclusion should use Implication from one predicate to Not(opposite) if proof requires opposition.
+
+450. Synonymy and paraphrase — Recap: similar meanings. Chainer features to exercise: Implication. Constraint templates: Synonyms/paraphrases should be linked by one or two Implication rules depending on one-way vs equivalence.
+
+451. Hyponymy and hypernymy — Recap: subtype/supertype words. Chainer features to exercise: Implication; unary predicates. Constraint templates: Hyponym-to-hypernym inference must use Implication.
+
+452. Meronymy and holonymy — Recap: lexical part-whole relations. Chainer features to exercise: Implication; Plain predicate. Constraint templates: (none)
+
+453. Selection among senses by context — Recap: context chooses word sense. Chainer features to exercise: unique predicates/entity IDs. Constraint templates: Chosen word sense should map to distinct predicate/entity symbol for that sense.
+
+454. Coercion between entity and event readings — Recap: shift between related entity/event. Chainer features to exercise: nested expressions; Implication. Constraint templates: Coerced event/entity readings should be explicit via related predicates/rules.
+
+455. Coercion between count and mass readings — Recap: reinterpret count/mass. Chainer features to exercise: portion entities; Cardinality. Constraint templates: Mass-to-count coercion should introduce portion/unit entities or classifier facts.
+
+456. Subsective adjectives — Recap: adjective depends on noun class. Chainer features to exercise: Plain predicate / proposition form; STV. Constraint templates: Subsective adjective should not imply standalone adjective property unless separately ruled.
+
+457. Privative adjectives — Recap: fake/counterfeit deny category. Chainer features to exercise: Not; STV. Constraint templates: Privative adjective examples must not assert base category; fake/counterfeit may imply Not(base category).
+
+458. Temporal qualification of nouns — Recap: former/future/current roles. Chainer features to exercise: time arguments; Not. Constraint templates: Former roles should assert past role and Not current role when contrast is required.
+
+459. Episodic versus generic noun phrases — Recap: instance vs kind reading. Chainer features to exercise: concrete entity IDs; Implication. Constraint templates: Generic NP readings should use kind entities or Implication; episodic readings use concrete instance IDs.
+
+460. Kind predicates — Recap: predicates apply to kinds. Chainer features to exercise: unary predicates over kind entities; Implication. Constraint templates: Kind-level predicates should target kind IDs, not individual specimen IDs.
+
+461. Instantiation of kinds — Recap: relate specimen to kind claims. Chainer features to exercise: Implication; unary predicates. Constraint templates: Kind-to-instance property inheritance should use explicit Implication and only when valid.
+
+462. Category prototypes and typicality — Recap: typical/atypical members. Chainer features to exercise: STV. Constraint templates: Typicality claims should use STV strength/confidence rather than hard category membership unless membership is separately asserted.
+
+463. Similarity-based classification — Recap: classify by resemblance. Chainer features to exercise: STV; Plain predicate. Constraint templates: Looks-like/resembles classifications should not assert actual category with unit STV; use similarity predicate or STV <1.0.
+
+464. Comparison by role or function — Recap: compare usefulness/performance. Chainer features to exercise: GreaterThan; distribution-valued arguments. Constraint templates: Functional comparisons should use explicit score/value predicates and GreaterThan when proof is comparative.
+
+465. Normative comparison — Recap: too/enough relative to standards. Chainer features to exercise: GreaterThan; Compute. Constraint templates: Too/enough claims should compare measured value to threshold/requirement using GreaterThan or Compute.
+
+466. Excess and sufficiency — Recap: too much/too little/enough. Chainer features to exercise: GreaterThan; Not; Compute. Constraint templates: Enough/insufficient must encode required threshold and compare actual quantity against it.
+
+467. Conditional comparatives — Recap: comparisons under circumstances. Chainer features to exercise: Implication; GreaterThan. Constraint templates: Conditional comparison should use Implication with circumstance Premises and comparative conclusion.
+
+468. Temporal comparison — Recap: compare values across times. Chainer features to exercise: GreaterThan; time arguments. Constraint templates: Temporal comparisons must include distinct time-indexed values and GreaterThan.
+
+469. Spatial comparison — Recap: compare locations/distances/orientations. Chainer features to exercise: GreaterThan; distribution-valued arguments. Constraint templates: Distance/spatial degree comparisons should compare numeric spatial values or distributions.
+
+470. Relational comparison — Recap: compare relations. Chainer features to exercise: GreaterThan; STV. Constraint templates: Relational comparison should use explicit relation-strength/degree values before GreaterThan.
+
+471. Equatives with as — Recap: equal degree/manner. Chainer features to exercise: Compute; distribution-valued arguments. Constraint templates: Equatives should use equality/tolerance predicates or Compute comparison, not GreaterThan alone.
+
+472. Differentials in comparison — Recap: amount of difference. Chainer features to exercise: Compute; GreaterThan. Constraint templates: Differential comparisons must derive difference with Compute when proof checks the stated amount.
+
+473. Multiplicative comparison — Recap: twice/half/three times. Chainer features to exercise: Compute; GreaterThan. Constraint templates: Multiplicative comparisons should use Compute for ratio/product relation.
+
+474. Superlative ties — Recap: shared maximal/minimal degree. Chainer features to exercise: FoldAll; GreaterThan; Compute. Constraint templates: Tie superlatives should prove equal top values and no greater candidate in comparison class.
+
+475. Comparative classes with among and of — Recap: explicit superlative set. Chainer features to exercise: FoldAll; GreaterThan. Constraint templates: Superlative proofs must restrict FoldAll/comparisons to the among/of/in class.
+
+476. Scope of superlatives — Recap: absolute vs relative superlatives. Chainer features to exercise: nested expressions; FoldAll. Constraint templates: Selected superlative scope must be represented by the comparison class/domain used in aggregation.
+
+477. Conjunction reduction — Recap: omitted material in conjunction. Chainer features to exercise: And. Constraint templates: Reduced conjunctions should expand to full conjunct propositions.
+
+478. Distributive conjunction — Recap: property applies to each conjunct. Chainer features to exercise: And; Implication. Constraint templates: Distributive readings should assert/prove property for each conjunct separately.
+
+479. Collective conjunction — Recap: conjuncts form group with collective property. Chainer features to exercise: group entities; And. Constraint templates: Collective readings should use a group entity rather than asserting property of each member.
+
+480. Conjunctive event sequencing — Recap: and implies temporal order. Chainer features to exercise: And; temporal ordering predicates. Constraint templates: If sequencing is intended, add explicit Before/After relation between event IDs.
+
+481. Conjunctive causality — Recap: and implies cause/result. Chainer features to exercise: Implication; And. Constraint templates: Causal “and” readings should use Implication or explicit Causes relation, not mere And alone.
+
+482. Disjunctive free choice — Recap: modal or permits either option. Chainer features to exercise: Or; Implication. Constraint templates: Free-choice permission should derive Permission for each alternative, not only Or(Permission A, Permission B).
+
+483. Exclusive versus inclusive or — Recap: one-or-both vs exactly one. Chainer features to exercise: Or; Not; And. Constraint templates: Exclusive-or requires Or(A,B) plus Not(And(A,B)) or equivalent explicit exclusion.
+
+484. Neither-nor and negative coordination — Recap: coordinate negative alternatives. Chainer features to exercise: Not; And. Constraint templates: Neither-nor should produce And(Not A, Not B).
+
+485. Both-and, either-or, and not-only-but-also — Recap: correlative coordination. Chainer features to exercise: And; Or; Not. Constraint templates: Both-and uses And; either-or uses Or; not-only-but-also asserts both conjuncts and focus/additive relation if needed.
+
+486. Additive negation with nor — Recap: extend negative claims. Chainer features to exercise: Not; And. Constraint templates: Nor clauses should add an additional Not proposition conjoined with prior negative.
+
+487. Conditionals with quantified antecedents — Recap: conditional plus quantification. Chainer features to exercise: Implication; rule variables. Constraint templates: Quantified conditional antecedents must share variables between Premises and Conclusions.
+
+488. Biconditional-like expressions — Recap: iff/only-if equivalence. Chainer features to exercise: Implication. Constraint templates: Biconditionals require two Implication rules, one in each direction.
+
+489. Necessary-condition conditionals — Recap: if marks requirement. Chainer features to exercise: Implication. Constraint templates: Necessary-condition readings should encode desired outcome/action implies required condition.
+
+490. Sufficient-condition conditionals — Recap: condition guarantees/supports outcome. Chainer features to exercise: Implication. Constraint templates: Sufficient-condition readings should encode condition in Premises and outcome in Conclusions.
+
+491. Relevance conditionals — Recap: condition marks relevance of assertion. Chainer features to exercise: Plain predicate / proposition form; Implication if modeled. Constraint templates: Relevance conditionals should not be forced into causal rules unless dependency is intended.
+
+492. Biscuit conditionals — Recap: information conditional on interest/need. Chainer features to exercise: Plain predicate / proposition form. Constraint templates: Biscuit conditionals generally assert consequent availability independently; avoid causal Implication unless selected.
+
+493. Indicative versus subjunctive conditionals — Recap: open vs remote hypotheses. Chainer features to exercise: Implication; STV. Constraint templates: Subjunctive/remote conditionals should not assert antecedent; indicative conditionals use ordinary Implication.
+
+494. Conditional perfection tendency — Recap: if pragmatically suggests only-if. Chainer features to exercise: Implication; STV. Constraint templates: Conditional perfection should be lower-confidence pragmatic inference, not automatic reverse Implication.
+
+495. Concessive conditionals — Recap: outcome holds regardless. Chainer features to exercise: Implication; Or. Constraint templates: “Even if/whether or not” should encode outcome under each relevant alternative or a rule independent of condition.
+
+496. Universal conditional relatives — Recap: whoever/whatever/wherever/whenever. Chainer features to exercise: Implication; rule variables. Constraint templates: Universal conditional relatives must use Implication over the wh-variable domain.
+
+497. Cause clauses with because and since — Recap: causal explanations. Chainer features to exercise: Implication; Plain predicate. Constraint templates: General because/since causal laws should use Implication; single-event explanations may use Causes relation.
+
+498. Purpose clauses with to and so that — Recap: intended outcomes. Chainer features to exercise: Plain predicate / proposition form; Implication. Constraint templates: Purpose clauses should encode intended goal; do not assert goal achieved unless stated.
+
+499. Reason versus evidence because — Recap: actual cause vs evidence for conclusion. Chainer features to exercise: Implication; STV. Constraint templates: Evidence-because conclusions should use non-unit STV; actual-cause because may use Causes relation or Implication.
+
+500. Causal chains — Recap: cause leads to cause leads to effect. Chainer features to exercise: Implication; rule chaining. Constraint templates: Causal chains should be represented as multiple Implication rules/facts enabling multi-step derivation.
+
+501. Direct and indirect causation — Recap: immediate vs mediated outcome. Chainer features to exercise: Implication; event relations. Constraint templates: Indirect causation should include intermediate event/proposition links when proof requires mediation.
+
+502. Let, make, have, and get causatives — Recap: different causal verbs. Chainer features to exercise: Implication; Permission predicates. Constraint templates: Make/get causatives may imply caused event; let should encode permission/allowing rather than direct force.
+
+503. Force dynamics — Recap: causing/allowing/preventing/resisting. Chainer features to exercise: Implication; Not. Constraint templates: Prevent/keep-from should derive Not(outcome) or Prevented predicate via Implication.
+
+504. Causal responsibility and blame — Recap: assign responsibility. Chainer features to exercise: Plain predicate / proposition form; Implication. Constraint templates: Responsibility inference from cause should be explicit rule, not automatic from Causes.
+
+505. Purpose of artifacts — Recap: intended functions. Chainer features to exercise: Implication. Constraint templates: Artifact-purpose generics should use Implication from artifact kind to function/use conclusion.
+
+506. Human intentions behind artifacts — Recap: designer goals. Chainer features to exercise: Plain predicate / proposition form; nested expressions. Constraint templates: Designed-for goals should not imply actual successful use unless separately asserted.
+
+507. Means-end relations — Recap: actions as means to goals. Chainer features to exercise: Implication; Plain predicate. Constraint templates: Means-end generalizations should use Implication from means action to enabled/goal outcome when causal.
+
+508. Temporal purpose and planning — Recap: present action for future goal. Chainer features to exercise: time arguments; nested expressions. Constraint templates: Future goal time should be explicit and not asserted as achieved.
+
+509. Consequence without intention — Recap: unintended results. Chainer features to exercise: Implication; Plain predicate. Constraint templates: Unintended results should assert outcome but not Intention/Goal predicate.
+
+510. Beneficial and harmful results — Recap: evaluate consequences for participants. Chainer features to exercise: Implication; Plain predicate. Constraint templates: (none)
+
+511. Conditional causation — Recap: cause under conditions. Chainer features to exercise: Implication; multi-premise rules. Constraint templates: Conditional causal laws must use Implication with all causal conditions as Premises.
+
+512. Temporal causation and latency — Recap: delayed effects. Chainer features to exercise: Implication; time arguments; Compute. Constraint templates: Delayed causal effects should encode later time via explicit time relation or Compute offset.
+
+513. Causal overdetermination and multiple causes — Recap: multiple sufficient/contributing causes. Chainer features to exercise: And; Implication; STV. Constraint templates: Joint-cause claims should use multiple Premises in Implication; partial causes may use STV <1.0.
+
+514. Partial causation and contribution — Recap: contributing factors. Chainer features to exercise: Implication; STV. Constraint templates: Contributing-factor rules should use Implication STV strength in [0.2,0.8], not deterministic unit STV.
+
+515. Prevented outcomes and counterfactual dependence — Recap: outcome did not occur due to prevention. Chainer features to exercise: Implication; Not. Constraint templates: Prevention proofs should derive Not(outcome) or Prevented(outcome) from preventer premise.
+
+516. Temporal overlap with causation — Recap: causes precede or overlap outcomes. Chainer features to exercise: Implication; temporal relations. Constraint templates: Causal examples with timing should include explicit Before/During/Overlap relations if timing is queried.
+
+517. Purpose with negative goals — Recap: act to avoid undesired outcome. Chainer features to exercise: Not; Plain predicate / proposition form. Constraint templates: Avoidance purpose should encode Goal(Not outcome) or IntendedPrevent, not actual Not(outcome) unless success is stated.
+
+518. Causal explanation of states — Recap: explain why a state holds. Chainer features to exercise: Implication; Plain predicate / proposition form. Constraint templates: General state explanations should use Implication from cause/state premises to explained state conclusion; single explanations may use Causes/Explains predicates.
