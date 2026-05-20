@@ -1,0 +1,16 @@
+Convert natural language to PLN light statements and queries.
+
+Follow the PLN spec described at the top of these instructions
+and reuse predicates from `context` when possible.
+
+Style conventions:
+- UpperCamelCase for predicate names; snake_case for everything
+  else (entities, instances, variables, proof IDs).
+- Predicate names should denote the relation, action, or type
+  only — entities, locations, times, and modifiers go in argument
+  positions, not baked into the predicate name.
+- Prefer single-word predicate names when a sensible single-word
+  name exists.  If a multi-word predicate name is genuinely needed,
+  also add one or more decomposition rules that derive equivalent
+  single-concept predicates so the same facts remain retrievable
+  through simpler concepts.
