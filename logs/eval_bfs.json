@@ -1,0 +1,848 @@
+[
+  {
+    "label": "bfs_instruct_analysis",
+    "mean": 0.626963503649635,
+    "n": 137,
+    "buckets": {
+      "above_floor": 114,
+      "early_return": 3,
+      "floor": 19,
+      "hard_zero": 1
+    },
+    "by_source": {
+      "stratified": {
+        "mean": 0.7044783950617285,
+        "n": 108
+      },
+      "held_out": {
+        "mean": 0.33828735632183904,
+        "n": 29
+      }
+    },
+    "per_puzzle": [
+      {
+        "score": 0.5,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Entity classification"
+      },
+      {
+        "score": 0.6966666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Entity identification and naming"
+      },
+      {
+        "score": 0.9733333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Properties and attributes"
+      },
+      {
+        "score": 1.0,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Relational properties"
+      },
+      {
+        "score": 0.9733333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Possession and ownership"
+      },
+      {
+        "score": 0.9666666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Part-whole relations"
+      },
+      {
+        "score": 0.9366666666666665,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Identity and equivalence"
+      },
+      {
+        "score": 0.7333333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Existence and nonexistence"
+      },
+      {
+        "score": 1.0,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "States and stative predication"
+      },
+      {
+        "score": 0.67,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Actions and events"
+      },
+      {
+        "score": 0.8700000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Thematic roles"
+      },
+      {
+        "score": 0.9766666666666666,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Transitive and intransitive events"
+      },
+      {
+        "score": 0.6666666666666666,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Ditransitive and transfer events"
+      },
+      {
+        "score": 0.9866666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Instrumental relations"
+      },
+      {
+        "score": 0.9099999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Beneficiaries and maleficiaries"
+      },
+      {
+        "score": 0.7733333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Experiencer and stimulus roles"
+      },
+      {
+        "score": 0.8200000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Agentless and natural events"
+      },
+      {
+        "score": 0.9966666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Passive voice"
+      },
+      {
+        "score": 0.6533333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Causative alternation"
+      },
+      {
+        "score": 0.61,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Causation"
+      },
+      {
+        "score": 0.9833333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Purpose and intention"
+      },
+      {
+        "score": 0.86,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Result and consequence"
+      },
+      {
+        "score": 0.9466666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Spatial containment"
+      },
+      {
+        "score": 0.6133333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Spatial support and contact"
+      },
+      {
+        "score": 0.8733333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Spatial proximity and distance"
+      },
+      {
+        "score": 0.6566666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Spatial orientation and direction"
+      },
+      {
+        "score": 0.9933333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Motion events"
+      },
+      {
+        "score": 0.615,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Temporal location"
+      },
+      {
+        "score": 0.97,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Temporal ordering"
+      },
+      {
+        "score": 0.7933333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Duration and time span"
+      },
+      {
+        "score": 0.63,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Tense"
+      },
+      {
+        "score": 0.87,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Aspect"
+      },
+      {
+        "score": 0.49666666666666665,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Frequency and habituality"
+      },
+      {
+        "score": 0.9099999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Existential quantification"
+      },
+      {
+        "score": 0.35000000000000003,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Universal quantification"
+      },
+      {
+        "score": 0.11,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Cardinality and numerals"
+      },
+      {
+        "score": 0.004,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "At-least and at-most quantification"
+      },
+      {
+        "score": 0.9199999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Proportional and vague quantifiers"
+      },
+      {
+        "score": 0.8166666666666668,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Partitives and measure expressions"
+      },
+      {
+        "score": 0.64,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Distributive and collective readings"
+      },
+      {
+        "score": 0.64,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Cumulative readings"
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Generic statements"
+      },
+      {
+        "score": 0.7066666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Definiteness and uniqueness"
+      },
+      {
+        "score": 0.5866666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Indefiniteness and specificity"
+      },
+      {
+        "score": 0.9733333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Anaphora and pronoun reference"
+      },
+      {
+        "score": 0.4833333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Reflexives and reciprocals"
+      },
+      {
+        "score": 0.9899999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Deixis"
+      },
+      {
+        "score": 0.96,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Negation"
+      },
+      {
+        "score": 0.995,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Negative polarity and minimizers"
+      },
+      {
+        "score": 0.485,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Double negation and negative concord"
+      },
+      {
+        "score": 0.6933333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Modality of ability"
+      },
+      {
+        "score": 0.52,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Modality of possibility and probability"
+      },
+      {
+        "score": 0.3333333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Modality of necessity and obligation"
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Permission and prohibition"
+      },
+      {
+        "score": 0.38666666666666666,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Epistemic versus deontic modal readings"
+      },
+      {
+        "score": 0.37666666666666665,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Comparison of inequality"
+      },
+      {
+        "score": 0.9966666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Equality and similarity comparison"
+      },
+      {
+        "score": 0.53,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Superlatives and extremes"
+      },
+      {
+        "score": 0.9733333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Ordinals and ranking"
+      },
+      {
+        "score": 0.7133333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Degree modification"
+      },
+      {
+        "score": 0.8766666666666666,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Approximation and precision"
+      },
+      {
+        "score": 0.7233333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Conjunction"
+      },
+      {
+        "score": 0.9500000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Disjunction"
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Exclusive and inclusive alternatives"
+      },
+      {
+        "score": 0.9533333333333335,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Coordination scope"
+      },
+      {
+        "score": 0.45,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Conditionals"
+      },
+      {
+        "score": 0.003,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Counterfactual conditionals"
+      },
+      {
+        "score": 0.7799999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Unless and exceptive conditions"
+      },
+      {
+        "score": 0.8766666666666666,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Propositional attitudes of belief and knowledge"
+      },
+      {
+        "score": 1.0,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Desires, wants, and preferences"
+      },
+      {
+        "score": 0.9899999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Intentions, plans, and decisions"
+      },
+      {
+        "score": 0.9666666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Speech and reporting events"
+      },
+      {
+        "score": 0.9933333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Factivity and presupposition in attitudes"
+      },
+      {
+        "score": 0.15,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Questions"
+      },
+      {
+        "score": 0.9700000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Imperatives and requests"
+      },
+      {
+        "score": 0.7200000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Adverbs of manner"
+      },
+      {
+        "score": 0.69,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Adverbs of degree, time, and place"
+      },
+      {
+        "score": 0.54,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Focus-sensitive expressions"
+      },
+      {
+        "score": 0.6733333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Restrictive and nonrestrictive modification"
+      },
+      {
+        "score": 0.6733333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Relative clauses"
+      },
+      {
+        "score": 0.8999999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Apposition"
+      },
+      {
+        "score": 0.7000000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Ellipsis and omitted material"
+      },
+      {
+        "score": 0.6166666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Gapping and sluicing"
+      },
+      {
+        "score": 0.9833333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Control constructions"
+      },
+      {
+        "score": 0.28,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Raising constructions"
+      },
+      {
+        "score": 0.98,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Event nominalization"
+      },
+      {
+        "score": 0.8466666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Prepositional attachment ambiguity"
+      },
+      {
+        "score": 0.6266666666666666,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Lexical ambiguity and polysemy"
+      },
+      {
+        "score": 0.9633333333333334,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Phrasal verbs and multiword predicates"
+      },
+      {
+        "score": 0.9899999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Idioms and figurative fixed expressions"
+      },
+      {
+        "score": 0.6733333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Metaphor and metonymy"
+      },
+      {
+        "score": 0.6,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Count and mass nouns"
+      },
+      {
+        "score": 0.7833333333333333,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Units, dimensions, and measurements"
+      },
+      {
+        "score": 0.9966666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Calendrical and named temporal expressions"
+      },
+      {
+        "score": 0.8300000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Aggregation and collective quantities"
+      },
+      {
+        "score": 0.36000000000000004,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Exceptions and exclusions"
+      },
+      {
+        "score": 0.0,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Scalar particles and threshold expressions"
+      },
+      {
+        "score": 0.3566666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Similarity, difference, and contrast"
+      },
+      {
+        "score": 0.9366666666666666,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Coreference across clauses"
+      },
+      {
+        "score": 0.62,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Discourse relations"
+      },
+      {
+        "score": 0.4066666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Context-dependent domain restriction"
+      },
+      {
+        "score": 0.53,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Polarity and truth-value operators beyond negation"
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Uncertainty and hedging"
+      },
+      {
+        "score": 0.7999999999999999,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Comparative subdeletion and differential comparison"
+      },
+      {
+        "score": 0.2966666666666667,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Temporal recurrence and schedules"
+      },
+      {
+        "score": 0.8500000000000001,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Change of state"
+      },
+      {
+        "score": 0.985,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Creation and destruction events"
+      },
+      {
+        "score": 0.6833333333333332,
+        "error": null,
+        "source": "stratified",
+        "phenomenon": "Information structure and topic-comment organization"
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.007,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.18,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.4266666666666666,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.7866666666666666,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.86,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 1.0,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.4,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.87,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.67,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.12,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.53,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.99,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.99,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.48,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      },
+      {
+        "score": 0.1,
+        "error": null,
+        "source": "held_out",
+        "phenomenon": null
+      }
+    ],
+    "pln_spec": "chainer_analysis.txt"
+  }
+]

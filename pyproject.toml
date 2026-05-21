@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "dspy>=3.1.3",
+    "dspy[optuna]>=3.1.3",
     "mlflow>=3.6.0",
     "pytest>=9.0.1",
     "pettachainer",

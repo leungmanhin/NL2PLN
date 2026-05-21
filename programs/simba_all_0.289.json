@@ -1,0 +1,44 @@
+{
+  "nl2pln.predict": {
+    "traces": [],
+    "train": [],
+    "demos": [],
+    "signature": {
+      "instructions": "Convert natural language to PLN light statements and queries.\n\nFollow `pln_spec` exactly and reuse predicates from `context` when possible.\n\nIf the input is a declarative sentence listing a small finite set of entities, emit one fact per entity and keep the predicates exactly aligned with the context (`Cat`, `Cute`, `In`, `Park`, etc.). If a later question asks about the same entities, do not rely on raw facts alone—introduce a compact helper predicate that matches the question shape.\n\nIf the question contains words like `all`, `every`, or `for all`, do not put an `Implication` in the query field. Instead, create or query a single summary predicate such as `AllKnownCatsCute park1`, derived from all the known relevant facts in context. Query that summary predicate directly with an atomic pattern.\n\nIf the question contains `any`, `exists`, or `is there`, do not use `(And ...)` as the query. Make a single atomic witness predicate like `CuteCatInPark $c park1` and query that predicate, or query one atomic fact pattern that can serve as the witness.\n\nIf the question asks `at least N`, build a threshold predicate such as `AtLeast2CuteCatsInPark park1` from N distinct witnesses. Use variables and distinctness-aware premises if possible; avoid hardcoding only one specific pair of named constants unless the input truly contains only those entities.\n\nWhen adding helper rules, make them directly answer the current question and reuse predicates already present in context. Avoid introducing unrelated rules, because they add noise without helping the proof.\n\nIf the input is a simple location question like 'Where is Bob?' and the context already contains a matching spatial fact, then emit one atomic query that mirrors the fact structure exactly, with only the answer slot variableized, e.g. `(: $prf (Behind bob $where) $tv)`. Use the same constant normalization as the context facts (prefer the lowercase entity token already used in the knowledge base), and do not introduce alternate surface forms, extra helper predicates, or capitalized variants of entity names. If the sentence is a declarative fact, keep it as one direct PLN-light statement with the same normalized constants so the query can unify cleanly.\n\nIf the input is a simple declarative sentence like `Max is a Dog`, then preserve the entity token exactly as it appears for proper nouns (`Max`, not `max`) when creating the PLN fact. If the input is a follow-up question like `What is max?`, then look for the matching fact pattern in context and emit one atomic query that mirrors that fact exactly, changing only the proof and truth-value variables. Do not lowercase or otherwise rename constants unless the context already uses that normalized form. For simple `What is X?` questions, prefer a direct query such as `(: $q (Dog Max) $tv)` over inventing helper predicates or alternate surface forms, because exact predicate/constant matching is what allows the proof to unify quickly and return the expected answer.\n\nIf the input says that several named people are \"helping each other\" with a shared activity, then do not compress it into one n-ary `HelpingEachOther...` fact and do not query that same predicate directly for pairwise or who-questions. Instead, emit either explicit pairwise `HelpsWithHomework` facts for every relevant ordered pair, or a single group fact plus helper rules that derive exactly the question-facing predicates (`HelpsWithHomework`, `ProvidingHelpWithHomework`). If the question is yes/no about one person helping another, query one atomic pairwise fact pattern like `(: $prf (HelpsWithHomework Mark Anna) $tv)`. If the question asks who is providing help, query one atomic unary predicate like `(: $prf (ProvidingHelpWithHomework $who) $tv)`. Keep the query shape as a single atomic pattern with the proof variable first and `$tv` last; avoid embedding free variables in a complex multi-argument predicate unless that exact predicate already appears in context and matches the question form exactly.",
+      "fields": [
+        {
+          "prefix": "Sentences:",
+          "description": "Original natural language sentences"
+        },
+        {
+          "prefix": "Context:",
+          "description": "Contextual information"
+        },
+        {
+          "prefix": "Pln Spec:",
+          "description": "PLN light syntax and semantics specification"
+        },
+        {
+          "prefix": "Reasoning: Let's think step by step in order to",
+          "description": "${reasoning}"
+        },
+        {
+          "prefix": "Statements:",
+          "description": "PLN light statements to add to the knowledge base"
+        },
+        {
+          "prefix": "Queries:",
+          "description": "PLN light queries for question answering"
+        }
+      ]
+    },
+    "lm": null
+  },
+  "metadata": {
+    "dependency_versions": {
+      "python": "3.12",
+      "dspy": "3.1.3",
+      "cloudpickle": "3.1"
+    }
+  }
+}

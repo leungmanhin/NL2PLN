@@ -1,0 +1,320 @@
+2026/04/22 07:16:55 WARNING dspy.primitives.base_module: There is a mismatch of python version between saved model and current environment. You saved with `python==3.10`, but now you have `python==3.12`. This might cause errors or performance downgrade on the loaded model, please consider loading the model in the same environment as the saving environment.
+2026/04/22 07:16:55 WARNING dspy.primitives.base_module: There is a mismatch of dspy version between saved model and current environment. You saved with `dspy==3.1.3`, but now you have `dspy==3.2.0`. This might cause errors or performance downgrade on the loaded model, please consider loading the model in the same environment as the saving environment.
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: cat1_fact (Cat cat1) (STV 1.0 1.0))', '(: cat2_fact (Cat cat2) (STV 1.0 1.0))', '(: cat3_fact (Cat cat3) (STV 1.0 1.0))', '(: cat1_in_park (InPark cat1) (STV 1.0 1.0))', '(: cat2_in_park (InPark cat2) (STV 1.0 1.0))', '(: cat3_in_park (InPark cat3) (STV 1.0 1.0))', '(: cat1_cute (Cute cat1) (STV 1.0 1.0))', '(: cat2_cute (Cute cat2) (STV 1.0 1.0))', '(: cat3_cute (Cute cat3) (STV 1.0 1.0))', '(: cat1_diff_cat2 (Different cat1 cat2) (STV 1.0 1.0))', '(: cat1_diff_cat3 (Different cat1 cat3) (STV 1.0 1.0))', '(: cat2_diff_cat3 (Different cat2 cat3) (STV 1.0 1.0))', '(: cuteAndCatRule (Implication (Premises (Cat $x) (Cute $x)) (Conclusions (CuteCat $x))) (STV 1.0 1.0))', '(: cuteCatInParkRule (Implication (Premises (CuteCat $x) (InPark $x)) (Conclusions (CuteCatInPark $x))) (STV 1.0 1.0))', '(: atLeast2CuteCatsInParkRule\n    (Implication\n        (Premises\n            (CuteCatInPark $x)\n            (CuteCatInPark $y)\n            (Different $x $y))\n        (Conclusions\n            (AtLeast2CuteCatsInPark)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (Cute cat1) $tv)', '(: $prf (Cute cat2) $tv)', '(: $prf (Cute cat3) $tv)'], ['(: $prf (CuteCatInPark $x) $tv)'], ['(: $prf (AtLeast2CuteCatsInPark) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Cat tom) (STV 1.0 1.0))', '(: f2 (Cat mary) (STV 1.0 1.0))', '(: f3 (Cat alex) (STV 1.0 1.0))', '(: f4 (InPark tom park) (STV 1.0 1.0))', '(: f5 (InPark mary park) (STV 1.0 1.0))', '(: f6 (InPark alex park) (STV 1.0 1.0))', '(: catInParkRule\n    (Implication\n        (Premises\n            (Cat $x)\n            (InPark $x park))\n        (Conclusions\n            (CatInPark $x)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (CatInPark $x) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: companyx-trader-count (TraderCount company_x (PointMass 10000000.0)) (STV 1.0 1.0))', '(: companyx-traders-transact-rule (Implication (Premises (Trader $p company_x) (Trader $q company_x) (Different $p $q)) (Conclusions (TransactionsWithEachOther $p $q))) (STV 1.0 0.9))', '(: tom-is-trader (Trader tom company_x) (STV 1.0 1.0))', '(: mary-is-trader (Trader mary company_x) (STV 1.0 1.0))', '(: tom-mary-different (Different tom mary) (STV 1.0 1.0))'],
+    queries=[['(: $prf (TransactionsWithEachOther tom mary) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (DogCountInHouse the_house (ParticleFromNormal 10.0 2.0)) (STV 1.0 0.9))'],
+    queries=[['(: $prf (GreaterThan (DogCountInHouse the_house (ParticleFromNormal 10.0 2.0)) 10.0) $tv)'], ['(: $prf (DogCountInHouse the_house $countDist) $tv)'], ['(: $prf (GreaterThan 10.0 (DogCountInHouse the_house (ParticleFromNormal 10.0 2.0))) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: failedFractionAboveHalf (GreaterThan (FailedFraction exam) (PointMass 0.5)) (STV 1.0 1.0))', '(: failedFractionBelowTwoThirds (GreaterThan (PointMass 0.6666667) (FailedFraction exam)) (STV 1.0 1.0))'],
+    queries=[['(: $prf (GreaterThan (FailedFraction exam) (PointMass 0.6)) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Runner bob) (STV 1.0 1.0))', '(: f2 (MadeItToFinishLine bob) (STV 1.0 1.0))', '(: f3 (Runner alice) (STV 1.0 1.0))', '(: f4 (Different alice bob) (STV 1.0 1.0))', '(: onlyBobFinishedRule\n    (Implication\n        (Premises\n            (Runner $p)\n            (Different $p bob))\n        (Conclusions\n            (Not (MadeItToFinishLine $p))))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (Not (MadeItToFinishLine alice)) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: classroomTallRule (Implication (Premises (InGroup $p classroom) (Different $p henry)) (Conclusions (GreaterThan (HeightDist $p) 160.0))) (STV 1.0 1.0))', '(: rioInClassroom (InGroup rio classroom) (STV 1.0 1.0))', '(: rioDifferentHenry (Different rio henry) (STV 1.0 1.0))', '(: henryDifferentRio (Different henry rio) (STV 1.0 1.0))', '(: henryNotOver160 (Not (GreaterThan (HeightDist henry) 160.0)) (STV 1.0 1.0))'],
+    queries=[['(: $prf (InGroup henry classroom) $tv)'], ['(: $prf (GreaterThan (HeightDist rio) 160.0) $tv)'], ['(: $prf (Not (GreaterThan (HeightDist henry) 160.0)) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (MetCountInRoom room1 new_teacher 2 10) (STV 1.0 1.0))', '(: f2 (InRoom bob room1) (STV 1.0 1.0))', '(: metCountToMetRule\n    (Implication\n        (Premises\n            (InRoom $p $room)\n            (MetCountInRoom $room $t 2 10))\n        (Conclusions\n            (Met $p $t)))\n    (STV 0.2 0.9))'],
+    queries=[['(: $prf (Met bob new_teacher) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (GreaterThan oranges limes) (STV 1.0 1.0))', '(: s2 (GreaterThan water_melons oranges) (STV 1.0 1.0))', '(: gtTransitiveRule\n    (Implication\n        (Premises\n            (GreaterThan $a $b)\n            (GreaterThan $b $c))\n        (Conclusions\n            (GreaterThan $a $c)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (GreaterThan water_melons limes) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Eats bob apples) (STV 1.0 1.0))', '(: morning-just-came (Morning today) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Eats bob apples) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Dog Max) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Dog Max) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Likes bob hot_food) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Likes bob $food) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: whaleIsMammalRule\n    (Implication\n        (Premises\n            (Whale $x))\n        (Conclusions\n            (Mammal $x)))\n    (STV 1.0 1.0))', '(: whaleLivesInOceanRule\n    (Implication\n        (Premises\n            (Whale $x))\n        (Conclusions\n            (LivesInOcean $x)))\n    (STV 1.0 1.0))', '(: oceanLivingAnimalToMarineAnimalRule\n    (Implication\n        (Premises\n            (Animal $x)\n            (LivesInOcean $x))\n        (Conclusions\n            (MarineAnimal $x)))\n    (STV 1.0 1.0))', '(: marineMammalExposureRule\n    (Implication\n        (Premises\n            (MarineMammal $x))\n        (Conclusions\n            (ExposedToPollutantP $x)))\n    (STV 1.0 1.0))', '(: pollutantExposureRiskRule\n    (Implication\n        (Premises\n            (ExposedToPollutantP $x))\n        (Conclusions\n            (IncreasedRiskOfDiseaseZ $x)))\n    (STV 1.0 1.0))', '(: mammalIsAnimalRule\n    (Implication\n        (Premises\n            (Mammal $x))\n        (Conclusions\n            (Animal $x)))\n    (STV 1.0 1.0))', '(: marineAnimalAndMammalImpliesMarineMammalRule\n    (Implication\n        (Premises\n            (MarineAnimal $x)\n            (Mammal $x))\n        (Conclusions\n            (MarineMammal $x)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (Implication (Premises (Whale $x)) (Conclusions (IncreasedRiskOfDiseaseZ $x))) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: bobWentSwimming (WentSwimming bob) (STV 1.0 1.0))'],
+    queries=[['(: $prf (WentSwimming bob) $tv)'], ['(: $prf (WentSwimming bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Likes bob hiking) (STV 1.0 1.0))', '(: s2 (Likes anna hiking) (STV 1.0 1.0))', '(: s3 (OftenGoTogether bob anna) (STV 1.0 1.0))', '(: s4 (OftenGoTogether anna bob) (STV 1.0 1.0))', '(: likesHikingImpliesGoesHikingRule\n    (Implication\n        (Premises\n            (Likes $p hiking))\n        (Conclusions\n            (GoesHiking $p)))\n    (STV 0.9 0.8))'],
+    queries=[['(: $prf (Likes $person hiking) $tv)'], ['(: $prf (GoesHiking $who) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Ball ball1) (STV 1.0 1.0))', '(: s2 (Red ball1) (STV 1.0 1.0))', '(: s3 (Bright ball1) (STV 1.0 1.0))', '(: s4 (Light light1) (STV 1.0 1.0))', '(: s5 (Bright light1) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Bright $obj) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (PlayedTennis bob) (STV 1.0 1.0))'],
+    queries=[['(: $prf (PlayedTennis bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: bobAlwaysWentSwimming (WentSwimming bob) (STV 1.0 1.0))', '(: wentSwimmingImpliesSwimmingRule\n    (Implication\n        (Premises\n            (WentSwimming $p))\n        (Conclusions\n            (Swimming $p)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (Swimming bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (WentSwimming bob) (STV 1.0 1.0))', '(: wentSwimmingImpliesSwimmingNowRule\n    (Implication\n        (Premises\n            (WentSwimming $p))\n        (Conclusions\n            (SwimmingNow $p)))\n    (STV 0.9 0.8))'],
+    queries=[['(: $prf (SwimmingNow bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Long Knife) (STV 1.0 1.0))', '(: f2 (Sharp Knife) (STV 1.0 1.0))', '(: f3 (Short Knife) (STV 1.0 1.0))', '(: f4 (Blunt Knife) (STV 1.0 1.0))', '(: kitchenKnivesShort (Short kitchen_knives) (STV 0.8 0.8))', '(: sashimiKnivesLong (Long sashimi_knives) (STV 0.8 0.8))', '(: shortLongImpliesComparisonRule (Implication (Premises (Short $a) (Long $b)) (Conclusions (GreaterThan (LengthDist $b) (LengthDist $a)))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Long Knife) $tv)'], ['(: $prf (GreaterThan (LengthDist sashimi_knives) (LengthDist kitchen_knives)) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: meeting1Fact (Meeting meeting1) (STV 1.0 1.0))', '(: unlessNoAgreeImpliesNoMeeting\n    (Implication\n        (Premises\n            (Not (EveryoneAgrees meeting1)))\n        (Conclusions\n            (Not (Happens meeting1))))\n    (STV 1.0 1.0))', '(: meetingHappensImpliesEveryoneAgrees\n    (Implication\n        (Premises\n            (Happens meeting1))\n        (Conclusions\n            (EveryoneAgrees meeting1)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (EveryoneAgrees meeting1) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: human1 (Human h1) (STV 1.0 1.0))', '(: fly1 (CanFly h1) (STV 1.0 1.0))', '(: human2 (Human h2) (STV 1.0 1.0))', '(: fly2 (CanFly h2) (STV 1.0 1.0))', '(: human3 (Human h3) (STV 1.0 1.0))', '(: fly3 (CanFly h3) (STV 1.0 1.0))', '(: human4 (Human h4) (STV 1.0 1.0))', '(: fly4 (CanFly h4) (STV 1.0 1.0))', '(: human5 (Human h5) (STV 1.0 1.0))', '(: fly5 (CanFly h5) (STV 1.0 1.0))', '(: human6 (Human h6) (STV 1.0 1.0))', '(: fly6 (CanFly h6) (STV 1.0 1.0))', '(: human7 (Human h7) (STV 1.0 1.0))', '(: fly7 (CanFly h7) (STV 1.0 1.0))', '(: human8 (Human h8) (STV 1.0 1.0))', '(: fly8 (CanFly h8) (STV 1.0 1.0))', '(: human9 (Human h9) (STV 1.0 1.0))', '(: fly9 (CanFly h9) (STV 1.0 1.0))', '(: human10 (Human h10) (STV 1.0 1.0))', '(: fly10 (CanFly h10) (STV 1.0 1.0))', '(: humanCanFlyImpliesFlyingHumanRule (Implication (Premises (Human $h) (CanFly $h)) (Conclusions (FlyingHuman $h))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (FlyingHuman $h) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (WentAway bob february) (STV 1.0 1.0))', '(: februaryMonthNumber (MonthNumber february 2) (STV 1.0 1.0))', '(: octoberMonthNumber (MonthNumber october 10) (STV 1.0 1.0))', '(: monthsAgoRule\n    (Implication\n        (Premises\n            (WentAway $p $month)\n            (MonthNumber $month $mn)\n            (MonthNumber october $currentMn)\n            (Compute - ($currentMn $mn) -> $ago))\n        (Conclusions\n            (MonthsAgo $p $ago)))\n    (STV 1.0 1.0))', '(: currentYearFact (CurrentYear 2025) (STV 1.0 1.0))', '(: wentAwayYearRule\n    (Implication\n        (Premises\n            (WentAway $p $month)\n            (MonthNumber $month 2)\n            (CurrentYear 2025))\n        (Conclusions\n            (WentAwayYear $p 2025)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (MonthsAgo bob $ago) $tv)'], ['(: $prf (WentAwayYear bob $year) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: help1 (HelpingWith mark bob homework) (STV 1.0 0.9))', '(: help2 (HelpingWith mark anna homework) (STV 1.0 0.9))', '(: help3 (HelpingWith bob mark homework) (STV 1.0 0.9))', '(: help4 (HelpingWith bob anna homework) (STV 1.0 0.9))', '(: help5 (HelpingWith anna mark homework) (STV 1.0 0.9))', '(: help6 (HelpingWith anna bob homework) (STV 1.0 0.9))'],
+    queries=[['(: $prf (HelpingWith mark anna homework) $tv)'], ['(: $prf (HelpingWith $who $other homework) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Dog the_dog) (STV 1.0 0.9))', '(: f2 (HasMagicalFur the_dog) (STV 1.0 0.9))', '(: f3 (HasWhiteTail the_dog) (STV 1.0 0.9))', '(: hasMagicalFurImpliesMagicalRule\n    (Implication\n        (Premises\n            (HasMagicalFur $d))\n        (Conclusions\n            (Magical $d)))\n    (STV 0.9 0.7))', '(: whiteTailImpliesWhiteRule\n    (Implication\n        (Premises\n            (HasWhiteTail $d))\n        (Conclusions\n            (White $d)))\n    (STV 0.6 0.5))'],
+    queries=[['(: $prf (Magical the_dog) $tv)'], ['(: $prf (White the_dog) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: f1 (Behind bob the_door) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Behind bob the_door) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: onlyEatVegWhenExerciseRule\n    (Implication\n        (Premises\n            (EatVegetables i $day))\n        (Conclusions\n            (Exercise i $day)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (EatVegetables i $day) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: sKick (Kicked bob bucket) (STV 0.6 0.7))', '(: kickedImpliesDiedRule (Implication (Premises (Kicked $p bucket)) (Conclusions (Died $p))) (STV 0.9 0.8))', '(: kickedImpliesKickedSomethingRule (Implication (Premises (Kicked $p $obj)) (Conclusions (KickedSomething $p))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (KickedSomething bob) $tv)'], [': $prf (Died bob) $tv']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+2026/04/22 07:51:31 WARNING dspy.primitives.base_module: There is a mismatch of dspy version between saved model and current environment. You saved with `dspy==3.1.3`, but now you have `dspy==3.2.0`. This might cause errors or performance downgrade on the loaded model, please consider loading the model in the same environment as the saving environment.
+Prediction(
+    statements=['(: cameraImpliesDeviceRule\n    (Implication\n        (Premises\n            (Camera $x))\n        (Conclusions\n            (Device $x)))\n    (STV 1.0 1.0))', '(: cameraImpliesTakesPicturesRule\n    (Implication\n        (Premises\n            (Camera $x))\n        (Conclusions\n            (TakesPictures $x)))\n    (STV 1.0 1.0))', '(: c1 (Camera camera) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Device camera) $tv)']]
+)
+simba-roman: 0.5095
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: c1 (Cat cat1) (STV 1.0 1.0))', '(: c2 (Cat cat2) (STV 1.0 1.0))', '(: c3 (Cat cat3) (STV 1.0 1.0))', '(: p1 (Park park1) (STV 1.0 1.0))', '(: i1 (In cat1 park1) (STV 1.0 1.0))', '(: i2 (In cat2 park1) (STV 1.0 1.0))', '(: i3 (In cat3 park1) (STV 1.0 1.0))', '(: cu1 (Cute cat1) (STV 1.0 1.0))', '(: cu2 (Cute cat2) (STV 1.0 1.0))', '(: cu3 (Cute cat3) (STV 1.0 1.0))', '(: allKnownCatsCuteRule (Implication (Premises (Cat cat1) (Cute cat1) (Cat cat2) (Cute cat2) (Cat cat3) (Cute cat3)) (Conclusions (AllKnownCatsCute park1))) (STV 1.0 1.0))', '(: cuteCatInParkRule\n    (Implication\n        (Premises\n            (Cat $c)\n            (Cute $c)\n            (In $c park1))\n        (Conclusions\n            (CuteCatInPark $c park1)))\n    (STV 1.0 1.0))', '(: atLeast2CuteCatsInParkRule12\n    (Implication\n        (Premises\n            (CuteCatInPark cat1 park1)\n            (CuteCatInPark cat2 park1))\n        (Conclusions\n            (AtLeast2CuteCatsInPark park1)))\n    (STV 1.0 1.0))', '(: atLeast2CuteCatsInParkRule13\n    (Implication\n        (Premises\n            (CuteCatInPark cat1 park1)\n            (CuteCatInPark cat3 park1))\n        (Conclusions\n            (AtLeast2CuteCatsInPark park1)))\n    (STV 1.0 1.0))', '(: atLeast2CuteCatsInParkRule23\n    (Implication\n        (Premises\n            (CuteCatInPark cat2 park1)\n            (CuteCatInPark cat3 park1))\n        (Conclusions\n            (AtLeast2CuteCatsInPark park1)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (AllKnownCatsCute park1) $tv)'], ['(: $prf (CuteCatInPark $c park1) $tv)'], ['(: $prf (AtLeast2CuteCatsInPark park1) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: fact1 (Cat Tom) (STV 1.0 1.0))', '(: fact2 (In Tom park) (STV 1.0 1.0))', '(: fact3 (Cat Mary) (STV 1.0 1.0))', '(: fact4 (In Mary park) (STV 1.0 1.0))', '(: fact5 (Cat Alex) (STV 1.0 1.0))', '(: fact6 (In Alex park) (STV 1.0 1.0))', '(: twoCatsInParkRule (Implication (Premises (Cat $c1) (In $c1 park) (Cat $c2) (In $c2 park)) (Conclusions (TwoCatsInPark $c1 $c2 park))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (TwoCatsInPark $c1 $c2 park) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (TraderCount Company_X (PointMass 10000000)) (STV 1.0 1.0))', '(: s2 (TransactionsWithEachOther Company_X) (STV 1.0 1.0))', '(: s3 (Trader Tom) (STV 1.0 1.0))', '(: s4 (In Tom Company_X) (STV 1.0 1.0))', '(: s5 (Trader Mary) (STV 1.0 1.0))', '(: s6 (In Mary Company_X) (STV 1.0 1.0))', '(: transactionWithEachOtherRule (Implication (Premises (Trader $x) (Trader $y) (In $x $company) (In $y $company) (TransactionsWithEachOther $company)) (Conclusions (CanMakeTransactionsWithEachOther $x $y))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (CanMakeTransactionsWithEachOther Tom Mary) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (CountDist house Dog (ParticleFromNormal 10.0 2.0)) (STV 1.0 1.0))', '(: couldBe100DogsInHouseRule (Implication (Premises (CountDist house Dog (ParticleFromNormal 10.0 2.0))) (Conclusions (CouldBe100DogsInHouse house))) (STV 1.0 1.0))', '(: couldBeFewerThan10DogsInHouseRule (Implication (Premises (CountDist house Dog (ParticleFromNormal 10.0 2.0))) (Conclusions (CouldBeFewerThan10DogsInHouse house))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (CouldBeCount house Dog 11.0) $tv)'], ['(: $prf (CouldBe100DogsInHouse house) $tv)'], ['(: $prf (CouldBeFewerThan10DogsInHouse house) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (MoreThanHalfButLessThanTwoThirdsStudentsFailedExam) (STV 1.0 1.0))'],
+    queries=[['(: $prf (MoreThan60PercentStudentsFailedExam) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Runner Bob) (STV 1.0 1.0))', '(: s2 (MadeItToFinishLine Bob) (STV 1.0 1.0))', '(: s3 (Runner Alice) (STV 1.0 1.0))'],
+    queries=[['(: $prf (MadeItToFinishLine Alice) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: classroomTallRule (Implication (Premises (In $x classroom) (Not (Equal $x Henry))) (Conclusions (TallerThan160cm $x))) (STV 1.0 1.0))', '(: rioInClassroom (In Rio classroom) (STV 1.0 1.0))', '(: rioTall (TallerThan160cm Rio) (STV 1.0 1.0))', '(: henryNotTall (Not (TallerThan160cm Henry)) (STV 1.0 1.0))'],
+    queries=[['(: $prf (In Henry classroom) $tv)'], ['(: $prf (TallerThan160cm Rio) $tv)'], ['(: $prf (TallerThan160cm Henry) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (MetNewTeacherInRoom (PointMass 2) (PointMass 10)) (STV 1.0 1.0))', '(: s2 (Person Bob) (STV 1.0 1.0))', '(: s3 (InRoom Bob) (STV 1.0 1.0))'],
+    queries=[['(: $prf (MetNewTeacherInRoom (PointMass $chance) (PointMass 10)) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (BiggerThan oranges limes) (STV 1.0 1.0))', '(: s2 (BiggerThan water_melons oranges) (STV 1.0 1.0))', '(: smallerThanFromBiggerRule\n    (Implication\n        (Premises\n            (BiggerThan $x $y)\n            (BiggerThan $z $x))\n        (Conclusions\n            (SmallerThan $y $z)))\n    (STV 1.0 1.0))'],
+    queries=[['(: $prf (SmallerThan limes water_melons) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (EatsEveryMorning Bob 5 apples) (STV 1.0 1.0))', '(: s1 (MorningToday today) (STV 1.0 1.0))', '(: r1 (Implication (Premises (MorningToday today) (EatsEveryMorning $person 5 apples)) (Conclusions (GoingToEat $person 5 apples))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (GoingToEat Bob 5 apples) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Dog Max) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Dog Max) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: fact1 (Likes Bob HotFood) (STV 1.0 1.0))', '(: hotFoodAttributeRule (Implication (Premises (Likes Bob HotFood)) (Conclusions (LikedFoodAttribute Bob Hot))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (LikedFoodAttribute Bob $attr) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: whalesAreMammalsRule (Implication (Premises (Whale $x)) (Conclusions (Mammal $x))) (STV 1.0 1.0))', '(: whalesLiveInOceanRule (Implication (Premises (Whale $x)) (Conclusions (LivesInOcean $x))) (STV 1.0 1.0))', '(: oceanLivingAnimalsAreMarineAnimalsRule (Implication (Premises (Animal $x) (LivesInOcean $x)) (Conclusions (MarineAnimal $x))) (STV 1.0 1.0))', '(: marineMammalsExposedToPollutantPRule (Implication (Premises (MarineMammal $x)) (Conclusions (ExposedToPollutantP $x))) (STV 1.0 1.0))', '(: pollutantPExposureIncreasesDiseaseZRiskRule (Implication (Premises (ExposedToPollutantP $x)) (Conclusions (AtRiskOfDiseaseZ $x))) (STV 1.0 1.0))', '(: mammalsAreAnimalsRule (Implication (Premises (Mammal $x)) (Conclusions (Animal $x))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (AtRiskOfDiseaseZ whales) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (WentSwimming Bob) (STV 1.0 1.0))'],
+    queries=[['(: $prf (WentSwimming Bob) $tv)'], ['(: $prf (WentSwimming Bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Like Bob hiking) (STV 1.0 1.0))', '(: s2 (Like Anna hiking) (STV 1.0 1.0))', '(: s3 (GoTogether Bob Anna) (STV 1.0 1.0))', '(: s4 (GoTogether Anna Bob) (STV 1.0 1.0))', '(: likesHikingPersonRule (Implication (Premises (Like $person hiking)) (Conclusions (LikesHikingPerson $person))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (LikesHikingPerson $who) $tv)'], ['(: $prf (LikesHikingPerson $who) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Ball ball1) (STV 1.0 1.0))', '(: s2 (Red ball1) (STV 1.0 1.0))', '(: s3 (Bright ball1) (STV 1.0 1.0))', '(: s4 (Light light1) (STV 1.0 1.0))', '(: s5 (Bright light1) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Bright $obj) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: playedTennis1 (PlayedTennis Bob) (STV 1.0 1.0))'],
+    queries=[['(: $prf (PlayedTennis Bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (WentSwimming Bob) (STV 1.0 1.0))', '(: swimmingNowFromWentSwimming (Implication (Premises (WentSwimming $who)) (Conclusions (SwimmingNow $who))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (SwimmingNow Bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (WentSwimming Bob) (STV 1.0 1.0))', '(: swimmingNowFromWentSwimming (Implication (Premises (WentSwimming $who)) (Conclusions (SwimmingNow $who))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (SwimmingNow Bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Long Knife KitchenKnife) (STV 1.0 1.0))', '(: s2 (Sharp Knife KitchenKnife) (STV 1.0 1.0))', '(: s3 (Short Knife SashimiKnife) (STV 1.0 1.0))', '(: s4 (Blunt Knife SashimiKnife) (STV 1.0 1.0))', '(: shorterThanRule (Implication (Premises (Short Knife $a) (Long Knife $b)) (Conclusions (ShorterThan $a $b))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Long Knife $otherKnife) $tv)'], ['(: $prf (ShorterThan KitchenKnife SashimiKnife) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: meeting_unless_agreement_rule (Implication (Premises (Not (EveryoneAgrees))) (Conclusions (MeetingWontHappen meeting))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (EveryoneAgrees) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: h1human (Human h1) (STV 1.0 1.0))', '(: h1fly (CanFly h1) (STV 1.0 1.0))', '(: h2human (Human h2) (STV 1.0 1.0))', '(: h2fly (CanFly h2) (STV 1.0 1.0))', '(: h3human (Human h3) (STV 1.0 1.0))', '(: h3fly (CanFly h3) (STV 1.0 1.0))', '(: h4human (Human h4) (STV 1.0 1.0))', '(: h4fly (CanFly h4) (STV 1.0 1.0))', '(: h5human (Human h5) (STV 1.0 1.0))', '(: h5fly (CanFly h5) (STV 1.0 1.0))', '(: h6human (Human h6) (STV 1.0 1.0))', '(: h6fly (CanFly h6) (STV 1.0 1.0))', '(: h7human (Human h7) (STV 1.0 1.0))', '(: h7fly (CanFly h7) (STV 1.0 1.0))', '(: h8human (Human h8) (STV 1.0 1.0))', '(: h8fly (CanFly h8) (STV 1.0 1.0))', '(: h9human (Human h9) (STV 1.0 1.0))', '(: h9fly (CanFly h9) (STV 1.0 1.0))', '(: h10human (Human h10) (STV 1.0 1.0))', '(: h10fly (CanFly h10) (STV 1.0 1.0))', '(: countHumansFlying (HumansFlyingCount 10) (STV 1.0 1.0))'],
+    queries=[['(: $prf (HumansFlyingCount $n) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (WentAway Bob february) (STV 1.0 1.0))', '(: s2 (MonthsAgo Bob 8) (STV 1.0 1.0))', '(: s3 (WentAwayYear Bob 2025) (STV 1.0 1.0))'],
+    queries=[['(: $prf (MonthsAgo Bob $months) $tv)'], ['(: $prf (WentAwayYear Bob $year) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: h1 (HelpsWithHomework Mark Bob) (STV 1.0 1.0))', '(: h2 (HelpsWithHomework Bob Mark) (STV 1.0 1.0))', '(: h3 (HelpsWithHomework Mark Anna) (STV 1.0 1.0))', '(: h4 (HelpsWithHomework Anna Mark) (STV 1.0 1.0))', '(: h5 (HelpsWithHomework Bob Anna) (STV 1.0 1.0))', '(: h6 (HelpsWithHomework Anna Bob) (STV 1.0 1.0))', '(: providingHelpWithHomeworkRule (Implication (Premises (HelpsWithHomework $who $other)) (Conclusions (ProvidingHelpWithHomework $who))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (HelpsWithHomework Mark Anna) $tv)'], ['(: $prf (ProvidingHelpWithHomework $who) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: fact1 (MagicalFur Dog) (STV 1.0 1.0))', '(: fact2 (WhiteTail Dog) (STV 1.0 1.0))', '(: whiteFromTailRule (Implication (Premises (WhiteTail $x)) (Conclusions (White $x))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (MagicalFur Dog) $tv)'], ['(: $prf (White Dog) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (Behind Bob door) (STV 1.0 1.0))'],
+    queries=[['(: $prf (Behind Bob $where) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: eatVegetablesOnlyOnExerciseDaysRule (Implication (Premises (EatVegetablesOnDay I $day)) (Conclusions (ExerciseOnDay I $day))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (EatVegetablesOnDay I $day) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: s1 (KickedTheBucket Bob) (STV 1.0 1.0))', '(: dieFromKickedTheBucketRule (Implication (Premises (KickedTheBucket $who)) (Conclusions (Die $who))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (KickedTheBucket Bob) $tv)'], ['(: $prf (Die Bob) $tv)']]
+)
+WARNING:pettachainer.pettachainer:Multiprocessing query timeout is unavailable from interactive __main__; running query without a timeout
+Prediction(
+    statements=['(: cameraDeviceRule (Implication (Premises (Camera $x)) (Conclusions (Device $x))) (STV 1.0 1.0))', '(: cameraTakesPicturesRule (Implication (Premises (Camera $x)) (Conclusions (TakesPictures $x))) (STV 1.0 1.0))'],
+    queries=[['(: $prf (AlsoKnownAs pictures $what) $tv)']]
+)
+simba-0.289: 0.5407
