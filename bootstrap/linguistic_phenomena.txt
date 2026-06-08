@@ -1,1035 +1,195 @@
-1. Entity classification and kind membership: English classifies individuals as instances of types, classes, or kinds. Examples: Fido is a dog. The tulip is a flower. A robin is a bird.
+1. Entity classification and type membership: English classifies individuals as members of kinds, categories, and roles. Examples: A robin is a bird. Alice is a doctor. Mars is a planet.
 
-2. Properties and attributes: English assigns qualities, states, colors, sizes, ages, and other attributes to entities. Examples: The apple is red. The tower is tall. Maria is tired.
+2. Named entities and proper reference: Proper names, titles, and unique labels refer to specific people, places, organizations, or artifacts. Examples: Ada visited Paris. The Nile crosses Egypt. NASA launched the probe.
 
-3. Relational attributes: Some attributes relate one entity to another, such as age, height, price, owner, or role. Examples: The book is Maria's. The table is two meters long. Sam is the captain of the team.
+3. Common nouns and sortal constraints: Nouns introduce kinds of entities and constrain what can sensibly fill an argument role. Examples: The cat slept. A student solved the problem. The river overflowed.
 
-4. Identity and equivalence: English can state that two descriptions refer to the same entity or that two values are equal. Examples: Clark Kent is Superman. The winner is Aisha. My home is this apartment.
+4. Properties and attributes: Adjectives, nouns, and predicative phrases ascribe qualities, colors, sizes, materials, and other attributes. Examples: The ball is red. The table is wooden. The child seems tired.
 
-5. Existence and nonexistence: English asserts that something exists, appears, is present, or is absent. Examples: There is a cat on the roof. No milk remains in the fridge. A solution exists.
+5. Gradable properties and degree: Many adjectives and adverbs express values on scales and can be modified by degree words. Examples: The tower is very tall. The soup is slightly salty. The road is too narrow.
 
-6. Definite and indefinite reference: English distinguishes familiar, uniquely identifiable, and newly introduced entities. Examples: A dog barked. The dog ran away. I found a key.
+6. Non-gradable and categorical properties: Some predicates express binary or conventional classifications rather than scalar degrees. Examples: The switch is off. The animal is female. The document is confidential.
 
-7. Proper names and named entities: English uses names for specific people, places, organizations, times, and artifacts. Examples: Ada visited Paris. Google hired Lina. Everest is in Asia.
+7. Relational nouns and inherent relations: Some nouns require or imply another participant, such as kinship, ownership, authorship, or part relations. Examples: Maria is Leo's sister. Plato was Socrates' student. The car's engine failed.
 
-8. Pronouns and coreference: Pronouns and other referring expressions can point back to previously mentioned entities. Examples: Nora dropped the glass because she slipped. The dog chased the cat, but it escaped. Omar saw himself in the mirror.
+8. Possession and ownership: English expresses possession, control, association, and belonging with possessives and have constructions. Examples: Sam owns a bicycle. The girl's book is missing. The company has three offices.
 
-9. Deixis and context-dependent reference: Words such as I, you, here, now, this, and that depend on the speech context. Examples: I am here now. Put this on that shelf. You should leave tomorrow.
+9. Identity, equality, and distinctness: English states that two descriptions refer to the same entity or to different entities. Examples: Clark Kent is Superman. The winner was Elena. Alice is not Bob.
 
-10. Count nouns, mass nouns, and substances: English distinguishes countable objects from uncountable substances and abstract masses. Examples: I bought three chairs. She drank water. There is sand in the shoe.
+10. Existence and absence: English asserts or denies that entities or events exist, occur, or are present. Examples: There is a spider in the sink. A solution exists. No milk remains.
 
-11. Plurality and number: English expresses singularity, plurality, and groups of multiple entities. Examples: The child is sleeping. The children are sleeping. Three birds landed.
+11. Definiteness and indefiniteness: Articles and determiners signal familiarity, uniqueness, identifiability, or introduction of a new discourse referent. Examples: A dog barked. The dog ran away. This book is heavy.
 
-12. Collective entities and group reference: Groups can be treated as wholes or as collections of members. Examples: The committee met at noon. The team wore blue jerseys. The crowd dispersed.
+12. Demonstratives and deixis: Words like this, that, here, and there depend on speaker context, location, or salience. Examples: This cup is mine. Put the box there. That woman waved.
 
-13. Part-whole relations: English expresses components, portions, membership, and containment within larger wholes. Examples: The wheel is part of the car. The handle broke off the cup. Alice is a member of the club.
+13. Mass nouns, count nouns, and substance reference: English distinguishes countable individuals from masses and substances, often affecting quantification and measurement. Examples: Three apples fell. Some water spilled. The sand was warm.
 
-14. Possession and ownership: English marks ownership, custody, association, and control. Examples: Ben owns a bicycle. Sara has a laptop. The dog's collar is red.
+14. Measures, units, and quantities: Noun phrases can specify amount, weight, distance, price, volume, or other measured values. Examples: The rope is five meters long. She bought two liters of milk. The package weighs ten kilograms.
 
-15. Actions and events with thematic roles: English describes events involving roles such as agent, patient, theme, recipient, source, goal, and instrument. Examples: Lena cut the bread with a knife. Tom gave Maya a book. The wind broke the window.
+15. Plurality and number: Singular and plural marking distinguishes one entity from multiple entities and interacts with agreement and quantification. Examples: The bird sings. The birds sing. Two chairs broke.
 
-16. Agent and patient relations: English identifies who performs an action and who or what is affected. Examples: The chef chopped the onions. The cat scratched the sofa. The storm damaged the roof.
+16. Collective and distributive readings: Plural subjects can act as a group or as individuals. Examples: The students gathered in the hall. The students each received a badge. The boys carried a piano together.
 
-17. Transfer and ditransitive events: English describes giving, sending, showing, teaching, and other transfer events involving a giver, item, and recipient. Examples: Mira gave Jonah a ticket. The teacher taught the class algebra. Paul sent a letter to Kim.
+17. Part-whole and meronymy: English expresses components, portions, members, and wholes. Examples: The wheel is part of the car. The handle broke off the cup. Three players left the team.
 
-18. Instrument and means: English specifies tools, mechanisms, or means used to perform actions. Examples: She opened the door with a key. He traveled by train. They fixed the leak using tape.
+18. Set membership and inclusion: Sentences can describe membership in sets, subsets, classes, and groups. Examples: Erin belongs to the choir. Every square is a rectangle. The blue marbles are in the bag.
 
-19. Benefactive and malefactive roles: English marks who benefits from or is harmed by an event. Examples: Ana baked Leo a cake. The delay cost us money. He held the door for the visitor.
+19. Generic statements and kind reference: English can make claims about kinds, typical members, or general truths rather than particular individuals. Examples: Tigers have stripes. A dog needs exercise. The whale is a mammal.
 
-20. Experiencers and psychological states: English expresses perception, emotion, cognition, and bodily experience with experiencer roles. Examples: Priya fears spiders. The music pleased the audience. I felt a sharp pain.
+20. Actions and events with thematic roles: Verbs describe events involving roles such as agent, patient, theme, experiencer, source, goal, and recipient. Examples: Lina opened the door. The boy gave Mia a flower. The wind broke the window.
 
-21. Perception events: English describes seeing, hearing, smelling, tasting, and feeling, often with perceivers and perceived objects. Examples: I saw a hawk. Emma heard the alarm. The dog smelled smoke.
+21. Agent and patient relations: Many clauses distinguish the doer of an action from the entity affected by it. Examples: The chef chopped the onions. The dog chased the cat. Nora painted the fence.
 
-22. Speech and communication events: English describes saying, asking, telling, promising, warning, and other communicative acts. Examples: Lina told Omar the news. The sign warns drivers. He promised to return.
+22. Themes, recipients, sources, and goals: Transfer and motion verbs identify what moves, who receives it, where it comes from, and where it goes. Examples: Omar sent Dana a file. The bird flew from the tree to the roof. She poured water into the glass.
 
-23. Motion events: English expresses movement, movers, paths, sources, goals, and manners of motion. Examples: The child ran into the house. A bird flew over the lake. The ball rolled down the hill.
+23. Instruments and means: English can specify tools or methods used to perform an action. Examples: Ben cut the bread with a knife. She unlocked the door using a card. They traveled by train.
 
-24. Spatial location: English places entities in regions, positions, and configurations. Examples: The cup is on the table. The keys are under the mat. The school is near the park.
+24. Comitative and accompaniment relations: Sentences can state that participants act together or accompany one another. Examples: Maya walked with Leo. The teacher met with the parents. I ate lunch with my sister.
 
-25. Spatial containment and support: English distinguishes being in, inside, on, atop, attached to, or supported by something. Examples: The coin is in the box. The vase is on the shelf. The poster is on the wall.
+25. Manner and adverbial modification: Adverbs and adverbial phrases describe how an action is performed. Examples: The dancer moved gracefully. He answered in a whisper. The machine stopped suddenly.
 
-26. Spatial orientation and direction: English expresses left, right, front, back, above, below, north, and other orientations. Examples: The bank is north of the station. The lamp is to the left of the sofa. The plane flew upward.
+26. Result states and change of state: English describes transitions from one state to another and the resulting condition. Examples: The ice melted. She painted the wall blue. The door became locked.
 
-27. Distance and proximity: English describes nearness, farness, adjacency, and separation. Examples: The hotel is close to the beach. The village is far from the city. The two chairs are next to each other.
+27. Stative predicates and states: Some expressions describe conditions, locations, possession, emotions, or relations rather than events. Examples: Kim knows French. The vase is on the shelf. The child loves music.
 
-28. Paths and boundaries: English describes movement through, across, along, past, into, out of, and around regions. Examples: We walked through the forest. The truck crossed the bridge. The mouse ran out of the hole.
+28. Voice and argument alternations: Active, passive, middle, and related constructions change how participants are syntactically profiled. Examples: The guard opened the gate. The gate was opened by the guard. This book reads easily.
 
-29. Temporal tense: English locates situations in past, present, and future time. Examples: Maya cooked dinner. Maya is cooking dinner. Maya will cook dinner.
+29. Causation: English expresses that one event, state, or participant brings about another event or state. Examples: The storm caused flooding. Ravi made the baby laugh. The alarm woke everyone.
 
-30. Temporal ordering: English expresses before, after, during, while, since, until, and simultaneous events. Examples: I called after lunch. She slept while the rain fell. We waited until sunset.
+30. Enablement and prevention: Sentences can state that something permits, blocks, or makes an event possible or impossible. Examples: The key allowed her to enter. The fence kept the dog outside. The rain prevented the match.
 
-31. Dates, times, and calendar expressions: English refers to specific times, recurring calendar points, and relative dates. Examples: The meeting starts at 3 p.m. He arrived on Monday. We leave next week.
+31. Purpose and intended result: Infinitives, purpose clauses, and prepositional phrases express goals or reasons for actions. Examples: She studied to pass the exam. He saved money for a trip. They whispered so the baby would sleep.
 
-32. Duration and intervals: English expresses how long states or events last. Examples: She studied for two hours. The festival lasted three days. I have lived here since 2020.
+32. Spatial relations and location: Prepositions and locative phrases describe containment, contact, proximity, orientation, and relative position. Examples: The keys are in the drawer. The lamp is above the desk. The school is near the park.
 
-33. Aspect and event structure: English distinguishes ongoing, completed, repeated, beginning, continuing, and ending situations. Examples: The baby is sleeping. They have finished the work. The engine stopped running.
+33. Motion, path, and direction: English encodes movement through space, including source, path, goal, and trajectory. Examples: The cat ran across the street. She walked into the room. The ball rolled down the hill.
 
-34. Habitual and generic aspect: English describes regular behaviors, customs, and characteristic truths. Examples: Sara walks to work. Tigers hunt at night. My grandfather reads after dinner.
+34. Distance and spatial measurement: Sentences can compare or measure separation, proximity, and extent. Examples: The station is two miles away. The chair is closer to the door than the sofa. The river stretches for fifty kilometers.
 
-35. Frequency: English states how often events occur. Examples: I rarely eat meat. The bus arrives every ten minutes. They often visit their cousins.
+35. Temporal location and calendrical reference: English locates events at times, dates, clock times, and periods. Examples: The meeting starts at noon. We arrived on Monday. The festival happened in July.
 
-36. Existential quantification: English states that at least one entity satisfying a description is involved. Examples: Someone knocked. A bird is singing. There is a problem.
+36. Temporal duration and intervals: English expresses how long states or events last and the interval over which they hold. Examples: She slept for eight hours. The museum was closed during winter. He waited from noon until three.
 
-37. Universal quantification: English states that a claim holds for all members of a class or set. Examples: Every student passed. All dogs need water. Each ticket has a number.
+37. Temporal ordering and sequencing: Clauses and adverbs express before, after, simultaneity, and event order. Examples: Wash your hands before dinner. She called after the show ended. I read while the soup cooked.
 
-38. Cardinality and exact number: English expresses exact, minimum, maximum, and approximate quantities. Examples: Three students left. At least five people called. About twenty birds gathered.
+38. Tense: Verb forms and auxiliaries locate situations relative to speech time or another reference time. Examples: Nina walks to school. Nina walked to school. Nina will walk to school.
 
-39. Generalized quantifiers: English uses many, most, few, several, enough, half, and similar expressions. Examples: Most guests arrived early. Few children disliked the game. Several cars were parked outside.
+39. Aspect: English distinguishes ongoing, completed, repeated, prospective, and perfect situations. Examples: I am reading the report. I have read the report. I used to read every night.
 
-40. Proportions and percentages: English expresses fractions, ratios, and shares of sets or quantities. Examples: Half the class voted. Ten percent of the apples are rotten. Two thirds of the water evaporated.
+40. Frequency and habitual aspect: Adverbs and aspectual constructions express how often events occur or whether they are customary. Examples: She often jogs. The train arrives every hour. We usually eat dinner at seven.
 
-41. Distributive, collective, and cumulative readings: Plural expressions can apply to individuals separately, groups together, or quantities cumulatively. Examples: The students each carried a box. The students lifted a piano. Three boys ate five pizzas.
+41. Iteration and repetition: English can describe events occurring multiple times or again. Examples: He knocked three times. The baby laughed again. The light flashed repeatedly.
 
-42. Scope interactions: Quantifiers, negation, modality, and other operators can interact in ways that affect interpretation. Examples: Every student read a book. A guard is outside every door. Kim did not answer every question.
+42. Existential quantification: Determiners and pronouns assert that at least one entity satisfying a description exists. Examples: Someone knocked. A bird is singing. There is a problem.
 
-43. Negation: English denies propositions, events, properties, or existence. Examples: The door is not open. Sam did not call. No one entered.
+43. Universal quantification: English can state that a claim holds for all members of a set. Examples: Every student passed. All roads were closed. Each ticket has a number.
 
-44. Constituent negation and contrastive negation: English can negate a specific word or phrase rather than the whole clause. Examples: I want tea, not coffee. She spoke to Tom, not to Anna. The shirt is not red but orange.
+44. Cardinality and exact number: Numerals and numerical determiners specify exact or bounded counts. Examples: Three birds landed. Exactly two keys are missing. At least five people called.
 
-45. Negative polarity items: Certain expressions appear naturally in negative, interrogative, conditional, or downward-entailing environments. Examples: I did not see anyone. Do you have any money? If you ever need help, call me.
+45. Proportional and fractional quantification: Expressions describe proportions, fractions, percentages, or parts of a group. Examples: Most guests arrived early. Half of the cookies are gone. Twenty percent of the voters abstained.
 
-46. Modality of ability: English expresses whether an entity has the capacity or skill to do something. Examples: Nora can swim. The machine is able to print labels. I cannot lift that box.
+46. Indefinite and vague quantification: English uses imprecise quantity expressions such as many, few, several, enough, and some. Examples: Many trees fell. Few people noticed. She has enough money.
 
-47. Modality of possibility: English expresses that something may or might be true or occur. Examples: It may rain tonight. The keys might be in the car. This road could be closed.
+47. Negative quantification: Determiners and pronouns can combine quantification with negation. Examples: No students failed. Nobody answered. Nothing moved.
 
-48. Modality of necessity: English expresses that something must be true, required, or unavoidable. Examples: You must wear a helmet. The answer has to be correct. Water needs to be clean.
+48. Exceptives and inclusion modifiers: English can include or exclude subsets using expressions such as except, only, also, and besides. Examples: Everyone except Tom left. Only Maria solved the puzzle. Alex also came.
 
-49. Permission and prohibition: English expresses what is allowed or forbidden. Examples: You may leave early. Visitors can park here. Students must not enter the lab.
+49. Negation: English denies propositions, predicates, events, quantities, or constituents with not, never, no, and related forms. Examples: The door is not open. She never smokes. No train arrived.
 
-50. Obligation and advice: English expresses duties, norms, recommendations, and weaker requirements. Examples: You should apologize. Employees are supposed to sign in. Drivers ought to slow down.
+50. Lexical negation and antonymy: Some words encode negative or opposite meanings without explicit sentential negation. Examples: The answer is incorrect. The plan failed. The room was empty.
 
-51. Causation: English states that one event, action, or condition brings about another. Examples: The rain caused flooding. Sam made the baby laugh. The alarm woke everyone.
+51. Modality of ability: Can, be able to, and related expressions describe capacities or skills. Examples: Lina can swim. The machine is able to detect smoke. I cannot lift the box.
 
-52. Purpose and intention: English expresses goals, intended outcomes, and reasons for actions. Examples: Mina saved money to buy a car. He whispered so the baby would not wake. They built a fence for privacy.
+52. Modality of possibility and probability: English expresses that something may, might, could, or is likely to be true. Examples: It may rain. The package might arrive today. She is likely to win.
 
-53. Result and consequence: English describes outcomes produced by events or states. Examples: The glass fell and broke. She studied hard, so she passed. The room became quiet.
+53. Modality of necessity and obligation: Must, have to, need to, and should express requirements, necessities, or duties. Examples: You must stop. The plants need water. Employees have to wear badges.
 
-54. Comparison of degree: English compares entities along scales such as size, speed, age, cost, and quality. Examples: Lee is taller than Max. This road is less dangerous than that one. The blue bag is as heavy as the red bag.
+54. Modality of permission and prohibition: English states what is allowed, forbidden, or authorized. Examples: You may leave now. Visitors can take photos. Students must not enter the lab.
 
-55. Equality and similarity: English states that entities share equal values or resemble each other. Examples: The two ropes are the same length. This copy is identical to the original. Ava looks like her sister.
+55. Epistemic versus deontic modality: The same modal forms can express evidence-based inference or rules and obligations. Examples: The lights are on, so Sam must be home. You must submit the form. She may be in her office.
 
-56. Superlatives and extremes: English identifies maximal or minimal members with respect to a property. Examples: Dana is the fastest runner. This is the least expensive option. Everest is the highest mountain.
+56. Conditionals and if-then relations: Conditional clauses state dependencies between antecedents and consequents. Examples: If it rains, the picnic will move indoors. You pass if you score eighty. If the switch is off, the light stays dark.
 
-57. Ordinal relations and ranking: English expresses first, second, last, next, previous, and ranked order. Examples: Maya finished second. The last train left. The next chapter is shorter.
+57. Counterfactual conditionals: English can describe hypothetical situations contrary to fact or unlikely possibilities. Examples: If I had a car, I would drive. If she had called, we would have waited. If the vase fell, it would break.
 
-58. Conjunction: English combines entities, predicates, events, clauses, and conditions with and and related forms. Examples: Alice and Ben arrived. The soup is hot and spicy. Kim washed the dishes and dried them.
+58. Comparison of greater, lesser, and equal degree: Comparative constructions order entities or events on scales. Examples: Ana is taller than Ben. This route is less dangerous than that one. The two boxes are equally heavy.
 
-59. Disjunction and alternatives: English expresses alternatives, choices, and inclusive or exclusive possibilities. Examples: Tea or coffee is available. You can call or email me. Either the key is lost or the door is locked.
+59. Superlatives and extremal comparison: Superlatives identify maximal or minimal members relative to a comparison class. Examples: Kai is the fastest runner. This is the least expensive option. Everest is the highest mountain.
 
-60. Coordination of unlike categories: English can coordinate noun phrases, verb phrases, adjectives, clauses, and mixed structures. Examples: The box is heavy and hard to move. She sang and played guitar. I need a pen and to find my notes.
+60. Similarity and difference: English compares entities by likeness, identity of properties, or contrast. Examples: This copy is like the original. The twins look different. Her plan is the same as mine.
 
-61. Conditionals: English expresses dependencies between conditions and consequences. Examples: If it rains, the picnic will move indoors. You will pass if you study. If the light is red, stop.
+61. Conjunction: English combines entities, predicates, clauses, and propositions with and and similar coordinators. Examples: Kim and Lee arrived. The soup is hot and spicy. She opened the door and entered.
 
-62. Counterfactual conditionals: English describes hypothetical situations contrary to fact or presented as remote possibilities. Examples: If I had a car, I would drive there. If she had left earlier, she would have arrived on time. If this were gold, it would be heavier.
+62. Disjunction: English expresses alternatives, inclusive choices, or exclusive choices with or and either-or. Examples: Tea or coffee is available. Either call me or send an email. The key is in the drawer or on the table.
 
-63. Unless and exceptive conditions: English expresses negative or exceptional conditions. Examples: I will go unless it rains. No one may enter except staff. The store is open every day except Sunday.
+63. Coordination of unlike constituents: English can coordinate phrases of different semantic types when they share a larger function. Examples: She is smart and a good leader. Pat worked quickly and with care. I need your name and where you live.
 
-64. Propositional attitudes: English reports mental relations to propositions, including belief, knowledge, doubt, hope, fear, and expectation. Examples: Lena believes the train is late. Omar knows that the door is locked. I doubt that he is home.
+64. Scope interactions: Quantifiers, negation, modals, and other operators can take different semantic scopes. Examples: Every student read a book. A guard did not check every bag. You may not enter.
 
-65. Desire, intention, and preference: English expresses wants, wishes, plans, goals, and preferences. Examples: Nina wants to leave. They intend to build a house. I prefer tea to coffee.
+65. Propositional attitudes: Verbs like believe, know, think, hope, fear, and doubt relate agents to embedded propositions. Examples: Maya believes that the door is locked. Jon knows that the train left. I doubt that he is awake.
 
-66. Factivity and presupposed truth: Some expressions suggest that their complements are already true or taken for granted. Examples: Mia knows that the file is missing. I regret that I shouted. Sam realized that the gate was open.
+66. Desire, intention, and preference: English expresses wants, plans, goals, and preferences toward actions or states. Examples: Rosa wants to leave. The team intends to win. I prefer coffee to tea.
 
-67. Intensional and opaque contexts: In belief, desire, search, and modal contexts, descriptions may not behave like ordinary references. Examples: Leo is looking for a unicorn. Maya wants a new assistant. Kim believes the masked singer is famous.
+67. Knowledge and factivity: Some predicates presuppose the truth of their complements, while others do not. Examples: Eva knows that the safe is open. Leo realized that he was late. Sam thinks that the safe is open.
 
-68. Manner adverbs: English modifies events by describing how they are performed. Examples: She opened the box carefully. The dog barked loudly. He answered politely.
+68. Communication and speech reports: English reports saying, asking, promising, warning, and other communicative acts. Examples: Mia said that the gate was open. The officer warned us about ice. He promised to return.
 
-69. Degree adverbs and intensifiers: English modifies the strength or extent of properties, events, and quantifiers. Examples: The soup is very hot. She almost won. The box is completely full.
+69. Questions and interrogatives: English asks for truth values, entities, quantities, times, places, reasons, or choices. Examples: Did the train arrive? Who opened the window? Which road leads north?
 
-70. Temporal adverbs: English uses adverbs to locate or relate events in time. Examples: He arrived yesterday. She will call soon. They already finished.
+70. Imperatives and directives: English issues commands, requests, instructions, or permissions through imperative forms. Examples: Close the door. Please sit down. Take one tablet daily.
 
-71. Aspectual adverbs: English marks continuation, completion, repetition, and change with adverbs such as still, already, again, and anymore. Examples: The child is still awake. I already ate. She knocked again.
+71. Reasons and explanations: English expresses why something happens or why someone acts. Examples: The game stopped because it rained. She left since she was tired. The road closed due to flooding.
 
-72. Relative clauses: English uses clauses to restrict or add information about nouns. Examples: The man who called is my uncle. The book that I borrowed is missing. I visited Paris, which I love.
+72. Focus-sensitive expressions: Words such as only, even, also, and too depend on focused alternatives. Examples: Only Dana laughed. Even the teacher was surprised. Sam also bought a ticket.
 
-73. Restrictive and nonrestrictive modification: Modifiers can identify which entity is meant or add parenthetical information. Examples: Students who study pass. My brother, who lives in Rome, called. The red car is mine.
+73. Anaphora and pronoun reference: Pronouns and other anaphoric expressions refer back to entities, events, or propositions in discourse. Examples: Maria dropped the glass, and it shattered. Leo saw Omar, and he waved. I missed the train, which annoyed me.
 
-74. Apposition: English places noun phrases side by side to identify or describe the same entity. Examples: My friend Sara arrived. Paris, the capital of France, is crowded. The winner, a young pianist, smiled.
+74. Reflexives and binding: Reflexive pronouns require suitable antecedents, often within a local clause. Examples: Alice praised herself. The boys blamed themselves. Ken introduced himself to the class.
 
-75. Complement clauses: English embeds full propositions as subjects, objects, or complements. Examples: That she left surprised me. I think that he is honest. The problem is that we are late.
+75. Discourse reference and accessibility: Later expressions can depend on entities introduced by earlier indefinite or definite phrases. Examples: A dog entered. The dog barked. If a farmer owns a donkey, he feeds it.
 
-76. Control constructions: English allows an unspoken participant in an embedded action to be understood from another phrase. Examples: Anna promised to help. Ben persuaded Cara to leave. The children tried to sleep.
+76. Relative clauses: Relative clauses restrict or add information about nouns. Examples: The woman who called is my aunt. I found the book that you lost. The car, which was red, sped away.
 
-77. Raising constructions: English can make an entity appear as the subject of a higher verb while semantically belonging to an embedded clause. Examples: Sam seems to be tired. The plan is likely to fail. Nina appears to know the answer.
+77. Restrictive versus appositive modification: Some modifiers narrow reference, while others add parenthetical information. Examples: Students who registered may enter. My brother, who lives in Rome, is visiting. The vase on the shelf is cracked.
 
-78. Passive voice and voice alternations: English changes perspective on event participants, often foregrounding the affected entity. Examples: The window was broken by the storm. The cake was eaten. Maria received a letter.
+78. Complement clauses: Clauses can function as arguments of verbs, adjectives, or nouns. Examples: She claimed that the test was easy. It is clear that he lied. The idea that time bends is strange.
 
-79. Causative-inchoative alternation: English distinguishes causing a change from undergoing a change. Examples: Kim broke the vase. The vase broke. The sun melted the ice.
+79. Control constructions: An unspoken subject of an infinitive is understood from another argument. Examples: Sara promised to help. Sara persuaded Tom to help. The children tried to sleep.
 
-80. Reflexives and reciprocals: English expresses actions directed back to the same participant or mutually among participants. Examples: Leo blamed himself. The twins helped each other. The countries traded with one another.
+80. Raising constructions: Some predicates appear to assign a subject syntactically while the subject belongs semantically to an embedded predicate. Examples: Tom seems to be tired. The plan is likely to fail. Kim appears to know the answer.
 
-81. Ellipsis and omitted material: English often leaves recoverable words or phrases unspoken. Examples: Kim ordered tea, and Lee coffee. I can play guitar, and Maya can too. Sam likes chess more than Nora does.
+81. Ellipsis and omitted material: English often leaves understood material unspoken, requiring recovery from context. Examples: Alice ordered tea, and Bob coffee. I can swim, and she can too. Who came? Maria.
 
-82. Anaphoric one, do so, and substitution: English uses substitute expressions to avoid repetition. Examples: I need a pen, preferably a blue one. Lina washed the car, and Omar did so too. This cake is better than the other one.
+82. Ambiguous attachment: Prepositional phrases and modifiers can attach to different constituents, changing meaning. Examples: I saw the man with a telescope. She ate the cake on the plate. The spy watched the guard near the door.
 
-83. Questions and interrogatives: English asks for truth values, entities, times, places, reasons, manners, and quantities. Examples: Did Ana call? Who opened the door? How many tickets remain?
+83. Preposition polysemy: Prepositions have multiple related meanings across space, time, cause, possession, and topic. Examples: The book is on the table. The show starts on Monday. She wrote a book on birds.
 
-84. Embedded questions: English can include questions inside larger declarative or interrogative sentences. Examples: I know where she lives. Tell me who won. Do you remember when it started?
+84. Idioms and conventionalized meanings: Some expressions have meanings not predictable from their parts. Examples: He kicked the bucket. She spilled the beans. They broke the ice.
 
-85. Imperatives and directives: English issues commands, requests, invitations, and instructions. Examples: Close the window. Please sit down. Let us begin.
+85. Metaphor and metonymy: English often uses one domain or associated entity to refer to another. Examples: The White House issued a statement. Time is running out. The ham sandwich wants the check.
 
-86. Requests and indirect speech acts: English often expresses intended actions indirectly through questions or statements. Examples: Can you pass the salt? I would like you to leave. It is cold in here.
+86. Presupposition triggers: Certain words and constructions imply background assumptions. Examples: Dana stopped smoking. The king of France is bald. It was Maya who broke the cup.
 
-87. Speech reports and quotation: English reports utterances directly or indirectly. Examples: Ana said, I am ready. Ana said that she was ready. The notice says the road is closed.
+87. Implicative and implicature-like predicates: Some verbs imply success, failure, or nonoccurrence of an embedded event. Examples: She managed to escape. He failed to arrive. They avoided hitting the deer.
 
-88. Tense sequence and reported time: English shifts or preserves tense in embedded and reported contexts. Examples: Leo said he was tired. Mia says she is leaving tomorrow. I knew that the train had departed.
+88. Adversative and concessive relations: English expresses contrast between expected and actual outcomes. Examples: Although it rained, we played. She was tired but happy. Even though he studied, he failed.
 
-89. Generics and kind-level statements: English makes broad claims about kinds rather than specific individuals. Examples: Dogs bark. The tiger is striped. A smartphone uses electricity.
+89. Alternative and exhaustive meanings: Some constructions require selecting among alternatives or excluding unmentioned options. Examples: Which color did you choose? I chose red rather than blue. The answer is either yes or no.
 
-90. Exceptions and default generalizations: English states rules with exceptions or tendencies rather than absolute universals. Examples: Birds usually fly. All students except Nina passed. Normally, water boils at this temperature.
+90. Probability, uncertainty, and evidential strength: English marks confidence, uncertainty, rumor, appearance, or evidence. Examples: Apparently, the train is late. She probably forgot. It seems that the roof is leaking.
 
-91. Vagueness and gradability: Many English predicates have context-sensitive boundaries and degrees. Examples: The room is warm. The child is tall. The pile is small.
+91. Evaluation and sentiment: English expresses judgments, attitudes, goodness, badness, desirability, or importance. Examples: The movie was excellent. It is unfortunate that she left. This task is important.
 
-92. Approximation and imprecision: English expresses rough quantities, times, and descriptions. Examples: About fifty people came. The trip took roughly an hour. She is around six feet tall.
+92. Norms, rules, and social roles: English states what is required, permitted, forbidden, customary, or appropriate in a social system. Examples: Drivers should stop at red lights. Guests may not smoke here. Judges must be impartial.
 
-93. Measurement and units: English expresses quantities using units, dimensions, and measurement scales. Examples: The board is two meters long. The jar holds one liter. The package weighs five kilograms.
+93. Numerical approximation and vagueness: English can express inexact numerical values and vague thresholds. Examples: About twenty people came. The trip took nearly an hour. She is over six feet tall.
 
-94. Rates and speeds: English expresses quantities per unit of time, distance, or other measure. Examples: The car traveled sixty miles per hour. The printer makes ten pages per minute. The rent is two thousand dollars a month.
+94. Ordinals and ranking: Ordinal expressions identify position in an ordered sequence. Examples: Lee finished first. The third drawer is empty. This is her second attempt.
 
-95. Monetary and value expressions: English states prices, costs, values, wages, and payments. Examples: The ticket costs ten dollars. She paid thirty euros. The house is worth a million dollars.
+95. Event nominalization: Nouns can denote events, processes, or results derived from verbs. Examples: The destruction of the bridge shocked us. Her arrival was late. The investigation continued.
 
-96. Age expressions: English expresses age and age comparisons. Examples: The baby is six months old. Omar is older than Lina. This tree is centuries old.
+96. Subsective, intersective, and intensional adjectives: Modifiers differ in whether they preserve category membership or introduce intensional readings. Examples: A red car is a car. A skilled surgeon is a surgeon. A former senator is not a senator.
 
-97. Change of state: English describes entities becoming, remaining, or ceasing to be in states. Examples: The leaves turned yellow. The soup became cold. The door stayed open.
+97. Quotation, mention, and language use: English can use words to refer to expressions themselves rather than their usual denotations. Examples: Cat has three letters. She said hello. The word bank is ambiguous.
 
-98. State versus event distinctions: English distinguishes static conditions from dynamic occurrences. Examples: The vase is on the table. The vase fell. Maya knows French.
-
-99. Achievements, accomplishments, activities, and states: English verbs differ in temporal shape and completion. Examples: She reached the summit. He built a house. They ran in the park.
-
-100. Incremental themes and affected objects: Some events progress as their objects are consumed, created, or transformed. Examples: Kim ate the sandwich. Nora wrote a letter. The workers painted the wall.
-
-101. Polarity, contrast, and focus: English highlights alternatives or contrasts using stress, clefts, and focus-sensitive words. Examples: It was Maya who called. Only Sam passed. Even Leo smiled.
-
-102. Additive and scalar particles: English uses words such as also, too, even, only, and just to relate alternatives and expectations. Examples: Nina also came. I only ate one cookie. Even the teacher was surprised.
-
-103. Presupposition triggers: Definite descriptions, again, stop, continue, too, and similar expressions carry background assumptions. Examples: The king of the island arrived. Lee stopped smoking. Maya came too.
-
-104. Implicature and pragmatic enrichment: English often conveys more than it explicitly states through context and conversational expectations. Examples: Some guests left early. The soup is warm. Can you reach the shelf?
-
-105. Lexical ambiguity and polysemy: English words can have multiple related or unrelated meanings. Examples: The bank closed at five. The boat reached the bank. She opened a new account.
-
-106. Structural ambiguity: A sentence can have multiple meanings because phrases can attach or group differently. Examples: I saw the man with a telescope. Old men and women waited. She discussed the plan on Monday.
-
-107. Modifier attachment: English modifiers may apply to different nearby expressions. Examples: She photographed the bird in the park. I bought a book with pictures. The student from Spain with glasses spoke.
-
-108. Idioms and fixed expressions: English includes multiword expressions whose meanings are not fully predictable from their parts. Examples: She kicked the bucket. He spilled the beans. They broke the ice.
-
-109. Light verb constructions: English uses semantically light verbs with nouns to express events. Examples: She took a walk. He made a decision. They had a discussion.
-
-110. Phrasal verbs: English verb-particle combinations can have compositional or idiomatic meanings. Examples: She looked up the word. The plane took off. He gave up.
-
-111. Nominalization: English turns events, properties, or relations into nouns. Examples: The destruction of the city shocked us. Her arrival was late. The measurement took an hour.
-
-112. Comparative subdeletion and differential comparison: English compares degrees with explicit or implicit differences. Examples: The table is two inches wider than the door. The lake is deeper than the river is wide. She is much faster than me.
-
-113. Correlatives and proportional comparison: English expresses paired changes across two scales. Examples: The more you practice, the better you get. The colder it gets, the more fuel we use. The faster he runs, the sooner he arrives.
-
-114. Similarity, difference, and distinction: English states that entities match or differ in properties or identity. Examples: These two keys are different. The twins look alike. This answer differs from yours.
-
-115. Set membership and inclusion: English expresses membership in groups and containment among categories. Examples: Dana belongs to the choir. Whales are mammals. This folder includes three files.
-
-116. Selection and choice: English marks choosing one or more alternatives from a set. Examples: Pick a card. She chose the blue dress. Select any two options.
-
-117. Exclusion and inclusion: English states what is included, excluded, added, or removed. Examples: The price includes breakfast. Taxes are not included. Remove the broken pieces.
-
-118. Ordering and sequencing of events: English describes series of actions in chronological or procedural order. Examples: First wash the rice. Then add water. Finally cover the pot.
-
-119. Purpose clauses and rationale clauses: English distinguishes intended goals from explanatory reasons. Examples: She left early to avoid traffic. He stayed home because he was sick. I called so that you would know.
-
-120. Reason and explanation: English gives causes, justifications, and evidence for claims. Examples: The road is wet because it rained. Since you are here, we can start. He must be home, for the lights are on.
-
-121. Concession and contrast: English expresses unexpected coexistence or opposition between facts. Examples: Although it rained, we played outside. The bag is small but heavy. Even though she was tired, she continued.
-
-122. Temporal recurrence and schedules: English describes events occurring on repeated days, cycles, or schedules. Examples: The train leaves every morning. The shop closes on Sundays. We meet twice a month.
-
-123. Ability versus opportunity: English distinguishes capacity from circumstantial chance. Examples: Lina can speak French. Lina can speak now because the room is quiet. The door can open from inside.
-
-124. Permission versus possibility ambiguity: English modal verbs can express either allowedness or factual possibility. Examples: You can leave after lunch. The answer can be wrong. Students may use calculators.
-
-125. Epistemic modality and evidential flavor: English expresses degrees of certainty and evidence. Examples: She must be at work. He might have forgotten. Apparently, the train is delayed.
-
-126. Attitude toward events and evaluation: English expresses approval, surprise, importance, likelihood, and desirability. Examples: It is good that you came. It is surprising that she won. It is likely that we will wait.
-
-127. Predicative versus attributive modification: English adjectives can appear as predicates or inside noun phrases, sometimes with different meanings. Examples: The stars are visible. The visible stars are bright. The responsible person apologized.
-
-128. Intersective and nonintersective adjectives: Some adjectives simply add a property, while others depend on the noun or change classification. Examples: The red car stopped. Olga is a former senator. He is a skillful surgeon.
-
-129. Adjective ordering and stacked modification: Multiple modifiers combine to narrow or describe a noun. Examples: She bought a small red wooden box. The old stone bridge collapsed. I saw three large black dogs.
-
-130. Adverbial placement and scope: The position of adverbs can change what they modify. Examples: Only Maria fed the cat. Maria only fed the cat. Maria fed only the cat.
-
-131. Parentheticals and supplements: English inserts side comments that modify the speaker's commitment or add background information. Examples: The plan, I think, will work. The storm, unfortunately, arrived early. Ben, as you know, is careful.
-
-132. Coordination scope and grouping: English coordinations can group in different ways. Examples: Alice invited Bob and Carol or Dan. The flag is red and white or blue. Sam bought apples and pears or oranges.
-
-133. Quantification over events: English can quantify not only over entities but over occurrences. Examples: Every time she visits, she brings flowers. Some meetings last too long. No accident happened today.
-
-134. Bare plurals and bare mass terms: English uses nouns without determiners for generic, existential, or kind-level meanings. Examples: Cats like warmth. I bought rice. Students were waiting outside.
-
-135. Specificity and nonspecificity: Indefinite expressions may refer to a particular entity or to any entity satisfying a description. Examples: I am looking for a certain book. I need a pen. She wants to marry a doctor.
-
-136. Definiteness and uniqueness: Definite expressions often imply identifiability or uniqueness within context. Examples: The sun is bright. Close the door. The president spoke.
-
-137. Anaphoric definites and bridging: Definite descriptions can refer to entities inferred from earlier mentions. Examples: I bought a car, but the engine is noisy. We entered a house, and the kitchen was dark. A wedding began, and the bride smiled.
-
-138. Recency and salience in reference: English reference often depends on which entity is most prominent in discourse. Examples: John met Bill after he called. The dog chased the squirrel until it hid. Mary handed Sue the vase because she trusted her.
-
-139. Comparisons involving quantities: English compares numbers and amounts directly. Examples: More than ten people arrived. Fewer students passed this year. We need as much water as before.
-
-140. Minimum and maximum constraints: English expresses lower and upper bounds on quantities and degrees. Examples: Bring at least two forms of ID. The box holds at most ten books. The child is no more than five years old.
-
-141. Enumeration and listing: English presents multiple items as members of a set or sequence. Examples: The flag is red, white, and blue. Bring bread, cheese, and fruit. The winners were Ana, Bo, and Chen.
-
-142. Exception handling in quantification: English carves out individuals or subclasses from broader claims. Examples: Everyone except Tom attended. All rooms but one are full. No pets other than service dogs are allowed.
-
-143. Proportional and vague frequency: English expresses how often something happens with precise or vague rates. Examples: She visits once a week. He almost always wins. They seldom complain.
-
-144. Generic habitual with dispositional meaning: English can describe what an entity is disposed or designed to do. Examples: This knife cuts bread well. The door locks automatically. Bees sting when threatened.
-
-145. Event participants left implicit: English often omits participants that are understood from context. Examples: The chef is cooking. The book sells well. This shirt washes easily.
-
-146. Middle voice: English can describe how easily an object undergoes an action without naming an agent. Examples: This bread cuts easily. The car drives smoothly. The fabric stains quickly.
-
-147. Generic second person and arbitrary subjects: English uses you, one, or they for people in general. Examples: You never know what will happen. One should be careful. They say the road is haunted.
-
-148. Comparative deletion and ellipsis: English omits repeated material in comparative clauses. Examples: Sue is taller than Max is. This box is heavier than that one. I read more books than Lee did.
-
-149. Subordination and clause linking: English connects clauses with because, although, when, before, after, while, and other subordinators. Examples: I stayed because it rained. We left when the bell rang. She smiled although she was nervous.
-
-150. Relative time from reference points: English locates events relative to another event or reference time. Examples: She had left before I arrived. He will have finished by noon. Two days later, they returned.
-
-151. Prospective aspect: English expresses events expected or about to occur. Examples: The train is about to leave. She is going to call. The team is set to win.
-
-152. Continuation and persistence: English states that a condition remains true across time. Examples: The store is still open. He remains angry. The tradition continues.
-
-153. Cessation and termination: English marks stopping, ending, quitting, and no longer being true. Examples: The music stopped. She quit smoking. The road no longer exists.
-
-154. Start and inception: English marks the beginning of states or events. Examples: It began to rain. The baby started crying. The meeting opened at noon.
-
-155. Repetition and iteration: English marks repeated occurrences of the same event type. Examples: She knocked three times. He read the letter again. The alarm kept ringing.
-
-156. Logical relations expressed by discourse connectives: English connects larger stretches of discourse with relations such as contrast, result, elaboration, and sequence. Examples: The roads were icy. Therefore, we stayed home. The team lost. However, the fans cheered.
-
-157. Numerals as labels versus quantities: English uses numbers both to count and to name or identify. Examples: Room 204 is empty. She has two rooms. Bus 12 arrived late.
-
-158. Units of measure versus containers: English distinguishes amount measured from container or portion expressions. Examples: She drank a glass of water. The recipe needs two cups of flour. He bought a bottle of wine.
-
-159. Substance portions and individuation: English can package mass nouns into countable portions. Examples: I ordered two coffees. She ate three cheeses. We need a slice of bread.
-
-160. Classifiers and measure nouns: English uses nouns such as piece, pair, group, kind, and type to count or classify. Examples: He found a piece of paper. She bought a pair of shoes. This is a type of orchid.
-
-161. Taxonomic and subtype relations: English expresses category hierarchies and subclass relations. Examples: A poodle is a kind of dog. Oak is a type of tree. Jazz is a form of music.
-
-162. Role nouns and social relations: English describes people by roles, kinship, jobs, and institutional positions. Examples: Maya is a doctor. Leo is Ana's brother. Kim became mayor.
-
-163. Kinship and interpersonal relations: English expresses family and social relationships. Examples: Sara is Omar's mother. Ben is friends with Lee. Nina married Paul.
-
-164. Symmetric and asymmetric relations: English includes relations that may or may not hold in both directions. Examples: Alice is near Bob. Alice is taller than Bob. Alice is Bob's cousin.
-
-165. Reciprocal social events: English describes interactions involving mutual participation. Examples: The two leaders met. The teams competed. The children argued with each other.
-
-166. Creation and destruction events: English describes entities coming into or going out of existence. Examples: The artist painted a portrait. The fire destroyed the barn. They built a bridge.
-
-167. Acquisition and loss: English expresses gaining, obtaining, losing, and lacking things. Examples: Mia found a wallet. Omar lost his keys. The team gained a player.
-
-168. Availability and accessibility: English describes whether something can be obtained, reached, or used. Examples: Tickets are available online. The file is accessible to staff. The road is blocked.
-
-169. Capacity and containment limits: English expresses how much an entity can hold or support. Examples: The jar holds two liters. The elevator carries eight people. The shelf supports fifty pounds.
-
-170. Function and use: English states what something is for or how it is used. Examples: A key opens locks. This tool is for cutting wire. The room serves as an office.
-
-171. Norms, rules, and laws: English expresses institutional or social rules. Examples: Drivers must stop at red lights. Employees may not smoke indoors. Children under twelve need a ticket.
-
-172. Definitions and descriptions: English gives meanings or identifying descriptions. Examples: A bachelor is an unmarried man. Photosynthesis is a process used by plants. A triangle has three sides.
-
-173. Metalinguistic statements: English can talk about words, names, and expressions themselves. Examples: Cat has three letters. Run is a verb. Paris is pronounced differently in French.
-
-174. Uncertainty and hedging: English marks weak commitment or approximate belief. Examples: I think she is home. The answer is probably correct. It seems that the road is closed.
-
-175. Evidentials and information source: English indicates how information was obtained. Examples: I heard that Maya resigned. Apparently, the shop is closed. The footprints show that someone entered.
-
-176. Surprise and mirativity: English can signal that information is unexpected. Examples: It turns out that Leo won. Surprisingly, the door was open. She actually finished early.
-
-177. Emphasis and intensification: English highlights strength, certainty, or contrast. Examples: I really need help. She absolutely refused. This is exactly what I wanted.
-
-178. Politeness and social meaning: English encodes politeness, formality, and interpersonal stance. Examples: Could you open the window? Please take a seat. I would appreciate your help.
-
-179. Register and domain-specific meaning: English expressions vary by context, profession, and style. Examples: The patient presented with fever. The server returned an error. The defendant entered a plea.
-
-180. Metaphor and figurative extension: English often describes one domain in terms of another. Examples: Time is running out. She attacked his argument. The idea took root.
-
-181. Hyperbole and understatement: English can exaggerate or minimize for effect. Examples: I have told you a million times. The suitcase weighs a ton. The test was not exactly easy.
-
-182. Irony and sarcasm: English can convey the opposite of literal wording depending on context. Examples: Great, another delay. Nice job breaking the vase. What a perfect day for a flood.
-
-183. Ambiguous attachment of negation and modality: English can leave unclear whether negation applies to an event, obligation, possibility, or participant. Examples: You must not leave. You do not have to leave. She cannot possibly know.
-
-184. Comparative ambiguity: English comparisons may leave the comparison class or standard implicit. Examples: The coffee is better. This apartment is expensive. She is tall for her age.
-
-185. Contextual standards for adjectives: Gradable adjectives depend on comparison classes and situations. Examples: A small elephant is a large animal. The water is cold for tea. The exam was easy for Sam.
-
-186. Anaphora to events and propositions: English pronouns and demonstratives can refer to events, facts, or claims. Examples: Maya resigned, and that surprised everyone. He lost the key, which annoyed me. The concert was canceled, but I expected it.
-
-187. Abstract entities: English refers to ideas, facts, events, qualities, plans, and reasons as entities. Examples: The idea is simple. Her honesty impressed us. The meeting lasted an hour.
-
-188. Events as nominal referents: English can treat actions and happenings as things that can be counted, described, and related. Examples: The explosion was loud. The race began late. Two accidents happened yesterday.
-
-189. Relations between propositions: English expresses entailment, contradiction, support, and consistency in ordinary language. Examples: His story contradicts hers. The evidence supports the claim. This fact implies a mistake.
-
-190. Topic and comment structure: English often separates what a sentence is about from what is said about it. Examples: As for the car, it is repaired. That book, I have not read. The soup, everyone liked.
-
-191. Clefts and pseudoclefts: English highlights a focused constituent by special sentence structure. Examples: It was Nora who called. What I need is a map. The place we met was the library.
-
-192. Left and right dislocation: English can place a phrase outside the main clause and refer to it with a pronoun. Examples: That movie, I loved it. My sister, she lives in Peru. I cannot stand it, this noise.
-
-193. Coordination with shared arguments: English can share subjects, objects, or modifiers across coordinated verbs or clauses. Examples: Lina bought and read the book. Sam washed, dried, and folded the towels. The dog chased and caught the ball.
-
-194. Gapping and stripping: English omits repeated material in coordinated structures. Examples: Kim likes tea, and Lee coffee. I ordered soup, and Maria salad. Sam went to Paris, and Ana too.
-
-195. Comparative and equative standards: English uses explicit or implicit standards in more, less, as, same, and different constructions. Examples: This rope is longer than that rope. The two bags are equally heavy. The result is different from yesterday.
-
-196. Interrogative quantification: English asks about quantities, degrees, and frequencies. Examples: How many guests arrived? How tall is the tower? How often do you travel?
-
-197. Alternative questions: English asks the hearer to choose among alternatives. Examples: Do you want tea or coffee? Is the meeting today or tomorrow? Should we walk or drive?
-
-198. Tag questions and confirmation seeking: English adds short questions to statements to seek confirmation. Examples: You are coming, aren't you? The door is locked, is it not? She called, right?
-
-199. Embedded imperatives and instructions: English reports or embeds directives as content. Examples: The sign says to stop. I told him to wait. The recipe says to add salt.
-
-200. Conditional commands and permissions: English combines directives with conditions. Examples: If the alarm rings, leave the building. You may enter if you have a badge. Call me when you arrive.
-
-201. Temporal conditionals: English uses time clauses that can function like conditions. Examples: When the bell rings, start writing. Once the water boils, add pasta. After you finish, submit the form.
-
-202. Nonfinite clauses: English uses infinitive, gerund, and participial clauses to express actions, reasons, purposes, and modifiers. Examples: To win, you must practice. Walking home, she found a coin. The man wearing a hat waved.
-
-203. Participial modifiers: English uses present and past participles to describe nouns or events. Examples: The crying baby woke me. The broken window let in rain. Students carrying signs marched.
-
-204. Absolute constructions: English uses detached phrases to provide background circumstances. Examples: Weather permitting, we will sail. His work finished, Omar left. The meeting over, everyone went home.
-
-205. Small clauses: English expresses predication without a finite verb in certain constructions. Examples: I consider Sam honest. She painted the door red. We found the room empty.
-
-206. Resultative constructions: English describes an action and the state it brings about. Examples: She wiped the table clean. He hammered the metal flat. The crowd shouted itself hoarse.
-
-207. Depictive secondary predicates: English describes a participant's state during an event. Examples: She ate the fish raw. He arrived drunk. They left the room angry.
-
-208. Temporal simultaneity and overlap: English states that two situations occur at the same time or overlap. Examples: She sang while he played piano. During the storm, the power failed. I met her as I was leaving.
-
-209. Temporal precedence and succession: English orders events before and after one another. Examples: Wash your hands before dinner. We left after the movie ended. The alarm rang, then everyone woke up.
-
-210. Temporal deadlines and endpoints: English expresses completion or validity by a time. Examples: Submit the form by Friday. The offer lasts until noon. She finished before midnight.
-
-211. Temporal starting points: English marks when a state or event begins. Examples: The shop has been open since nine. From Monday, the road will close. Starting tomorrow, tickets cost more.
-
-212. Duration versus completion ambiguity: English time phrases can describe duration or time to completion. Examples: She read for an hour. She read the book in an hour. He slept through the lecture.
-
-213. Location versus destination ambiguity: English prepositional phrases may describe where something is or where it goes. Examples: She ran in the park. She ran into the park. He put the book on the table.
-
-214. Source, goal, and route distinction: English distinguishes where motion begins, ends, and passes through. Examples: The train left Boston. The train arrived in Chicago. The train went through Albany.
-
-215. Contact and attachment: English describes touching, fastening, and physical connection. Examples: The sticker is on the bottle. The rope is tied to the post. The two magnets touched.
-
-216. Orientation relative to observer: English spatial descriptions can depend on viewpoint. Examples: The tree is left of the house. The car is behind the building. The front of the statue faces the river.
-
-217. Ownership versus temporary possession: English distinguishes legal ownership, control, and temporary holding. Examples: Priya owns the car. Leo has the keys today. Maya is holding my phone.
-
-218. Alienable and inalienable possession: English expresses both detachable possessions and inherent relations such as body parts or kinship. Examples: Omar's hat is blue. Omar's hand hurts. Omar's sister called.
-
-219. Quantified possession: English combines possession with quantity. Examples: She has three cats. The house has two doors. No student has a calculator.
-
-220. Comparative possession and more-than relations: English compares who has more or fewer things. Examples: Ana has more books than Leo. This room has fewer windows. Both bags contain the same number of apples.
-
-221. Permission, obligation, and authority source: English can specify who grants permission or imposes duty. Examples: The teacher allowed us to leave. The law requires helmets. My doctor told me to rest.
-
-222. Ability under conditions: English can condition abilities on circumstances. Examples: The car can cross the bridge if it is not flooded. I can help when I am free. The program runs only on new phones.
-
-223. Preference ordering: English ranks alternatives by desirability. Examples: I like coffee better than tea. She would rather walk than drive. My favorite color is green.
-
-224. Desire conflicts and competing goals: English can express incompatible wants or priorities. Examples: I want to sleep, but I need to work. She hopes to win yet fears the attention. They prefer speed over comfort.
-
-225. Belief reports with mistaken identity: English can report beliefs that conflict with actual identity or facts. Examples: Sam thinks the stranger is a doctor. Lina believes the empty box contains gold. Omar does not know that the caller is his sister.
-
-226. Knowledge-wh and acquaintance: English distinguishes knowing facts, answers, people, places, and skills. Examples: I know that she left. He knows where the key is. Maria knows French.
-
-227. Remembering and forgetting: English expresses retained or lost information, events, and obligations. Examples: I remember meeting her. He forgot the password. Do not forget to lock the door.
-
-228. Learning and discovery: English expresses changes in knowledge. Examples: She learned that the store closed. We discovered a cave. He found out who called.
-
-229. Attention and awareness: English expresses noticing, ignoring, focusing on, and being aware of things. Examples: I noticed the stain. She ignored the warning. They focused on the problem.
-
-230. Emotion and evaluation predicates: English relates experiencers to emotional states and causes. Examples: The news saddened him. Nina is proud of her son. The joke amused everyone.
-
-231. Physical condition and health states: English expresses bodily states, symptoms, and conditions. Examples: Ben is hungry. Maya has a fever. The patient feels dizzy.
-
-232. Weather and environmental predicates: English describes weather and environmental conditions, often without ordinary agents. Examples: It is raining. It snowed last night. The room is humid.
-
-233. Impersonal and expletive subjects: English uses dummy subjects in some constructions. Examples: It is late. There is a mouse in the kitchen. It seems that we lost.
-
-234. Existential there constructions: English introduces entities with there plus a form of be or similar verbs. Examples: There are cookies on the plate. There appeared a strange light. There remains one issue.
-
-235. Numerical identity and distinctness: English distinguishes counting separate entities from multiple descriptions of one entity. Examples: Alice invited three different doctors. The same man came twice. Two names refer to one person.
-
-236. Repetition of individuals versus events: English distinguishes the same entity recurring from a new entity or event. Examples: The same bird returned. Another bird arrived. She knocked again.
-
-237. Alternation between states and locations: English uses have, be, contain, include, and locate expressions with related meanings. Examples: The box contains coins. Coins are in the box. The box has coins in it.
-
-238. Event causation by absences and omissions: English can treat failures or absences as causes. Examples: Lack of rain killed the crops. His silence worried me. Missing the bus made her late.
-
-239. Prevention and enablement: English expresses blocking or allowing events to happen. Examples: The fence prevented escape. The medicine enabled recovery. The password lets users enter.
-
-240. Attempt and success: English distinguishes trying from achieving. Examples: She tried to open the jar. She managed to open the jar. He failed to solve the puzzle.
-
-241. Implicative verbs: Some verbs imply success or failure of their complements. Examples: She managed to escape. He failed to arrive. They forgot to pay.
-
-242. Aspectual coercion: English can shift event interpretations to fit temporal modifiers or context. Examples: The author began a new book. She finished the sandwich. The room sleeps four guests.
-
-243. Eventive readings of nouns: English can infer an associated event from a noun. Examples: The concert was loud. The book took months to write. Lunch lasted an hour.
-
-244. Institutional and conventional roles: English describes statuses created by social practices. Examples: This paper counts as a receipt. The judge declared them married. The coin is legal tender.
-
-245. Classification by function rather than form: English can classify entities by use or role. Examples: The crate served as a chair. This room is a classroom. The phone became a flashlight.
-
-246. Similarity classes and comparison sets: English interpretations often depend on an implicit group being compared. Examples: Sam is tall for a jockey. This is cheap for a hotel. The puppy is large for its breed.
-
-247. Salient alternatives in focus-sensitive expressions: English words such as only, even, also, and too depend on contextual alternatives. Examples: Only Kim laughed. Even Kim laughed. Kim laughed too.
-
-248. Free choice expressions: English uses any and related expressions to convey unrestricted choice in some contexts. Examples: You may choose any seat. Any student can apply. Take whichever book you like.
-
-249. Choice functions and arbitrary selection language: English sometimes refers to an unspecified but selectable member of a set. Examples: Pick a number. Choose a card. Take any cookie.
-
-250. Donkey anaphora and dependent pronouns: English pronouns can depend on quantified or conditional antecedents. Examples: Every farmer who owns a donkey feeds it. If a student has a laptop, she should bring it. No parent with a baby ignored it.
-
-251. Quantifier domain restriction: English quantifiers are interpreted relative to contextually limited domains. Examples: Everyone is here. All the food is gone. No chairs are available.
-
-252. Modal domain restriction: English modal claims depend on relevant rules, facts, goals, or evidence. Examples: You must be quiet. She can leave now. It might rain.
-
-253. Embedded modality: English can place modal meanings inside attitudes, questions, conditionals, and relative clauses. Examples: I believe she can win. If you must leave, call me. The person who may enter is Ana.
-
-254. Layered modification: English allows multiple modifiers with nested semantic effects. Examples: The fake antique vase broke. The alleged thief escaped. The former local champion returned.
-
-255. Fake, former, alleged, and other intensional adjectives: Certain adjectives change how a noun phrase refers or whether the noun property is asserted. Examples: A fake diamond sparkled. The former mayor spoke. The alleged burglar denied it.
-
-256. Temporal adjectives and stage-level properties: English distinguishes temporary conditions from stable properties. Examples: The available seats are near the front. The visible stars faded. The current president spoke.
-
-257. Stage-level and individual-level predicates: English distinguishes temporary states from enduring characteristics. Examples: Kim is hungry. Kim is intelligent. The door is open.
-
-258. Result states and perfect meanings: English marks present relevance of past events. Examples: She has broken the vase. The guests have arrived. I have lost my wallet.
-
-259. Future reference without will: English can refer to future events using present forms and constructions. Examples: The train leaves tomorrow. I am meeting Sam tonight. We are going to win.
-
-260. Generic present versus current present: English present tense can express timeless regularities or ongoing situations. Examples: Water freezes at zero degrees. She works in Boston. She is working now.
-
-261. Events with multiple agents: English expresses joint action, cooperation, and shared agency. Examples: Ana and Ben carried the sofa. The workers built the bridge together. The committee approved the plan.
-
-262. Events with multiple patients or themes: English expresses actions affecting several entities. Examples: She washed the plates and cups. The storm damaged houses and trees. He packed two bags.
-
-263. Reciprocal comparison and matching: English compares or matches members across groups. Examples: Each child held a parent's hand. The students paired with tutors. Every key matched a lock.
-
-264. Mapping and correspondence relations: English expresses one-to-one, many-to-one, or ordered correspondences. Examples: Each guest received a badge. Every room has a number. The names correspond to seats.
-
-265. Distribution over time and space: English spreads events or entities across intervals or regions. Examples: The lights flashed throughout the night. Stores line the street. Rain fell across the valley.
-
-266. Boundedness and telicity: English distinguishes events with inherent endpoints from open-ended activities. Examples: She ran for an hour. She ran a mile. He ate soup for ten minutes.
-
-267. Plural event readings: English can describe multiple events collectively or individually. Examples: The children sneezed. The guests arrived one by one. The lights flashed all night.
-
-268. Event counting and individuation: English counts occurrences using times, occasions, cases, and instances. Examples: She called three times. There were two accidents. On several occasions, he apologized.
-
-269. Manner of motion versus path of motion: English can encode how motion happens separately from where it goes. Examples: She limped into the room. The bottle floated down the river. The child skipped across the yard.
-
-270. Sound emission and sensory emission: English describes entities emitting sounds, light, smells, or other perceptible phenomena. Examples: The bell rang. The lamp glowed. The soup smelled spicy.
-
-271. Symptom and evidence relations: English links observations to conclusions or underlying states. Examples: Smoke means fire. The tracks indicate a deer. Her cough suggests a cold.
-
-272. Argument realization alternations: English verbs can appear with different participant patterns. Examples: Maria loaded hay onto the truck. Maria loaded the truck with hay. The door opened.
-
-273. Locative alternation: English alternates between emphasizing a location and the material placed there. Examples: She sprayed paint on the wall. She sprayed the wall with paint. They packed books into the box.
-
-274. Dative alternation: English alternates between double-object and prepositional transfer constructions. Examples: He gave Mia a ring. He gave a ring to Mia. She sent the office a memo.
-
-275. Unaccusative and unergative distinctions: English intransitive verbs differ in whether the subject undergoes a change or performs an activity. Examples: The vase fell. The child laughed. The ice melted.
-
-276. Scalar change: English describes movement along a scale such as temperature, size, amount, or intensity. Examples: The price rose. The soup cooled. The crowd grew.
-
-277. Incremental comparison over time: English expresses that a value changes relative to an earlier value. Examples: The days are getting shorter. Prices became higher. Her voice grew quieter.
-
-278. Counterexpectation markers: English signals outcomes contrary to expectations. Examples: Still, she continued. Nevertheless, the plan succeeded. Even so, we waited.
-
-279. Additive discourse relations: English adds related information across sentences or clauses. Examples: The hotel is clean. It is also cheap. She bought bread and milk too.
-
-280. Elaboration and exemplification: English expands or illustrates previous content. Examples: Several animals escaped, including a zebra. I need tools, for example a hammer. The problem is simple: the battery is dead.
-
-281. Summarization and reformulation: English restates content in a condensed or clarified form. Examples: In short, we failed. That is, the door was locked. In other words, he refused.
-
-282. Contrastive topic: English contrasts parallel topics across clauses. Examples: As for tea, I like it. As for coffee, I avoid it. John likes chess, but Mary likes tennis.
-
-283. Conditional probability and tendency: English expresses that one condition makes another more likely rather than guaranteed. Examples: If it is cloudy, it may rain. When prices rise, demand often falls. Exercise can improve sleep.
-
-284. Statistical and probabilistic language: English expresses likelihood, odds, chance, and risk. Examples: There is a high chance of rain. The patient is likely to recover. The risk is low.
-
-285. Correlation and association: English states that two variables or properties tend to occur together. Examples: Smoking is linked to disease. Height correlates with age in children. The two symptoms often appear together.
-
-286. Causal versus correlational distinction: English distinguishes causing from merely accompanying. Examples: The drug caused drowsiness. The two events coincided. Ice cream sales are associated with hot weather.
-
-287. Plans, schedules, and commitments: English represents intended future actions and organized events. Examples: We plan to meet at noon. The concert is scheduled for Friday. She is committed to finishing.
-
-288. Promises, threats, and offers: English expresses commitments to future actions with social force. Examples: I promise to help. He threatened to sue. She offered to drive.
-
-289. Permission requests and grants: English expresses asking for and giving authorization. Examples: May I enter? You may use my phone. The manager approved the request.
-
-290. Capability of artifacts: English describes what tools, systems, and devices can do by design. Examples: This camera records video. The app can translate text. The lock opens with a code.
-
-291. Functional dependency: English states that one value or outcome depends on another. Examples: The fee depends on the distance. Success depends on practice. The color changes with temperature.
-
-292. Constraints and requirements: English describes necessary conditions for goals or validity. Examples: A passport is required. You need a ticket to enter. The password must contain a number.
-
-293. Eligibility and qualification: English states who meets criteria for roles, benefits, or actions. Examples: Adults are eligible to vote. Only members may enter. Applicants must have experience.
-
-294. Sufficiency: English states that a condition is enough for an outcome. Examples: One ticket is enough. Pressing this button starts the machine. A valid ID will suffice.
-
-295. Necessity of conditions: English states that a condition is required for an outcome. Examples: You need water to live. A key is necessary to open the door. Without fuel, the car will not run.
-
-296. Conditional exclusion and restriction: English limits actions to certain circumstances. Examples: Use the stairs only in emergencies. Enter if authorized. Do not open the box unless instructed.
-
-297. Adversative causation: English expresses causing an undesirable or contrasting result. Examples: The noise kept me awake. The mistake prevented approval. The storm forced us inside.
-
-298. Facilitation and assistance: English expresses helping an event occur. Examples: The map helped us find the trail. The new tool makes cutting easier. Her advice enabled success.
-
-299. Obviation and avoidance: English expresses acting so that something does not happen. Examples: He left early to avoid traffic. She saved the file lest it be lost. They wore boots to prevent injury.
-
-300. Purpose versus result ambiguity: English clauses can be interpreted as intended goals or actual outcomes. Examples: She opened the window to cool the room. He shouted so loudly that everyone heard. I pressed the button to start the machine.
-
-301. Conditional purpose: English can make goals depend on conditions. Examples: Bring an umbrella in case it rains. Save the receipt if you need a refund. Call me if you get lost.
-
-302. Nonveridical contexts: English includes contexts where the truth of embedded content is not asserted. Examples: I hope that she wins. If he is home, call him. Did Maya leave?
-
-303. Veridical and antiveridical expressions: Some English expressions imply truth or falsity of their complements. Examples: She knows that the door is open. He pretended that he was asleep. It is false that the ticket is valid.
-
-304. Attitude strength and certainty: English grades mental commitment. Examples: I suspect he left. I am sure she won. They are uncertain whether it works.
-
-305. Preference under uncertainty: English combines desire and uncertainty. Examples: I hope the train is on time. She would like a seat by the window. They fear the plan may fail.
-
-306. Temporal attitude content: English attitudes can concern past, present, or future situations. Examples: I remember that she left. I believe she is home. I expect she will call.
-
-307. Agentive intention versus accidental action: English distinguishes deliberate from accidental events. Examples: He broke the glass on purpose. She accidentally deleted the file. They intentionally ignored the warning.
-
-308. Volition and willingness: English expresses whether participants choose or consent to act. Examples: Nina agreed to help. Omar refused to leave. The dog would not move.
-
-309. Consent and coercion: English distinguishes voluntary action from forced action. Examples: She chose to stay. The guard forced him to leave. They were made to apologize.
-
-310. Social permissions and rights: English expresses entitlements and authority. Examples: Citizens have the right to vote. Members are allowed to borrow books. Visitors may not take photos.
-
-311. Obligations over time: English expresses deadlines, recurring duties, and standing obligations. Examples: Rent is due on Friday. Employees must report weekly. You have to renew the license every year.
-
-312. Norm violation and compliance: English describes obeying, breaking, satisfying, or violating rules. Examples: She followed the instructions. The company violated the law. This password meets the requirements.
-
-313. Conditional obligation: English states duties that arise under certain circumstances. Examples: If you drive, you must carry a license. When the alarm sounds, leave immediately. Employees who travel must file receipts.
-
-314. Event permission versus object permission: English can allow actions or authorize use of objects. Examples: You may swim here. This pass allows entry. The license permits commercial driving.
-
-315. Attributive possession and relational nouns: English compresses relations into noun phrases. Examples: the city mayor resigned. the car door opened. the school principal spoke.
-
-316. Compound nouns: English combines nouns to express underspecified relations. Examples: chicken soup is hot. The coffee cup broke. The snow shovel is missing.
-
-317. Genitives and possessive constructions: English genitives express ownership, authorship, kinship, parts, time, and more. Examples: Anna's bike is new. Shakespeare's plays endure. Yesterday's storm was severe.
-
-318. Prepositional relation diversity: English prepositions express many relations beyond space, including time, cause, topic, instrument, and possession. Examples: She arrived after lunch. He died from illness. We spoke about music.
-
-319. Aboutness and topic relations: English marks the subject matter of speech, thought, texts, and concern. Examples: The book is about whales. We talked about the budget. I worry about the exam.
-
-320. Reference to information objects: English distinguishes physical documents from their informational contents. Examples: The book is heavy. The book is interesting. The email says the meeting moved.
-
-321. Medium and content distinction: English separates messages from carriers. Examples: The letter is torn. The letter says hello. The video explains the rule.
-
-322. File, document, and data entities: English refers to informational artifacts with properties and contents. Examples: The file is corrupted. The report lists three errors. The spreadsheet contains prices.
-
-323. Agentive organizations: English treats organizations as actors with beliefs, decisions, and actions. Examples: The company hired a lawyer. The committee decided to wait. The school announced a closure.
-
-324. Institutional events: English describes events defined by social rules. Examples: The court sentenced him. The university awarded a degree. The bank approved the loan.
-
-325. Geopolitical entities: English uses names that can refer to places, governments, populations, or teams. Examples: France signed the treaty. France is beautiful. France won the match.
-
-326. Metonymy: English often uses a related entity to stand for another. Examples: The White House issued a statement. The kettle is boiling. Hollywood loves sequels.
-
-327. Type-token distinctions: English distinguishes a type or work from its copies or instances. Examples: I read Hamlet. The library owns three Hamlets. This word appears twice.
-
-328. Event location versus participant location: English can locate an event or one of its participants. Examples: The concert is in the park. The singer is in the park. The ticket is in my pocket.
-
-329. Event time versus reference time: English can distinguish when an event occurs from when it is discussed or scheduled. Examples: The meeting is tomorrow. The announcement was yesterday. The deadline is next week.
-
-330. Reported plans and future-in-the-past: English describes future events from a past viewpoint. Examples: She was going to call. They would leave the next day. I was about to speak.
-
-331. Conditional perfect and past unreal outcomes: English describes hypothetical past consequences. Examples: If he had studied, he would have passed. She would have won if she had entered. We could have helped.
-
-332. Alternative possible outcomes: English expresses outcomes that could, might, or would occur under different circumstances. Examples: The glass could break. We might miss the train. Another route would save time.
-
-333. Counterfactual desire: English expresses wishes contrary to fact. Examples: I wish I were taller. She wishes she had studied. They wish the rain would stop.
-
-334. Regret and evaluation of alternatives: English evaluates past possibilities or choices. Examples: I should have called. He regrets leaving early. They ought to have waited.
-
-335. Conditional questions: English asks questions under assumed conditions. Examples: If it rains, where will we meet? What would you do if you won? If the store is closed, should we go home?
-
-336. Subjunctive and mandative constructions: English expresses demands, recommendations, or hypothetical states with special verb forms. Examples: I insist that he leave. It is important that she be present. If I were rich, I would travel.
-
-337. Degree questions and exclamatives: English asks or exclaims about degree. Examples: How tall is the tower? How cold is it outside? How beautiful the garden is.
-
-338. Exclamatives: English expresses surprise or strong evaluation. Examples: What a storm that was. How quickly she ran. Such a beautiful day.
-
-339. Vocatives and address: English directly addresses participants. Examples: Maria, close the door. Thank you, doctor. Friends, listen carefully.
-
-340. Names used descriptively: English can use names to describe similarity or role rather than literal identity. Examples: She is the Einstein of our class. Do not be a Scrooge. This city is a new Venice.
-
-341. Categorization with borderline cases: English handles uncertain or contested category membership. Examples: A tomato is often called a vegetable. Is chess a sport? This object is almost a circle.
-
-342. Scalar endpoints and closed scales: English adjectives can have maximum or minimum endpoints. Examples: The glass is full. The room is empty. The line is straight.
-
-343. Open-scale adjectives: English adjectives can lack fixed endpoints and depend on context. Examples: The soup is hot. The road is long. The dog is heavy.
-
-344. Absolute versus relative adjectives: English distinguishes properties with fixed criteria from context-relative ones. Examples: The door is closed. The box is large. The number is prime.
-
-345. Comparative standards left implicit: English often omits the standard of comparison. Examples: The new phone is faster. This route is safer. I need a bigger box.
-
-346. Measure phrases with adjectives: English uses measurements to specify degrees. Examples: The table is six feet long. The water is ten degrees colder. The child is three years old.
-
-347. Degree achievements: English verbs express gradual change along a scale. Examples: The sky darkened. The road widened. The soup cooled.
-
-348. Intensified comparatives: English modifies comparative degree. Examples: This book is much longer. The road is slightly narrower. She is far more experienced.
-
-349. Superlative comparison class: English superlatives depend on the relevant group. Examples: Lina is the tallest in her class. This is the best restaurant nearby. He chose the cheapest ticket.
-
-350. Uniqueness and maximality in plural definites: English definites can refer to maximal groups. Examples: The students left. The apples are ripe. The doors are closed.
-
-351. Plural definites with exceptions: English plural definites can tolerate contextually salient subsets or exceptions. Examples: The children are asleep, except Emma. The books arrived, though one is missing. The lights are off apart from the kitchen.
-
-352. Inclusive and exclusive we: English first-person plural may include or exclude the addressee. Examples: We should leave now. We will send you the report. We are gathered here today.
-
-353. Pronoun gender and animacy: English pronouns encode distinctions such as personhood, gender, and animacy. Examples: She is waiting. It is broken. They arrived early.
-
-354. Singular they and gender-neutral reference: English uses they for unknown, nonbinary, or nonspecific individuals. Examples: Someone left their bag. Alex said they are coming. Each student should bring their book.
-
-355. Quantified pronouns: English uses pronouns such as everyone, someone, nobody, each, and all. Examples: Everyone laughed. Somebody called. Nobody answered.
-
-356. Indefinite pronouns and vague reference: English refers to unspecified people or things. Examples: Something moved. Someone is outside. Anything can happen.
-
-357. Reciprocal scope: English reciprocals can have different groupings or pairings. Examples: The students know each other. The teams played one another. The children gave each other gifts.
-
-358. Reflexive binding constraints: English reflexives usually depend on a local antecedent. Examples: Maya saw herself. The boy's father praised himself. Anna told Ben about herself.
-
-359. Logophoric and perspective-sensitive pronouns: English pronoun interpretation can depend on whose perspective is represented. Examples: In John's picture, he looked brave. Mary heard a rumor about herself. According to Ana, she deserved the prize.
-
-360. Indexical shift in quotation and reported speech: English contrasts the speaker's here and now with quoted perspectives. Examples: Leo said, I am here. Leo said that he was there. The note read, Meet me tomorrow.
-
-361. Direct versus indirect evidence in perception reports: English distinguishes perceiving an event directly from inferring it. Examples: I saw him leave. I saw that he had left. She heard the baby crying.
-
-362. Perception of states versus events: English perception verbs can take objects, states, or eventive complements. Examples: I saw the red car. I saw the car move. I saw that the car was red.
-
-363. Object permanence and tracking across change: English refers to the same entity across changing properties. Examples: The green apple turned red. The child became an adult. The old building is now a museum.
-
-364. Temporal persistence of identity: English preserves identity across time despite change. Examples: This is the same river I saw yesterday. The puppy grew into a dog. My old school became a hospital.
-
-365. Role change and becoming: English describes entities entering or leaving roles. Examples: Maya became president. Leo stopped being captain. The room turned into an office.
-
-366. Naming and renaming: English describes assigning or changing names. Examples: They named the baby Sofia. The city was renamed. We call this star Polaris.
-
-367. Labeling and classification acts: English describes speech acts that classify or designate. Examples: The judge declared him guilty. The committee classified the file as secret. She marked the box fragile.
-
-368. Evidence-based inference with must and cannot: English uses modals to draw conclusions from evidence. Examples: The lights are on, so she must be home. He cannot be asleep; he is talking. The road must be icy.
-
-369. Conditional inference markers: English signals conclusions from premises. Examples: If the key fits, this must be the door. Since the lights are off, they are probably gone. Given the delay, we may miss the train.
-
-370. Temporal inference from aspect: English aspect can suggest whether events are complete or ongoing. Examples: She was writing a letter. She wrote a letter. She has written a letter.
-
-371. Implicit arguments in passives and nominals: English can leave agents or other participants unspecified. Examples: The window was broken. The decision was made. The destruction was sudden.
-
-372. Generic agents in passives: English passives can imply unnamed people in general. Examples: English is spoken here. These flowers are grown locally. The form must be signed.
-
-373. By-phrases and agent expression: English passives can optionally express the agent. Examples: The song was written by Lee. The window was broken by a ball. The meal was prepared by the chef.
-
-374. Information packaging in passives: English uses passive voice to emphasize affected entities or maintain topic continuity. Examples: The proposal was approved. The injured bird was rescued. The package was delivered yesterday.
-
-375. Rhetorical questions: English questions can function as assertions or evaluations. Examples: Who cares? Is that your idea of help? How could I forget?
-
-376. Negative questions and bias: English negative questions often convey expectation or surprise. Examples: Did you not call? Is she not coming? Have you never been here?
-
-377. Polarity alternatives in questions: English questions can offer positive and negative alternatives. Examples: Are you coming or not? Did she call or did she not? Is the door open?
-
-378. Wh-scope and multiple questions: English questions can ask for multiple values or pairings. Examples: Who bought what? Which student read which book? Where did everyone sit?
-
-379. Island-sensitive dependencies: English restricts certain long-distance question or relative dependencies. Examples: Who did you say left? What did you read a book about? Who heard the rumor that Maya met Leo?
-
-380. Long-distance dependencies: English relates displaced phrases to positions understood elsewhere. Examples: What did you eat? The book that I read was long. This is the person I told you about.
-
-381. Topicalization: English moves a phrase to the front to mark topic or contrast. Examples: This book, I enjoyed. That problem, we solved yesterday. Beans, I cannot stand.
-
-382. Preposition stranding and pied-piping: English can leave prepositions behind or move them with wh-phrases. Examples: Who did you talk to? To whom did you speak? This is the chair I sat on.
-
-383. Relative pronoun omission: English can omit relative pronouns in some relative clauses. Examples: The book I bought is new. The person you met is my cousin. The house we rented was small.
-
-384. Free relatives: English uses wh-clauses as noun phrases. Examples: I ate what she cooked. Whoever arrives first wins. Take whichever seat you like.
-
-385. Headless relatives and fused determiners: English combines determiner-like and noun-like meanings in one expression. Examples: The rich need support. I chose the red one. What he said was true.
-
-386. Comparative relatives and correlatives: English links relative-like clauses with comparison. Examples: The more she reads, the more she learns. Whoever studies passes. What matters most is safety.
-
-387. Adverbial clauses of manner: English describes the way an event occurs using clauses. Examples: Do it as I showed you. She acted like she knew him. He spoke as if he were angry.
-
-388. As-if and as-though clauses: English expresses resemblance, pretense, or hypothetical appearance. Examples: She looked as if she had seen a ghost. He talks as though he owns the place. The room felt as if it were moving.
-
-389. Counterfactual manner: English describes actions performed in an unreal or imagined manner. Examples: He spoke as if he were king. She smiled as though nothing had happened. They ran as if chased.
-
-390. Temporal anaphora in discourse: English interprets times across sentences relative to prior events. Examples: Sam entered the room. He sat down. A minute later, he left.
-
-391. Narrative progression: English often advances event time through simple past clauses. Examples: She opened the door. She stepped inside. She turned on the light.
-
-392. Backgrounding in narrative: English uses past progressive and perfect forms to set background. Examples: It was raining when we arrived. She had lost her key. The children were playing outside.
-
-393. Discourse referent introduction and tracking: English introduces entities and tracks them over subsequent discourse. Examples: A man walked in. He ordered coffee. The waiter greeted him.
-
-394. Topic continuity and pronoun choice: English chooses pronouns or full noun phrases depending on discourse salience. Examples: Anna saw Maria. She waved. Maria waved back.
-
-395. Bridging inferences: English allows reference to related entities not explicitly introduced. Examples: I entered a church. The altar was covered in flowers. We bought a car, and the tires were new.
-
-396. World knowledge in interpretation: English often relies on common knowledge to fill roles and relations. Examples: The waiter brought the menu. The key opened the door. The doctor treated the patient.
-
-397. Selectional preferences: English verbs and adjectives favor certain kinds of participants. Examples: The child drank milk. The idea slept is odd. The knife cut the bread.
-
-398. Animacy effects: English distinguishes animate from inanimate entities in grammar and interpretation. Examples: The boy kicked the ball. The ball hit the boy. The rock wanted lunch sounds strange.
-
-399. Agency and intentionality: English differentiates agents who act intentionally from causes that lack intention. Examples: The boy opened the window. The wind opened the window. The robot opened the door.
-
-400. Control by instruments and machines: English can treat tools or systems as subjects while implying users or mechanisms. Examples: The knife cut the rope. The camera recorded the scene. The app deleted the file.
-
-401. Natural forces as causes: English treats storms, gravity, fire, and similar forces as event participants. Examples: The flood destroyed the bridge. Gravity pulled the stone down. Fire blackened the wall.
-
-402. Events without clear agents: English describes happenings that occur spontaneously or with unknown causes. Examples: The vase broke. A noise occurred. The lights went out.
-
-403. Chance and accident: English expresses randomness and lack of planning. Examples: We met by chance. She accidentally found the ring. The error happened at random.
-
-404. Manner versus result complementarity: English often packages manner and result differently across verbs. Examples: She scrubbed the floor clean. The bottle floated into the cave. He broke the stick with a blow.
-
-405. Agentless generics and dispositions: English attributes tendencies to entities without specifying particular events. Examples: Glass breaks easily. This car handles well. Wool shrinks in hot water.
-
-406. Cognitive frames and scripts: English interpretation draws on conventional event structures. Examples: We ate at a restaurant. The waiter brought the bill. She left a tip.
-
-407. Argument omission in instructions and recipes: English imperatives often omit subjects and recover objects from context. Examples: Add salt. Stir until smooth. Bake for twenty minutes.
-
-408. Telegraphic and fragmentary utterances: English can convey meanings with sentence fragments in context. Examples: Two coffees, please. No parking. Out of order.
-
-409. Headlines and compressed style: English headlines omit function words and compress events. Examples: Mayor Opens Bridge. Storm Leaves Thousands Without Power. Team Wins Final.
-
-410. Lists, tables, and labels in language: English uses non-sentential expressions to convey classification or instruction. Examples: Name: Sofia. Fragile glass. Exit only.
-
-411. Multisentence coherence: English meaning often spans several sentences through relations of cause, contrast, elaboration, and sequence. Examples: The battery died. The phone turned off. I plugged it in.
-
-412. Cross-sentence negation and correction: English can revise or cancel prior claims. Examples: I thought the store was open. It was not. Actually, it closed early.
-
-413. Contrastive correction: English explicitly replaces one claim with another. Examples: The meeting is not today; it is tomorrow. She bought pears, not apples. He is a doctor, not a nurse.
-
-414. Answerhood and short answers: English answers often omit material recoverable from the question. Examples: Who came? Maria. Did it rain? Yes. Where are the keys? On the table.
-
-415. Yes-no response polarity: English yes and no interact with positive and negative questions. Examples: Is he coming? Yes. Is he not coming? No. Did nobody call? Yes, someone did.
-
-416. Scalar implicature from quantifiers: English expressions like some, many, and possible can imply weaker-than-stronger alternatives. Examples: Some students passed. The task is possible. She ate many cookies.
-
-417. Exhaustivity in answers and focus: English answers may imply completeness relative to the question. Examples: Who came? Ana and Bo. What did you buy? Bread. Which door is open? The red one.
-
-418. Cumulative readings with plurals: English can relate plural groups without one-to-one pairing. Examples: Three authors wrote five papers. The trucks carried ten tons. The students solved twenty problems.
-
-419. Branching and complex quantification: English can express interdependent choices across multiple quantified groups. Examples: Different students read different books. Every boy gave every girl a card. Each worker used a separate tool.
-
-420. Quantification over kinds: English can quantify types rather than individual tokens. Examples: Three species disappeared. Many kinds of cheese are sold. Every model has a serial number.
-
-421. Generic quantifiers over situations: English expresses regularities across occasions. Examples: Whenever it rains, the roof leaks. In winter, the lake freezes. When dogs are scared, they hide.
-
-422. Modal subordination: English later sentences can continue a hypothetical or modal scenario. Examples: A wolf might enter. It would eat the sheep. John may buy a car. He would drive it daily.
-
-423. Conditional anaphora: English pronouns can refer to entities introduced inside conditions. Examples: If a guest arrives, greet them. If you buy a car, insure it. If a file is missing, report it.
-
-424. Discourse-level alternatives: English tracks alternatives introduced by or, either, whether, and questions. Examples: We can take the bus or walk. The bus is faster. Walking is cheaper.
-
-425. Whether-clauses and alternative complements: English embeds open alternatives as objects of knowledge, doubt, or inquiry. Examples: I wonder whether she called. Tell me whether the door is locked. He knows whether they arrived.
-
-426. Exhaustive versus nonexhaustive lists: English lists may or may not be complete. Examples: Bring apples, oranges, and bananas. Bring fruit such as apples and oranges. The colors include red and blue.
-
-427. Including and excluding examples: English marks examples as illustrative or exhaustive. Examples: Many animals, including dogs, need exercise. Tools such as hammers are useful. Everyone except Leo came.
-
-428. Scalar endpoints with almost and barely: English marks closeness to thresholds. Examples: She almost won. He barely passed. The glass is nearly full.
-
-429. Approximate comparison and tolerance: English allows near equality or rough comparison. Examples: The bags are about the same weight. This road is roughly as long. She is nearly as tall as Ben.
-
-430. Numerical ranges: English expresses bounded intervals of quantity or time. Examples: Five to ten people came. The meeting lasts between two and three hours. Children aged six through twelve may enter.
-
-431. Open-ended ranges: English expresses lower or upper ranges without exact endpoints. Examples: People over sixty get a discount. Children under five enter free. Temperatures above freezing are expected.
-
-432. Collective measurements: English measures groups or totals. Examples: The crowd numbered five thousand. The team weighs a combined eight hundred pounds. The shipment totals three tons.
-
-433. Comparative rates of change: English compares how quickly quantities change. Examples: Prices rose faster than wages. The child grew more quickly this year. The water cooled slower than expected.
-
-434. Temporal frequency with quantifiers: English combines number and time to describe recurrence. Examples: She calls three times a day. The medicine is taken twice weekly. We meet every other month.
-
-435. Periodic and interval-based recurrence: English marks regular cycles and intervals. Examples: The train arrives hourly. The newsletter is published monthly. Elections occur every four years.
-
-436. Irregular recurrence: English describes repeated events without a fixed schedule. Examples: He visits from time to time. Storms occur occasionally. She calls now and then.
-
-437. Habitual exceptions: English states habits that allow occasional deviations. Examples: I usually bike to work, but today I drove. The store normally opens at nine. She generally avoids sugar.
-
-438. Dispositional frequency: English expresses tendencies rather than observed repetitions. Examples: This dog bites. The printer jams often. The door sticks in winter.
-
-439. Quantified time spans: English restricts claims to periods. Examples: She worked every day last week. No calls arrived during the night. Several storms hit this summer.
-
-440. Historical present: English can use present tense for past narratives. Examples: So he walks in and asks for help. In 1492, Columbus sails west. The hero opens the door and sees a dragon.
-
-441. Timeless mathematical and definitional statements: English expresses truths not tied to a time. Examples: Two plus two equals four. A square has four sides. Water contains hydrogen.
-
-442. Fictional and hypothetical discourse: English describes entities and events within imagined worlds. Examples: Sherlock Holmes lives in London. Suppose a dragon guards the bridge. In the story, the king dies.
-
-443. Fictional names and nonactual entities: English can refer to entities that do not exist in reality. Examples: Hamlet is a prince. A unicorn has one horn. The Easter Bunny hides eggs.
-
-444. Dreams, plans, and imagined objects: English can discuss objects of thought that may not exist. Examples: She dreamed of a golden city. He designed an imaginary machine. They planned a bridge across the river.
-
-445. Reference failure: English sometimes uses descriptions that presuppose entities that do not exist. Examples: The current king of France is bald. The missing page is blank. The unicorn in the garden vanished.
-
-446. Contradiction and inconsistency: English can state mutually incompatible claims. Examples: The door is open and closed. He is taller than himself. The box is empty but contains a coin.
-
-447. Tautology and trivial truth: English can express statements true by meaning or form. Examples: A deal is a deal. Either it rains or it does not. All bachelors are unmarried.
-
-448. Entailment through lexical meaning: English word meanings imply related truths. Examples: She killed the plant. The plant died. He bought a car, so he owns or obtained it.
-
-449. Antonymy and opposition: English uses words with opposed meanings. Examples: The light is on. The light is off. The water is hot, not cold.
-
-450. Synonymy and paraphrase: English can express similar meanings in different words. Examples: The child began to cry. The child started crying. The sofa is large.
-
-451. Hyponymy and hypernymy: English words stand in subtype and supertype relations. Examples: A sparrow is a bird. A car is a vehicle. A rose is a flower.
-
-452. Meronymy and holonymy: English lexical meanings encode part-whole relations. Examples: A finger is part of a hand. A page belongs to a book. A roof is part of a house.
-
-453. Selection among senses by context: English context determines which word sense is intended. Examples: She deposited money in the bank. The canoe reached the bank. The pilot banked the plane.
-
-454. Coercion between entity and event readings: English can shift nouns or verbs to related meanings. Examples: The ham sandwich left without paying. The book is heavy but fascinating. The city slept.
-
-455. Coercion between count and mass readings: English can reinterpret count nouns as substances or mass nouns as portions. Examples: There is apple in the salad. We ordered two waters. The floor was covered with chicken.
-
-456. Subsective adjectives: English adjectives such as skillful or good depend on the noun they modify. Examples: She is a good surgeon. He is a skillful liar. That is a beautiful dancer.
-
-457. Privative adjectives: English adjectives such as fake and counterfeit deny ordinary category membership. Examples: This is a fake gun. The counterfeit bill fooled no one. The toy car is small.
-
-458. Temporal qualification of nouns: English uses adjectives to locate roles in time. Examples: The former president spoke. The future king was born. The current champion won again.
-
-459. Episodic versus generic noun phrases: English noun phrases can refer to particular instances or kinds. Examples: The lion escaped from the zoo. The lion is endangered. A lion roared.
-
-460. Kind predicates: English predicates apply naturally to kinds rather than individual instances. Examples: Dinosaurs are extinct. The dodo disappeared. Rice is widespread.
-
-461. Instantiation of kinds: English relates kind-level claims to individual specimens. Examples: This animal is a tiger. Tigers are striped. This tiger is sleeping.
-
-462. Category prototypes and typicality: English can express typical and atypical members. Examples: A robin is a typical bird. A penguin is an unusual bird. This is not a normal chair.
-
-463. Similarity-based classification: English classifies by resemblance rather than strict membership. Examples: This mushroom looks like an umbrella. The cloud resembles a horse. The fabric feels like silk.
-
-464. Comparison by role or function: English compares entities with respect to what they do. Examples: This knife works better than that one. The old phone is less useful. The new route is more efficient.
-
-465. Normative comparison: English compares entities relative to standards or expectations. Examples: The room is too cold. The bag is heavy enough. The answer is good enough.
-
-466. Excess and sufficiency: English expresses too much, too little, enough, and insufficient amounts. Examples: The box is too heavy. We have enough chairs. There is not enough water.
-
-467. Conditional comparatives: English states comparisons that depend on circumstances. Examples: This road is safer when it is dry. The soup tastes better if you add salt. The phone works faster with Wi-Fi.
-
-468. Temporal comparison: English compares an entity or value across times. Examples: The city is larger now. She was happier last year. Prices are higher than before.
-
-469. Spatial comparison: English compares locations, distances, and orientations. Examples: The school is closer than the mall. The north trail is steeper. This room is farther from the exit.
-
-470. Relational comparison: English compares relations rather than simple properties. Examples: Ana is closer to Leo than to Max. This key fits better than that one. Sam trusts Mia more than Omar.
-
-471. Equatives with as: English expresses equal degree or manner. Examples: The rope is as long as the wall. She runs as fast as her brother. This plan is as risky as that one.
-
-472. Differentials in comparison: English names the amount of difference between degrees. Examples: The table is two inches taller. The train is ten minutes late. She earns twice as much.
-
-473. Multiplicative comparison: English expresses ratios such as twice, half, and three times. Examples: This box is twice as heavy. The new road is half as long. We sold three times as many tickets.
-
-474. Superlative ties: English can express shared highest or lowest degree. Examples: Ana and Bo are the tallest students. These are the two cheapest tickets. Several runners tied for first.
-
-475. Comparative classes with among and of: English specifies the set for a superlative. Examples: She is the oldest of the siblings. This is the best among the options. He is the fastest in the race.
-
-476. Scope of superlatives: English superlatives can be absolute or relative to an individual's choices. Examples: Sam climbed the highest mountain. Sam climbed the highest mountain in Peru. Sam wants to read the shortest book.
-
-477. Conjunction reduction: English omits repeated material in coordinated structures. Examples: Anna likes and Ben dislikes olives. The red and blue cars stopped. She washed and dried the dishes.
-
-478. Distributive conjunction: English conjunction can imply each conjunct has a property separately. Examples: Alice and Ben are tall. The cups and plates are clean. Dogs and cats need water.
-
-479. Collective conjunction: English conjunction can create a plural group with collective properties. Examples: Alice and Ben met. The salt and pepper are mixed. The two ropes together are long enough.
-
-480. Conjunctive event sequencing: English and can imply temporal order. Examples: She unlocked the door and entered. He fell and broke his arm. I cooked dinner and ate it.
-
-481. Conjunctive causality: English and can imply cause or result in context. Examples: Press the button and the machine starts. Insult him and he will leave. She studied hard and passed.
-
-482. Disjunctive free choice: English or with modals can imply permission for either alternative. Examples: You may take tea or coffee. Students can write in pen or pencil. Choose soup or salad.
-
-483. Exclusive versus inclusive or: English or may mean one or both, or exactly one, depending on context. Examples: You can have cake or ice cream. The password needs a digit or a symbol. Either Ana or Bo will chair the meeting.
-
-484. Neither-nor and negative coordination: English coordinates negative alternatives. Examples: Neither Tom nor Sue called. The room is neither hot nor cold. He neither apologized nor explained.
-
-485. Both-and, either-or, and not-only-but-also: English uses correlative coordinators to structure alternatives and additions. Examples: Both Anna and Leo came. Either call or email me. She is not only smart but also kind.
-
-486. Additive negation with nor: English continues negative claims across clauses. Examples: I did not call, nor did I write. She has no car, nor does she want one. The room was not clean, nor was it quiet.
-
-487. Conditionals with quantified antecedents: English combines quantification and conditionality. Examples: If any student is late, they lose points. Every person who enters must sign in. Whoever finds the key should return it.
-
-488. Biconditional-like expressions: English states that two conditions go together. Examples: You may enter only if you have a badge. The light turns on if and only if the switch is up. A shape is a square exactly when it has four equal sides and four right angles.
-
-489. Necessary-condition conditionals: English if can mark requirements. Examples: If you want to vote, you must register. If the plant is to survive, it needs water. If we are to win, we must practice.
-
-490. Sufficient-condition conditionals: English if can mark conditions that guarantee or support outcomes. Examples: If you press this button, the door opens. If it freezes, water becomes ice. If she calls, I will answer.
-
-491. Relevance conditionals: English conditionals can state the relevance of a claim rather than cause. Examples: If you are hungry, there is food in the fridge. If I may say so, you are wrong. If you need me, I am next door.
-
-492. Biscuit conditionals: English conditionals sometimes offer information conditional on interest or relevance. Examples: If you are thirsty, there is juice in the fridge. If you need a ride, my car is outside. If you want dessert, cookies are on the counter.
-
-493. Indicative versus subjunctive conditionals: English uses different forms for open and remote hypotheses. Examples: If she comes, we will start. If she came, we would start. If she had come, we would have started.
-
-494. Conditional perfection tendency: English if can pragmatically suggest only if. Examples: If you mow the lawn, I will pay you. If you finish the form, you may leave. If the light is green, go.
-
-495. Concessive conditionals: English expresses outcomes that hold regardless of a range of conditions. Examples: Even if it rains, we will play. Whether you agree or not, the rule applies. No matter who wins, we celebrate.
-
-496. Universal conditional relatives: English uses whoever, whatever, wherever, and whenever for universal-like conditions. Examples: Whoever arrives first gets a prize. Whatever you choose is fine. Wherever she goes, she makes friends.
-
-497. Cause clauses with because and since: English marks explanations and causes with conjunctions. Examples: The game stopped because it rained. Since the door was locked, we waited. I left because I was tired.
-
-498. Purpose clauses with to and so that: English marks intended outcomes with infinitives and finite clauses. Examples: She studied to pass. He whispered so that the baby would sleep. They saved money in order to travel.
-
-499. Reason versus evidence because: English because can introduce actual causes or evidence for a conclusion. Examples: The ground is wet because it rained. It must have rained because the ground is wet. She stayed home because she was sick.
-
-500. Causal chains: English describes sequences where one event causes another, which causes another. Examples: The spark lit the paper. The paper started a fire. The fire damaged the house.
-
-501. Direct and indirect causation: English distinguishes immediate actions from mediated outcomes. Examples: She pushed the vase over. She caused the vase to fall. Her complaint got him fired.
-
-502. Let, make, have, and get causatives: English uses special verbs for different causal relations. Examples: She made him apologize. The teacher let us leave. I had the mechanic fix the car.
-
-503. Force dynamics: English expresses causing, allowing, preventing, resisting, and overcoming. Examples: The wind pushed the door open. The lock kept the door shut. She resisted the pressure.
-
-504. Causal responsibility and blame: English assigns responsibility for outcomes. Examples: The driver caused the crash. The company is responsible for the leak. I blame the storm for the delay.
-
-505. Purpose of artifacts: English describes intended functions of objects. Examples: A cup is for drinking. This button starts the engine. The bridge carries traffic.
-
-506. Human intentions behind artifacts: English relates created objects to their designers' goals. Examples: The sign was made to warn drivers. The app was designed to track expenses. The room was built for meetings.
-
-507. Means-end relations: English links actions to goals through means. Examples: She saved money by cooking at home. He opened the jar with a spoon. They won by practicing daily.
-
-508. Temporal purpose and planning: English expresses future goals motivating present action. Examples: I am studying for tomorrow's exam. She packed for the trip. They trained for the race.
-
-509. Consequence without intention: English distinguishes unintended results from purposes. Examples: He slipped and broke the vase. The medicine made her sleepy. The joke offended everyone.
-
-510. Beneficial and harmful results: English evaluates consequences for participants. Examples: The rain helped the crops. The frost damaged the flowers. The delay benefited the team.
-
-511. Conditional causation: English states causal relations under particular conditions. Examples: Heat melts ice. If the switch is on, the motor runs. Too much water kills the plant.
-
-512. Temporal causation and latency: English describes delayed effects. Examples: The bite caused swelling later. Years of practice made her skilled. The decision led to problems.
-
-513. Causal overdetermination and multiple causes: English expresses outcomes with more than one cause. Examples: Rain and wind damaged the roof. Both errors caused the crash. Stress and lack of sleep made him ill.
-
-514. Partial causation and contribution: English expresses contributing factors rather than sole causes. Examples: The new policy helped reduce waste. Fatigue contributed to the accident. Exercise can improve mood.
-
-515. Prevented outcomes and counterfactual dependence: English describes events that did not occur because of prevention. Examples: The vaccine prevented infection. Her warning stopped the crash. The fence kept the dog from escaping.
-
-516. Temporal overlap with causation: English distinguishes causes that precede outcomes from simultaneous conditions. Examples: The spark caused the fire. The heavy rain flooded the road. The loud music kept me awake.
-
-517. Purpose with negative goals: English expresses acting to avoid an undesired outcome. Examples: She wore a coat to avoid getting cold. He left early so he would not be late. They hid the gift so Ana would not see it.
-
-518. Causal explanation of states: English explains why a state holds. Examples: The glass is cracked because it fell. The room is dark because the lights are off. The road is closed due to flooding.
+98. Polarity items and licensing: Some expressions occur naturally only under negation, questions, conditionals, or other licensing environments. Examples: I did not see anyone. Did you ever visit Rome? If you need any help, call me.
