@@ -10,6 +10,7 @@ from dspy.utils.callback import BaseCallback
 from pathlib import Path
 
 from nl2pln import NL2PLNModule , difficulty_metric , build_examples_from_file
+from chainers import add_chainer_arg, configure_chainer
 from logging_utils import setup_logging
 
 logger = logging.getLogger(__name__)
@@ -68,6 +69,7 @@ def parse_args():
     p.add_argument("--log-file", default="/tmp/simba.log",
                    help="Path to log file; mirrors stdout/stderr for Colab "
                         "where streaming cell output gets truncated.")
+    add_chainer_arg(p)
     return p.parse_args()
 
 
@@ -76,6 +78,9 @@ def main():
 
     setup_logging(args.log_file, args.log_level)
     print(f"  Logging to {args.log_file} (level={args.log_level})")
+
+    configure_chainer(args.chainer)
+    print(f"  Chainer: {args.chainer}")
 
     lm_kwargs = {"reasoning_effort": args.reasoning_effort} if args.reasoning_effort else {}
     lm_kwargs["max_tokens"] = args.max_tokens

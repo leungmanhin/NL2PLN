@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 from typing import List
 from textwrap import dedent
-from pettachainer import PeTTaChainer
 
 # Module-level pln_spec.  Defaults to empty; callers (optimizer scripts,
 # eval_program.py, usage_example.py, etc.) set this from a chainer-
@@ -31,6 +30,14 @@ pln_spec = ""
 # untouched.
 _PLN_SPEC_BEGIN = "<!-- BEGIN_PLN_SPEC -->"
 _PLN_SPEC_END = "<!-- END_PLN_SPEC -->"
+
+# Chainer factory.  The pipeline is chainer-agnostic and has NO default
+# backend: callers MUST install a zero-arg factory here before running
+# difficulty_metric (e.g. via chainers.configure_chainer("lib_pln") or a
+# script's --chainer flag).  The factory returns an object exposing
+# add_atom(stmt) / query(q) / print_kb().  Left None so that forgetting to
+# select a chainer fails loudly rather than silently assuming one.
+make_chainer = None
 
 
 class NL2PLNSingature(dspy.Signature):
@@ -212,8 +219,17 @@ def difficulty_metric(gold: dspy.Example, pred: dspy.Prediction, trace=None, pre
             "(likely auth, quota, rate-limit, or network)."
         )
 
+    if make_chainer is None:
+        raise RuntimeError(
+            "No chainer configured: set nl2pln.make_chainer to a zero-arg "
+            "factory (e.g. via chainers.configure_chainer('lib_pln') or a "
+            "script's --chainer flag) before running difficulty_metric."
+        )
+    # Construct outside the try below so a missing/broken backend fails loudly
+    # rather than being swallowed into a per-example score of 0.0.
+    metta_handler = make_chainer()
+
     try:
-        metta_handler = PeTTaChainer()
         evaluator = ProofEvaluator()
 
         log = False
@@ -344,6 +360,10 @@ if __name__ == '__main__':
         #enable_memory_cache=False,
     )
     dspy.settings.configure(track_usage=True)
+
+    # Dev harness: select a chainer explicitly (the pipeline has no default).
+    import chainers
+    make_chainer = chainers.resolve_chainer("pettachainer")
 
     module = NL2PLNModule()
     #compiled_program = Path("programs/simba_all3.json")

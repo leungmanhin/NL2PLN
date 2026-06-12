@@ -153,6 +153,8 @@ def parse_args():
         "--output", default=None,
         help="Save per-puzzle results to this JSON (default: don't save)",
     )
+    from chainers import add_chainer_arg
+    add_chainer_arg(p)
     return p.parse_args()
 
 
@@ -161,8 +163,10 @@ def parse_args():
 # ---------------------------------------------------------------------------
 
 def _eval_one_full(program, example):
-    """Run a single example through program + difficulty_metric, mirroring
-    simba_utils.wrap_program semantics."""
+    """
+    Run a single example through program + difficulty_metric, mirroring
+    simba_utils.wrap_program semantics.
+    """
     from nl2pln import difficulty_metric
     prediction = None
     error = None
@@ -294,7 +298,7 @@ def report_full(label: str, results: list[dict], examples: list) -> dict:
 # ---------------------------------------------------------------------------
 
 def _eval_one_syntax(program, example):
-    from pettachainer import PeTTaChainer
+    import nl2pln
 
     try:
         pred = program(**example.inputs())
@@ -319,7 +323,7 @@ def _eval_one_syntax(program, example):
     if not stmts:
         return {"bucket": "no_statements", "n_stmts": 0, "n_queries": 0, **pred_extras}
 
-    chainer = PeTTaChainer()
+    chainer = nl2pln.make_chainer()
     n_added = 0
     rejected_stmt = None
     rejected_stmt_err = None
@@ -519,6 +523,10 @@ def main():
     import dspy
     import nl2pln
     from nl2pln import NL2PLNModule, build_examples_from_file
+    from chainers import configure_chainer
+
+    configure_chainer(args.chainer)
+    print(f"  Chainer: {args.chainer}")
 
     # Capture the module's original pln_spec so we can reset between
     # programs that have different spec preferences.

@@ -29,6 +29,10 @@ Usage:
     python src/bootstrap_chainer.py --chainer ../PeTTaChainer
     python src/bootstrap_chainer.py --from-step 2
     python src/bootstrap_chainer.py --from-step 3
+
+    # Analyze a single-file chainer library, regenerating only Step 1
+    # into a separate file (leaves the existing analysis untouched):
+    python src/bootstrap_chainer.py --chainer ../PeTTa/lib/lib_pln.metta --from-step 1 --to-step 1 --output-analysis bootstrap/chainer_analysis_libpln.txt
 """
 import argparse
 import logging
@@ -65,9 +69,14 @@ _SOURCE_EXTENSIONS = {
 }
 
 
-def _read_chainer_source_code(chainer_dir: pathlib.Path) -> str:
+def _read_chainer_source_code(chainer_path: pathlib.Path) -> str:
+    # A single explicitly-provided file (e.g. a one-file chainer library
+    # such as lib_pln.metta) is read directly; a directory is walked for
+    # all recognized source files.
+    if chainer_path.is_file():
+        return f"=== {chainer_path.name} ===\n{chainer_path.read_text(encoding='utf-8')}"
     parts = []
-    for f in sorted(chainer_dir.rglob("*")):
+    for f in sorted(chainer_path.rglob("*")):
         if any(p in _SKIP_DIRS or p.endswith(".egg-info") for p in f.parts):
             continue
         if not f.is_file():
@@ -75,11 +84,11 @@ def _read_chainer_source_code(chainer_dir: pathlib.Path) -> str:
         if f.suffix.lower() not in _SOURCE_EXTENSIONS:
             continue
         try:
-            parts.append(f"=== {f.relative_to(chainer_dir)} ===\n{f.read_text(encoding='utf-8')}")
+            parts.append(f"=== {f.relative_to(chainer_path)} ===\n{f.read_text(encoding='utf-8')}")
         except UnicodeDecodeError:
-            print(f"Skipping binary file: {f.relative_to(chainer_dir)}")
+            print(f"Skipping binary file: {f.relative_to(chainer_path)}")
     if not parts:
-        raise FileNotFoundError(f"No source files found under {chainer_dir}")
+        raise FileNotFoundError(f"No source files found under {chainer_path}")
     return "\n\n".join(parts)
 
 
@@ -123,17 +132,25 @@ class ChainerAnalysisSignature(dspy.Signature):
     will write — the surface syntax and semantics it needs to produce
     expressions for this chainer.  Internal helpers, source-file
     references, compiler/runtime intermediates, and narratives about
-    what the chainer does to expressions after the Python API receives
-    them are out of scope and must not appear in the output.
+    what the chainer does to expressions internally, after they are
+    submitted, are out of scope and must not appear in the output.
 
     From the source code, reverse-engineer and document, minimally:
 
     1. EXPRESSION FORMAT — What do valid statements and queries look like
-       when passed to the chainer's Python API (add_atom / query)?
-       Show the exact syntactic template with placeholders.
+       for this chainer — the expressions a caller submits to assert a
+       fact or rule, and to pose a query?  Show the exact syntactic
+       template with placeholders.  For a query, document the bare query
+       TARGET — the goal expression whose truth or derivation is being
+       asked about — as the thing the translator emits.  If actually
+       running a query additionally requires wrapping that target in a
+       host invocation (a Python call, or a driver/runner expression that
+       also takes the knowledge base), describe that invocation separately
+       and state clearly that the translator emits ONLY the bare target,
+       never the surrounding invocation or the knowledge base.
     2. BUILT-IN OPERATORS — List every built-in operator/connector that
-       external callers can write inside the expression strings passed to
-       the Python API.  For each: show its surface syntax with
+       external callers can write inside the expressions submitted to
+       the chainer.  For each: show its surface syntax with
        placeholders, and describe its semantic effect — what truth value
        or behaviour the chainer produces given that expression — in a
        few sentences of English.
@@ -326,6 +343,15 @@ def main():
         help="Start from this step, loading earlier outputs from disk (default: 1)",
     )
     parser.add_argument(
+        "--to-step",
+        type=int,
+        default=3,
+        choices=[1, 2, 3],
+        help="Stop after this step (default: 3).  Combine with --from-step "
+             "to run a single step, e.g. --from-step 1 --to-step 1 to "
+             "(re)generate only the chainer analysis.",
+    )
+    parser.add_argument(
         "--model",
         default="openai/gpt-5.4-mini",
         help="LM identifier (default: openai/gpt-5.4-mini)",
@@ -356,6 +382,8 @@ def main():
     if args.from_step <= 1 and args.chainer is None:
         parser.error("--chainer is required when --from-step <= 1 "
                      "(Step 1 reads the chainer source)")
+    if args.to_step < args.from_step:
+        parser.error("--to-step must be >= --from-step")
 
     # Configure logging
     log_level = getattr(logging, args.log_level.upper(), logging.INFO)
@@ -430,6 +458,7 @@ def main():
     }
 
     from_step = args.from_step
+    to_step = args.to_step
 
     # Pre-declared so step 3 can load these from disk if earlier steps were skipped.
     chainer_analysis = None
@@ -438,7 +467,7 @@ def main():
     # =================================================================
     # Step 1: Analyze chainer (RLM)
     # =================================================================
-    if from_step <= 1:
+    if from_step <= 1 <= to_step:
         print(f"\nReading chainer source from {args.chainer} ...")
         chainer_source = _read_chainer_source_code(pathlib.Path(args.chainer))
         print(f"  Source size: {len(chainer_source):,} characters")
@@ -456,7 +485,7 @@ def main():
     # =================================================================
     # Step 2: Enumerate linguistic phenomena
     # =================================================================
-    if from_step <= 2:
+    if from_step <= 2 <= to_step:
         print("\n" + "=" * 60)
         print("Step 2: Enumerating linguistic phenomena ...")
 
@@ -474,7 +503,7 @@ def main():
     # =================================================================
     # Step 3: Generate phenomenon-feature mapping
     # =================================================================
-    if from_step <= 3:
+    if from_step <= 3 <= to_step:
         print("\n" + "=" * 60)
         print("Step 3: Generating phenomenon-feature mapping ...")
 

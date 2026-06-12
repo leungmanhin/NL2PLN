@@ -1,4 +1,5 @@
-"""Shared logging setup for the optimization scripts.
+"""
+Shared logging setup for the optimization scripts.
 
 Mirrors stdout/stderr to a log file in addition to the original streams,
 and configures the Python root logger to write to both console and the
@@ -24,7 +25,9 @@ import sys
 
 
 class _Tee:
-    """Mirror writes to two file-likes (typically a stream + a log file)."""
+    """
+    Mirror writes to two file-likes (typically a stream + a log file).
+    """
     def __init__(self, original, log_fh):
         self._original = original
         self._log_fh = log_fh
@@ -42,7 +45,8 @@ class _Tee:
 
 
 def setup_logging(log_file: str, log_level: str = "info") -> None:
-    """Configure root logging + tee stdout/stderr to ``log_file``.
+    """
+    Configure root logging + tee stdout/stderr to ``log_file``.
 
     Args:
         log_file: Path to the log file.  Truncated on creation, then both
